@@ -1,0 +1,88 @@
+nohup: ignoring input
+
+=== Running run_preprocessing.py ===
+{
+  "price_hourly": {
+    "source_path": "/home/sven/Nextcloud/Research/Projects/Open/GK25:CARMA-QUANTO/Pricing_and_Hedging_of_Quanto_Options_in_Renewable_Energy_Markets_using_CARMA/Code/data/raw/prices.csv",
+    "value_col": "price_eur_mwh",
+    "aggregation": "mean",
+    "n_raw_obs": 32839,
+    "n_hourly_obs": 26281,
+    "hours_with_single_obs": 24095,
+    "hours_with_multiple_obs": 2186,
+    "hours_with_four_obs": 2186,
+    "missing_hours_before_interpolation": 0,
+    "start": "2023-01-01 00:00:00+00:00",
+    "end": "2025-12-31 00:00:00+00:00"
+  },
+  "temperature_hourly": {
+    "source_path": "/home/sven/Nextcloud/Research/Projects/Open/GK25:CARMA-QUANTO/Pricing_and_Hedging_of_Quanto_Options_in_Renewable_Energy_Markets_using_CARMA/Code/data/raw/temperature.csv",
+    "value_col": "temperature_c",
+    "aggregation": "mean",
+    "n_raw_obs": 52584,
+    "n_hourly_obs": 52584,
+    "hours_with_single_obs": 52584,
+    "hours_with_multiple_obs": 0,
+    "hours_with_four_obs": 0,
+    "missing_hours_before_interpolation": 0,
+    "start": "2020-01-01 00:00:00+00:00",
+    "end": "2025-12-30 23:00:00+00:00"
+  },
+  "temp_residuals": {
+    "label": "temperature",
+    "start": "2020-01-01 00:00:00+00:00",
+    "end": "2025-12-30 23:00:00+00:00",
+    "n_obs": 52584,
+    "mean": -0.1709000245071421,
+    "std": 3.7383597916117774,
+    "skew": 0.04562102764473902,
+    "kurtosis_excess": 0.4315327044124868,
+    "adf_stat": -18.312001026351645,
+    "adf_pvalue": 2.275069425916679e-30
+  },
+  "price_log_residuals": {
+    "label": "log_shifted_price",
+    "start": "2023-01-01 00:00:00+00:00",
+    "end": "2025-12-31 00:00:00+00:00",
+    "n_obs": 26281,
+    "mean": 0.008724208048941631,
+    "std": 0.038202656446181274,
+    "skew": 0.43624677872418005,
+    "kurtosis_excess": 15.651058938371662,
+    "adf_stat": -12.422564476153655,
+    "adf_pvalue": 4.105901302412576e-23
+  },
+  "train_end_timestamp": "2024-12-31 23:00:00+00:00",
+  "test_start_timestamp": "2025-01-01 00:00:00+00:00",
+  "price_shift": 1000.0
+}
+
+=== Running run_marginal_carma.py ===
+[temperature] starting model grid
+[temperature] screening 5 orders with 2 worker(s) on a 6-hour subsample via discrete ARMA
+/home/sven/bin/miniconda3/lib/python3.12/site-packages/statsmodels/tsa/statespace/sarimax.py:966: UserWarning: Non-stationary starting autoregressive parameters found. Using zeros as starting parameters.
+  warn('Non-stationary starting autoregressive parameters'
+/home/sven/bin/miniconda3/lib/python3.12/site-packages/statsmodels/tsa/statespace/sarimax.py:978: UserWarning: Non-invertible starting MA parameters found. Using zeros as starting parameters.
+  warn('Non-invertible starting MA parameters found.'
+[temperature] CARMA(1,0) done: loglik=-15036.800, AIC=30077.599, LB24=0.0000, success=True
+[temperature] CARMA(2,0) done: loglik=-15009.473, AIC=30024.945, LB24=0.0000, success=True
+[temperature] CARMA(3,0) done: loglik=-14909.782, AIC=29827.564, LB24=0.0000, success=True
+[temperature] CARMA(3,1) done: loglik=-14900.159, AIC=29810.319, LB24=0.0000, success=True
+[temperature] CARMA(2,1) done: loglik=-15008.494, AIC=30024.987, LB24=0.0000, success=True
+[temperature] selected CARMA(3,1) for final refit
+[temperature] final refit done: CARMA(3,1), AIC=82255.714, LB24=0.0000
+[logprice] starting model grid
+[logprice] screening 6 orders with 2 worker(s) on a 6-hour subsample via discrete ARMA
+[logprice] CARMA(1,0) done: loglik=5918.948, AIC=-11833.895, LB24=0.0000, success=True
+[logprice] CARMA(2,0) done: loglik=6027.484, AIC=-12048.967, LB24=0.0000, success=True
+[logprice] CARMA(3,0) done: loglik=6037.940, AIC=-12067.879, LB24=0.0000, success=True
+/home/sven/bin/miniconda3/lib/python3.12/site-packages/statsmodels/tsa/statespace/sarimax.py:966: UserWarning: Non-stationary starting autoregressive parameters found. Using zeros as starting parameters.
+  warn('Non-stationary starting autoregressive parameters'
+/home/sven/bin/miniconda3/lib/python3.12/site-packages/statsmodels/tsa/statespace/sarimax.py:978: UserWarning: Non-invertible starting MA parameters found. Using zeros as starting parameters.
+  warn('Non-invertible starting MA parameters found.'
+[logprice] CARMA(2,1) done: loglik=6055.170, AIC=-12102.340, LB24=0.0000, success=True
+[logprice] CARMA(3,1) done: loglik=6057.032, AIC=-12104.063, LB24=0.0000, success=False
+[logprice] CARMA(3,2) done: loglik=6078.760, AIC=-12145.519, LB24=0.0000, success=True
+[logprice] selected CARMA(3,2) for final refit
+/home/sven/Nextcloud/Research/Projects/Open/GK25:CARMA-QUANTO/Pricing_and_Hedging_of_Quanto_Options_in_Renewable_Energy_Markets_using_CARMA/Code/notebooks/carma_utils.py:202: RuntimeWarning: invalid value encountered in log
+  loglik += -0.5 * (np.log(2.0 * np.pi * S) + v ** 2 / S)
