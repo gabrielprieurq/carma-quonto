@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(python3 -c ':*)",
+      "Bash(Rscript -e 'nb <- jsonlite::fromJSON\\('\\\\''notebooks/02deseasonalise.ipynb'\\\\''\\); for\\(i in seq_along\\(nb$cells$source\\)\\) cat\\('\\\\''=== Cell'\\\\'', i, '\\\\''===\\\\n'\\\\'', paste\\(nb$cells$source[[i]], collapse='\\\\'''\\\\''\\), '\\\\''\\\\n\\\\n'\\\\''\\)')",
+      "Bash(python3 -c ' *)"
+    ]
+  }
+}
