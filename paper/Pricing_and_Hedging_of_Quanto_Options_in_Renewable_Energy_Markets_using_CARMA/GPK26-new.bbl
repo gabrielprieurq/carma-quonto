@@ -1,0 +1,91 @@
+\begin{thebibliography}{11}
+\providecommand{\natexlab}[1]{#1}
+\providecommand{\url}[1]{\texttt{#1}}
+\expandafter\ifx\csname urlstyle\endcsname\relax
+  \providecommand{\doi}[1]{doi: #1}\else
+  \providecommand{\doi}{doi: \begingroup \urlstyle{rm}\Url}\fi
+
+\bibitem[Alfonsi and Vadillo(2024)]{Alf24}
+Aurélien Alfonsi and Nerea Vadillo.
+\newblock Risk valuation of quanto derivatives on temperature and electricity,
+  2024.
+\newblock URL \url{https://arxiv.org/abs/2310.07692}.
+
+\bibitem[Benth and Karbach(2023)]{Ben23}
+Fred~Espen Benth and Sven Karbach.
+\newblock Multivariate continuous-time autoregressive moving-average processes
+  on cones.
+\newblock \emph{Stochastic Processes Appl.}, 162:\penalty0 299--337, 2023.
+\newblock ISSN 0304-4149.
+\newblock \doi{10.1016/j.spa.2023.05.003}.
+
+\bibitem[Benth and Taib(2013)]{Ben13}
+Fred~Espen Benth and Che Mohd Imran~Che Taib.
+\newblock On the speed towards the mean for continuous time autoregressive
+  moving average processes with applications to energy markets.
+\newblock \emph{Energy Economics}, 40:\penalty0 259--268, 2013.
+\newblock ISSN 0140-9883.
+\newblock \doi{https://doi.org/10.1016/j.eneco.2013.07.007}.
+\newblock URL
+  \url{https://www.sciencedirect.com/science/article/pii/S0140988313001527}.
+
+\bibitem[Benth et~al.(2014)Benth, Klüppelberg, Müller, and Vos]{Ben14}
+Fred~Espen Benth, Claudia Klüppelberg, Gernot Müller, and Linda Vos.
+\newblock Futures pricing in electricity markets based on stable carma spot
+  models.
+\newblock \emph{Energy Economics}, 44:\penalty0 392--406, 2014.
+\newblock ISSN 0140-9883.
+\newblock \doi{https://doi.org/10.1016/j.eneco.2014.03.020}.
+\newblock URL
+  \url{https://www.sciencedirect.com/science/article/pii/S014098831400067X}.
+
+\bibitem[Benth et~al.(2015)Benth, Lange, and Myklebust]{Ben15}
+{Fred Espen} Benth, Nina Lange, and {Tor {\AA}ge} Myklebust.
+\newblock Pricing and hedging quanto options in energy markets.
+\newblock \emph{Journal of Energy Markets}, 8\penalty0 (1):\penalty0 1--35,
+  March 2015.
+\newblock ISSN 1756-3607.
+
+\bibitem[Brockwell(2001)]{Bro01}
+P.~J. Brockwell.
+\newblock L{\'e}vy-driven {CARMA} processes.
+\newblock \emph{Ann. Inst. Stat. Math.}, 53\penalty0 (1):\penalty0 113--124,
+  2001.
+\newblock ISSN 0020-3157.
+\newblock \doi{10.1023/A:1017972605872}.
+
+\bibitem[Carr and Madan(1999)]{Car99}
+Peter Carr and Dilip~B. Madan.
+\newblock Option valuation using the fast {F}ourier transform.
+\newblock \emph{The Journal of Computational Finance}, 2\penalty0 (4):\penalty0
+  61--73, 1999.
+\newblock \doi{10.21314/JCF.1999.043}.
+
+\bibitem[Cont and Tankov(2004)]{Con04}
+Rama Cont and Peter Tankov.
+\newblock \emph{Financial Modelling with Jump Processes}.
+\newblock Chapman \& Hall/CRC Financial Mathematics Series. Chapman \&
+  Hall/CRC, 2004.
+\newblock ISBN 1-5848-8413-4.
+
+\bibitem[Hull(2021)]{Hul21}
+John Hull.
+\newblock \emph{Options, futures and other derivatives}.
+\newblock Pearson, 11 edition, 2021.
+
+\bibitem[Marquardt and Stelzer(2007)]{Mar07}
+Tina Marquardt and Robert Stelzer.
+\newblock Multivariate {CARMA} processes.
+\newblock \emph{Stochastic Processes and their Applications}, 117\penalty0
+  (1):\penalty0 96--120, 2007.
+\newblock \doi{10.1016/j.spa.2006.05.014}.
+
+\bibitem[Schweizer(2001)]{Sch01}
+Martin Schweizer.
+\newblock A guided tour through quadratic hedging approaches.
+\newblock In Elyes Jouini, Jak{\v{s}}a Cvitani{\'c}, and Marek Musiela,
+  editors, \emph{Option Pricing, Interest Rates and Risk Management}, Handbooks
+  in Mathematical Finance, pages 538--574. Cambridge University Press, 2001.
+\newblock \doi{10.1017/CBO9780511569708.016}.
+
+\end{thebibliography}

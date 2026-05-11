@@ -1,0 +1,21 @@
+component,parameter,value
+global,model_family,coupled_CARMA
+global,dt_hours,1.0
+temperature_state,A_T,"[[0.0, 1.0], [-0.02473622057743, -0.834602554797278]]"
+temperature_state,b_T,"[1.0, 0.584420888567256]"
+temperature_state,e_T,"[0.0, 1.0]"
+temperature_state,sigma_T,0.76963298150931
+temperature_driver,distribution,Gaussian
+temperature_driver,mu,0.00464896922691595
+temperature_driver,sigma,1.382279921283192
+price_state,A_X,"[[0.0, 1.0, 0.0], [0.0, 0.0, 1.0], [-0.161163594914844, -1.85827342924239, -2.7417368516678]]"
+price_state,b_X,"[1.0, -1.69107499948807, 0.0856060699524467]"
+price_state,e_X,"[0.0, 0.0, 1.0]"
+price_state,lambda,0.0017485173776097822
+price_state,lambda_sigma_T,0.0013457166425506568
+price_state,sigma_J,0.7599528206635434
+price_idiosyncratic_driver,distribution,NIG
+price_idiosyncratic_driver,alpha,0.6126495315710487
+price_idiosyncratic_driver,beta,-0.06324992596984157
+price_idiosyncratic_driver,delta,0.5113897759597233
+price_idiosyncratic_driver,mu,0.05307242510785595

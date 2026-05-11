@@ -1,0 +1,11 @@
+series,model,parameter,value
+price_idiosyncratic_driver,Gaussian,mu,2.047328120008118e-05
+price_idiosyncratic_driver,Gaussian,sigma,1.0000933267991479
+price_idiosyncratic_driver,NIG,scipy_a,0.31330270669194804
+price_idiosyncratic_driver,NIG,scipy_b,-0.03234536547118637
+price_idiosyncratic_driver,NIG,loc,0.05307242510785595
+price_idiosyncratic_driver,NIG,scale,0.5113897759597233
+price_idiosyncratic_driver,NIG,alpha,0.6126495315710487
+price_idiosyncratic_driver,NIG,beta,-0.06324992596984157
+price_idiosyncratic_driver,NIG,delta,0.5113897759597233
+price_idiosyncratic_driver,NIG,mu,0.05307242510785595

@@ -1,0 +1,17 @@
+series,model,parameter,value
+price_ou_idiosyncratic_driver,Gaussian,mu,0.00017870608049850046
+price_ou_idiosyncratic_driver,Gaussian,sigma,0.9951135540524889
+price_ou_idiosyncratic_driver,NIG,scipy_a,0.29622798590345595
+price_ou_idiosyncratic_driver,NIG,scipy_b,-0.027643257494458867
+price_ou_idiosyncratic_driver,NIG,loc,0.04674887952319668
+price_ou_idiosyncratic_driver,NIG,scale,0.4965814059844228
+price_ou_idiosyncratic_driver,NIG,alpha,0.5965345909724785
+price_ou_idiosyncratic_driver,NIG,beta,-0.055667121566219106
+price_ou_idiosyncratic_driver,NIG,delta,0.4965814059844228
+price_ou_idiosyncratic_driver,NIG,mu,0.04674887952319668
+price_ou_idiosyncratic_driver,Merton_threshold,sigma_diffusion,0.5886169844669064
+price_ou_idiosyncratic_driver,Merton_threshold,jump_intensity,0.057420091324200916
+price_ou_idiosyncratic_driver,Merton_threshold,jump_mean,-0.0173522820268614
+price_ou_idiosyncratic_driver,Merton_threshold,jump_sigma,3.400854462968083
+price_ou_idiosyncratic_driver,Merton_threshold,jump_threshold,1.696614143368111
+price_ou_idiosyncratic_driver,Merton_threshold,n_jumps,1509.0

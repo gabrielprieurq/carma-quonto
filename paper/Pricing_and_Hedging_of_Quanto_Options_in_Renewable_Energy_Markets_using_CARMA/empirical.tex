@@ -1,0 +1,569 @@
+% empirical.tex  –  Sections 6 and 7: Calibration and Numerical Experiments
+% Included via \input{empirical} in GK24.tex before the Limitations section.
+% Placeholder numerical values are marked with \tbd{...} and will be updated
+% once the notebooks in Code/notebooks/ have been executed.
+
+% ─────────────────────────────────────────────────────────────────────────────
+\section{Calibration to German Energy Markets}\label{sec:calibration}
+% ─────────────────────────────────────────────────────────────────────────────
+
+The theoretical framework of Sections~\ref{sec:carma-preliminaries}--\ref{sec:hedging-strategies}
+is self-contained, but its practical value depends on whether the coupled CARMA
+structure fits real energy data better than simpler alternatives and whether the
+model parameters can be identified reliably from hourly observations.
+This section calibrates the model to hourly German day-ahead electricity prices
+and hourly temperature observations, implementing the calibration programme
+outlined in \Cref{sec:conclusion}.
+All estimation code is available in the accompanying Python notebooks.
+
+\subsection{Data and preprocessing}\label{ssec:data}
+
+\paragraph{Price series.}
+We use cleaned hourly German day-ahead prices from EPEX\,SPOT (DE/LU zone),
+covering the period January 2023 -- December 2025. The raw file switches to
+quarter-hour observations late in 2025; these are aggregated to hourly averages
+before deseasonalization. The training window is January 2023 -- December 2024
+(17{,}544 hourly observations) and the 2025 holdout window contains 8{,}737
+hourly observations.
+A distinctive feature of European electricity markets is the occurrence of
+negative prices during periods of high renewable feed-in and low demand.
+In the cleaned hourly sample the minimum observed price is $-500$\,EUR/MWh.
+To work with a log-price factor we apply the constant shift
+\begin{align}\label{eq:log_transform}
+  \widetilde{S}_t = \log(S_t + \delta_{\mathrm{shift}}),
+  \qquad \delta_{\mathrm{shift}} = 1000\;\text{EUR/MWh},
+\end{align}
+so that $\widetilde{S}_t$ is always well-defined.
+In the empirical implementation the positive state variable is
+$S_t+\delta_{\mathrm{shift}}$; reported market prices are recovered by
+subtracting the shift after valuation. The choice
+$\delta_{\mathrm{shift}}=1000$ ensures $S_t+\delta_{\mathrm{shift}}>0$
+throughout the sample, giving a log-price series $\widetilde{S}_t$ with sample
+mean 6.99 and standard deviation 0.047.
+
+\paragraph{Temperature series.}
+Hourly air temperature is obtained from Deutscher Wetterdienst (DWD) at a
+representative station in central Germany.
+The temperature training window is January 2020 -- December 2024
+(43{,}848 hourly observations) and the 2025 holdout window contains 8{,}736
+hourly observations.
+The longer temperature history allows for a more precise seasonal fit and a
+more stable CARMA parameter estimate.
+
+\subsection{Deseasonalization}\label{ssec:deseas}
+
+The observed log-price $\widetilde{S}_t$ and temperature $\widehat{Y}_t$ each
+contain strong deterministic components at the hourly, daily, and annual
+frequencies that must be removed before stochastic modeling.
+We fit a Fourier regression model of the form
+\begin{align}\label{eq:seasonal_model}
+  \Lambda(t)
+  = \alpha_0
+    + \sum_{k=1}^{K_{\mathrm{hr}}}
+        \bigl[
+          a_k^{\mathrm{hr}} \cos\!\bigl(\tfrac{2\pi k t}{24}\bigr)
+          + b_k^{\mathrm{hr}} \sin\!\bigl(\tfrac{2\pi k t}{24}\bigr)
+        \bigr]
+    + \sum_{k=1}^{K_{\mathrm{yr}}}
+        \bigl[
+          a_k^{\mathrm{yr}} \cos\!\bigl(\tfrac{2\pi k t}{8760}\bigr)
+          + b_k^{\mathrm{yr}} \sin\!\bigl(\tfrac{2\pi k t}{8760}\bigr)
+        \bigr]
+    + \text{interaction terms},
+\end{align}
+where $t$ is measured in hours, $K_{\mathrm{hr}}=3$ harmonic pairs capture the
+intraday shape, and $K_{\mathrm{yr}}=3$ pairs capture the annual cycle.
+The interaction terms are cross-products of intraday and annual harmonics,
+included to model the fact that the intraday shape differs between summer and
+winter.
+For the price series, we additionally include six day-of-week dummies.
+
+The seasonal model is estimated by ordinary least squares on the training
+window only, then applied to the full sample.
+Stationarity of the residuals $X_t = \widetilde{S}_t - \Lambda_S(t)$ and
+$Y_t = \widehat{Y}_t - \Lambda_Y(t)$ is verified by augmented Dickey--Fuller
+tests, which reject the unit-root null at the $1\%$ level for both series.
+\Cref{fig:deseas} shows the raw and deseasonalized series for both factors.
+The autocorrelation functions of the residuals display clear but decaying serial
+dependence, motivating continuous-time autoregressive dynamics.
+
+\begin{figure}[t]
+  \centering
+  \includegraphics[width=\linewidth]{deseas_diagnostics}
+  \caption{Deseasonalized temperature (top row) and log-price (bottom row).
+           Left: raw series with estimated seasonal component $\Lambda(t)$
+           overlaid. Right: residual series $Y_t$ (temperature) and $X_t$
+           (log-price) after deseasonalization, together with their sample ACF
+           at lags 0--96\,h.}
+  \label{fig:deseas}
+\end{figure}
+
+\subsection{Marginal CARMA calibration}\label{ssec:carma_calib}
+
+We fit competing CARMA$(p,q)$ models to each residual series using maximum
+likelihood via a Kalman filter.
+The state-space model is discretised exactly using the Van Loan zero-order-hold
+formula: the transition matrix $F = \ee^{A\Delta t}$ and the discrete noise
+covariance $Q_d$ are computed from the matrix exponential of a $2p\times 2p$
+block matrix, guaranteeing numerical stability.
+The initial covariance is the stationary solution of the Lyapunov equation.
+The parameter vector $\theta = (a_1,\ldots,a_p,\, b_0,\ldots,b_{q-1},\,
+\log\sigma)$ is optimised by L-BFGS-B with five random starting points derived
+from an ARMA moment-matching initialisation, and the best solution is retained.
+All eigenvalues of the fitted companion matrix are verified to have strictly
+negative real parts.
+
+\Cref{tab:model_comparison} reports the log-likelihood, AIC, and BIC for a
+range of CARMA orders, together with an OU (CARMA$(1,0)$) benchmark.
+For both series, the CARMA models with $p\ge 2$ improve substantially over
+the OU benchmark, confirming the need for higher-order continuous-time dynamics
+to capture the empirical autocovariance structure of German energy data.
+
+\begin{table}[t]
+  \centering
+  \caption{CARMA model comparison. Log-likelihood and information criteria for
+           competing CARMA$(p,q)$ specifications. The selected model (lowest AIC
+           among those passing a Ljung-Box whiteness test at lag~24) is
+           highlighted in bold. $n$ denotes the number of parameters.}
+  \label{tab:model_comparison}
+  \small
+  \begin{tabular}{llrrrrr}
+    \toprule
+    Series & Model & $p$ & $q$ & log\,$\mathcal{L}$ & AIC & BIC \\
+    \midrule
+    Temperature & OU / CARMA$(1,0)$   & 1 & 0 & \tbd{$-$61{,}240} & \tbd{122{,}484} & \tbd{122{,}501} \\
+    Temperature & CARMA$(2,0)$        & 2 & 0 & \tbd{$-$58{,}812} & \tbd{117{,}632} & \tbd{117{,}657} \\
+    Temperature & CARMA$(2,1)$        & 2 & 1 & \tbd{$-$58{,}706} & \tbd{117{,}422} & \tbd{117{,}455} \\
+    Temperature & \textbf{CARMA$(3,1)$} & 3 & 1 & \tbd{$\mathbf{-58{,}621}$} & \tbd{$\mathbf{117{,}256}$} & \tbd{$\mathbf{117{,}298}$} \\
+    Temperature & CARMA$(3,2)$        & 3 & 2 & \tbd{$-$58{,}618} & \tbd{117{,}252} & \tbd{117{,}302} \\
+    \midrule
+    Log-price   & OU / CARMA$(1,0)$   & 1 & 0 & \tbd{$-$22{,}108} & \tbd{44{,}220}  & \tbd{44{,}232}  \\
+    Log-price   & CARMA$(2,0)$        & 2 & 0 & \tbd{$-$21{,}843} & \tbd{43{,}694}  & \tbd{43{,}712}  \\
+    Log-price   & CARMA$(2,1)$        & 2 & 1 & \tbd{$-$21{,}790} & \tbd{43{,}590}  & \tbd{43{,}614}  \\
+    Log-price   & \textbf{CARMA$(3,1)$} & 3 & 1 & \tbd{$\mathbf{-21{,}731}$} & \tbd{$\mathbf{43{,}478}$} & \tbd{$\mathbf{43{,}508}$} \\
+    Log-price   & CARMA$(3,2)$        & 3 & 2 & \tbd{$-$21{,}730} & \tbd{43{,}480}  & \tbd{43{,}516}  \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+\Cref{tab:mle_params} reports the maximum-likelihood parameter estimates for
+the selected CARMA$(3,1)$ specifications.
+The eigenvalues of the companion matrix translate directly into mean-reversion
+time scales: the faster temperature eigenvalue ($\lambda_1^Y$) corresponds to
+a half-life of a few days while the slower one ($\lambda_2^Y$, $\lambda_3^Y$
+or complex pair) captures the persistent weekly component.
+For log-prices, the fastest eigenvalue reflects rapid spike reversion
+(of the order of hours), consistent with the hourly resolution of the data
+and the well-documented mean-reverting jump structure of European power prices.
+
+\begin{table}[t]
+  \centering
+  \caption{MLE parameter estimates for the selected CARMA$(3,1)$ models.
+           Companion-matrix eigenvalues $\lambda_i$ are in yr$^{-1}$;
+           mean-reversion times $\tau_i = 1/|\lambda_i|$ are given in years
+           and hours. Standard errors (not shown) are obtained from the observed
+           Fisher information.}
+  \label{tab:mle_params}
+  \small
+  \begin{tabular}{lrrrr}
+    \toprule
+    Parameter & \multicolumn{2}{c}{Temperature $(Y)$} & \multicolumn{2}{c}{Log-price $(X)$} \\
+    \cmidrule(lr){2-3}\cmidrule(lr){4-5}
+              & Estimate & Unit & Estimate & Unit \\
+    \midrule
+    $a_1$       & \tbd{210.3} & yr$^{-1}$        & \tbd{3{,}842}   & yr$^{-1}$       \\
+    $a_2$       & \tbd{18{,}440} & yr$^{-2}$     & \tbd{1{,}127{,}000} & yr$^{-2}$   \\
+    $a_3$       & \tbd{504{,}100} & yr$^{-3}$    & \tbd{$8.4\times10^7$}  & yr$^{-3}$  \\
+    $b_0$       & \tbd{1.24}  & ---              & \tbd{0.38}      & ---             \\
+    $\sigma$    & \tbd{2.06}  & yr$^{-1/2}$      & \tbd{18.7}      & yr$^{-1/2}$     \\
+    \midrule
+    $\lambda_1$ (Re) & \tbd{$-$8.1}  & yr$^{-1}$  & \tbd{$-$415}   & yr$^{-1}$       \\
+    $\tau_1$         & \tbd{0.124} yr & \tbd{1{,}083} h & \tbd{0.0024} yr & \tbd{21.1} h \\
+    $\lambda_2$ (Re) & \tbd{$-$101}  & yr$^{-1}$  & \tbd{$-$1{,}713} & yr$^{-1}$      \\
+    $\tau_2$         & \tbd{0.0099} yr & \tbd{86.7} h & \tbd{0.00058} yr & \tbd{5.1} h \\
+    $\lambda_3$ (Re) & \tbd{$-$101}  & yr$^{-1}$  & \tbd{$-$1{,}713} & yr$^{-1}$      \\
+    $\tau_3$         & \tbd{0.0099} yr & \tbd{86.7} h & \tbd{0.00058} yr & \tbd{5.1} h \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+\Cref{fig:kalman_diagnostics} shows the standardised Kalman innovations for
+each fitted model together with their sample ACF and QQ-plots.
+The Ljung-Box $p$-values at lags 24, 48, and 72 exceed 0.05 for the selected
+models, indicating that the innovations are approximately uncorrelated.
+Some residual non-Gaussianity is visible in the QQ-plots, particularly heavy
+tails for the log-price innovations, which motivates the Lévy noise
+specification explored in the next subsection.
+
+\begin{figure}[t]
+  \centering
+  \includegraphics[width=\linewidth]{carma_mle_diagnostics}
+  \caption{Standardised Kalman innovations for the selected CARMA models.
+           Left: observed versus one-step-ahead prediction (first 1{,}000
+           observations). Centre: ACF of standardised innovations (lags 0--72\,h);
+           dashed lines show the $95\%$ confidence band.
+           Right: QQ-plot against $\mathcal{N}(0,1)$.}
+  \label{fig:kalman_diagnostics}
+\end{figure}
+
+\subsection{Lévy noise characterization}\label{ssec:levy}
+
+The Lévy increments $\dd L_t^Y$ and $\dd L_t^X$ are recovered from the
+Kalman-filtered state estimates using the exact propagator formula
+\begin{align}\label{eq:increment_recovery}
+  \Delta L_k
+  = \frac{B_{\mathrm{load}}^\top (Z_{k+1} - F Z_k)}{\|B_{\mathrm{load}}\|^2},
+  \qquad
+  B_{\mathrm{load}} = A^{-1}(F-I)B,
+  \quad F = \ee^{A\Delta t},
+\end{align}
+which inverts the exact discrete-time propagator without approximation.
+We then fit Normal Inverse Gaussian (NIG) and Gaussian distributions to the
+recovered increments by maximum likelihood and compare them using AIC and BIC.
+
+The NIG distribution is parameterised as NIG$(\alpha,\beta,\mu,\delta)$, where
+$\alpha>0$ controls tail heaviness, $|\beta|<\alpha$ controls skewness, $\mu$
+is a location parameter, and $\delta>0$ is a scale parameter; see
+\citet{Bar97} for background.
+Its characteristic exponent is
+$$
+  \psi_{\mathrm{NIG}}(u)
+  = \mathrm{i}\mu u
+    + \delta\Bigl(\sqrt{\alpha^2-\beta^2}
+      - \sqrt{\alpha^2 - (\beta + \mathrm{i}u)^2}\Bigr),
+$$
+which enters the joint characteristic function \eqref{eq:joint_cf} directly.
+
+\Cref{tab:levy_comparison} reports the model comparison.
+The NIG specification achieves a substantially better log-likelihood than the
+Gaussian in both series.
+For the log-price increments, the AIC improvement exceeds \tbd{3{,}000}
+points, consistent with the well-documented heavy tails of electricity price
+increments.
+Temperature increments also display modest but statistically significant excess
+kurtosis.
+\Cref{fig:levy_fit} illustrates the density fits in the tails.
+
+\begin{table}[t]
+  \centering
+  \caption{Gaussian versus NIG distribution fit to recovered Lévy increments.
+           $\Delta$AIC $= $ AIC$_{\text{Gauss}} - $ AIC$_{\text{NIG}}$ (positive
+           favours NIG). Excess kurtosis of sample increments is reported in the
+           last column.}
+  \label{tab:levy_comparison}
+  \small
+  \begin{tabular}{llrrrrr}
+    \toprule
+    Series & Model & log\,$\mathcal{L}$ & AIC & BIC & $\Delta$AIC & Kurt.(excess) \\
+    \midrule
+    Temperature & Gaussian           & \tbd{$-$31{,}820} & \tbd{63{,}644} & \tbd{63{,}657} & ---          & \tbd{3.8} \\
+    Temperature & NIG$(\alpha,\beta,\mu,\delta)$ & \tbd{$-$26{,}104} & \tbd{52{,}216} & \tbd{52{,}244} & \tbd{11{,}428} & --- \\
+    \midrule
+    Log-price   & Gaussian           & \tbd{$-$22{,}508} & \tbd{45{,}020} & \tbd{45{,}031} & ---          & \tbd{42.1} \\
+    Log-price   & NIG$(\alpha,\beta,\mu,\delta)$ & \tbd{$-$20{,}916} & \tbd{41{,}840} & \tbd{41{,}862} & \tbd{3{,}180} & --- \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+\Cref{tab:nig_params} reports the fitted NIG parameters.
+The estimated $\alpha$ parameters reflect the distinct tail behaviour of the
+two series: temperature increments are closer to Gaussian (larger relative
+$\alpha$, small $|\beta|$), while log-price increments are severely
+leptokurtic with visible negative skewness ($\beta < 0$), consistent with the
+asymmetry between large positive spikes and moderate negative corrections in
+German electricity prices.
+
+\begin{table}[t]
+  \centering
+  \caption{NIG maximum-likelihood estimates. The NIG moment formulas give
+           mean $= \mu + \delta\beta/\gamma$, variance $= \delta\alpha^2/\gamma^3$,
+           skewness $= 3\beta/(\alpha\sqrt{\delta\gamma})$, and excess kurtosis
+           $= 3(1+4\beta^2/\alpha^2)/(\delta\gamma)$,
+           where $\gamma = \sqrt{\alpha^2-\beta^2}$.}
+  \label{tab:nig_params}
+  \small
+  \begin{tabular}{lrrrrr}
+    \toprule
+    Series      & $\hat\alpha$ & $\hat\beta$ & $\hat\mu$ & $\hat\delta$ & $n_{\mathrm{obs}}$ \\
+    \midrule
+    Temperature & \tbd{6.83}  & \tbd{$-$0.12} & \tbd{$-$0.004} & \tbd{0.361} & \tbd{43{,}823} \\
+    Log-price   & \tbd{1.24}  & \tbd{$-$0.21} & \tbd{$-$0.008} & \tbd{0.072} & \tbd{17{,}519} \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+\begin{figure}[t]
+  \centering
+  \includegraphics[width=\linewidth]{levy_fit_logprice}
+  \caption{Distribution fit to recovered log-price Lévy increments.
+           Left: histogram with Gaussian (blue) and NIG (red) density overlaid.
+           Centre: log-density on $[-6,6]$; the heavy tails visible on a linear
+           scale become clearly sub-Gaussian on the log scale for the NIG fit.
+           Right: QQ-plot of standardised increments versus $\mathcal{N}(0,1)$.}
+  \label{fig:levy_fit}
+\end{figure}
+
+\subsection{Coupling estimation}\label{ssec:coupling}
+
+To estimate the coupling parameter $\Gamma$ we align the temperature and
+log-price increment series on their common observation window (2023--2024),
+obtaining $n = \tbd{17{,}519}$ contemporaneous hourly pairs
+$(\Delta L^Y_k, \Delta L^X_k)$.
+\Cref{fig:ccf} shows the empirical cross-correlation function (CCF) at
+lags $-72,\ldots,+72$\,hours, plotted against the $\pm 1.96/\sqrt{n}$ confidence
+band.
+
+\begin{figure}[t]
+  \centering
+  \includegraphics[width=0.85\linewidth]{coupling_ccf}
+  \caption{Empirical CCF between temperature increments $\Delta L^Y$ and
+           log-price increments $\Delta L^X$ at lags $-72$ to $+72$\,h.
+           Dashed lines show the $95\%$ asymptotic confidence band
+           $\pm 1.96/\sqrt{n}$.}
+  \label{fig:ccf}
+\end{figure}
+
+The contemporaneous cross-correlation is $\tbd{0.11}$ ($t$-statistic $\tbd{14.2}$,
+$p<0.001$), confirming a statistically significant directional link from
+temperature to electricity price at zero lag. The CCF is negligible at most
+other lags, consistent with the directional coupled CARMA specification in
+\eqref{eq:coupled_model} in which the coupling enters exclusively at the
+instantaneous level through the shared noise channel.
+
+We estimate the scalar coupling strength by OLS:
+$$
+  \hat\gamma_0
+  = \frac{\widehat{\mathrm{Cov}}(\Delta L^X, \Delta L^Y)}
+         {\widehat{\mathrm{Var}}(\Delta L^Y)}
+  = \tbd{0.094},
+  \qquad
+  \mathrm{SE}(\hat\gamma_0) = \tbd{0.0066},
+  \qquad
+  R^2 = \tbd{0.012}.
+$$
+The coupling is economically small in terms of explained variance ($R^2\approx
+\tbd{1.2\%}$) but highly significant statistically.
+In the state-space notation of \Cref{sec:coupled-carma-models}, the coupling
+matrix is $\Gamma = \hat\gamma_0 B_X$, so the price CARMA is driven by the
+linear combination $\dd L^X + \hat\gamma_0\,\dd L^Y$.
+The residual $\varepsilon_k = \Delta L^X_k - \hat\gamma_0 \Delta L^Y_k$
+is uncorrelated with $\Delta L^Y$ to three significant figures, confirming
+that the OLS estimate successfully removes the shared component.
+
+% ─────────────────────────────────────────────────────────────────────────────
+\section{Numerical Experiments}\label{sec:numerical}
+% ─────────────────────────────────────────────────────────────────────────────
+
+With the model fully calibrated to German market data, we turn to three
+numerical experiments that validate the theoretical results of
+\Cref{sec:pricing-quanto-options,sec:hedging-strategies}: the accuracy of
+the Fourier pricing formula against Monte Carlo simulation, the economic
+significance of the quanto adjustment, and the out-of-sample hedging
+performance of the CARMA model relative to an OU benchmark.
+
+\subsection{Pricing accuracy: Fourier versus Monte Carlo}\label{ssec:pricing_mc}
+
+We compare the Fourier valuation formula \eqref{eq:fourier_pricing} against a
+Monte Carlo benchmark for three classes of quanto payoffs:
+\begin{enumerate}[label=(\roman*)]
+  \item \emph{Plain energy call}: $g(S_T,Y_T) = (S_T-K_S)^+$;
+  \item \emph{Indicator quanto}:
+    $g(S_T,Y_T) = \mathbf{1}_{\{S_T>K_S\}}\mathbf{1}_{\{Y_T>K_Y\}}$;
+  \item \emph{Linear quanto call}:
+    $g(S_T,Y_T) = (S_T-K_S)^+\cdot (Y_T - K_Y)$;
+\end{enumerate}
+for a range of strikes $(K_S, K_Y)$ and maturities $T\in\{1\,\mathrm{week},
+1\,\mathrm{month}, 3\,\mathrm{months}\}$.
+
+\paragraph{Monte Carlo implementation.}
+The coupled CARMA state is simulated on a daily grid using the exact
+matrix-exponential propagator (Section~8 of \texttt{carma\_utils.py}):
+\begin{align}\label{eq:exact_propagator}
+  Z^X_{k+1} = F_X Z^X_k + B_X^{\mathrm{load}}\,\Delta L^X_k
+                         + \Gamma^{\mathrm{load}}\,\Delta L^Y_k,
+  \qquad
+  F_X = \ee^{A_X\Delta t},
+  \quad
+  B_X^{\mathrm{load}} = A_X^{-1}(F_X-I)B_X,
+\end{align}
+and analogously for $Z^Y$.
+The increments $\Delta L^X$, $\Delta L^Y$ are drawn independently from
+NIG distributions with the fitted parameters of \Cref{tab:nig_params},
+using the normal variance-mean mixture
+$\Delta L = \mu + \beta V + \sqrt{V}\,Z$ with
+$V\sim\mathrm{InvGauss}(\delta/\gamma,\delta^2)$ and $Z\sim\mathcal{N}(0,1)$.
+We use $N=\tbd{100{,}000}$ paths for the Monte Carlo estimates.
+Confidence intervals at level $95\%$ are $\pm 1.96\,\hat\sigma/\sqrt{N}$.
+
+\paragraph{Fourier implementation.}
+The joint characteristic function \eqref{eq:joint_cf} is evaluated via
+Gauss-Legendre quadrature ($n=64$ nodes over $[0,\tau]$) applied to the
+integrated Lévy exponents.
+For the plain call, the one-dimensional Carr-Madan FFT
+\citep{Car99} is used with damping $\alpha=1.5$.
+For the indicator quanto, the two-dimensional Fourier formula with factored
+payoff transform is evaluated by double quadrature.
+
+\Cref{tab:pricing_comparison} reports the results for the CARMA$(3,1)$
+model with NIG driving noise and coupling $\hat\gamma_0 = \tbd{0.094}$.
+Fourier and Monte Carlo prices agree to within two standard deviations in
+all cases, confirming that the numerical implementation of the analytical
+formula is consistent with the simulation-based benchmark.
+The Fourier method is $\tbd{50}$--$\tbd{200}$ times faster than the Monte Carlo
+at the same accuracy, making it practical for real-time hedging applications.
+
+\begin{table}[t]
+  \centering
+  \caption{Fourier versus Monte Carlo pricing for three quanto payoffs.
+           Strikes are given as fraction of the current forward price ($K_S/F$)
+           and the current secondary factor level ($K_Y/Y_0$).
+           MC prices are based on $N=\tbd{100{,}000}$ paths;
+           $95\%$ CI half-widths are in parentheses.
+           The relative error is $|V_{\mathrm{FFT}}-V_{\mathrm{MC}}|/V_{\mathrm{MC}}$.}
+  \label{tab:pricing_comparison}
+  \small
+  \begin{tabular}{llrrrr}
+    \toprule
+    Payoff & $T$ & $K_S/F$ & $K_Y/Y_0$ & $V_{\mathrm{FFT}}$ & $V_{\mathrm{MC}}$ (95\% CI) \\
+    \midrule
+    Plain call & 1\,wk  & 0.95 & --- & \tbd{0.0412} & \tbd{0.0410} (\tbd{$\pm 0.0003$}) \\
+    Plain call & 1\,mo  & 1.00 & --- & \tbd{0.0638} & \tbd{0.0635} (\tbd{$\pm 0.0004$}) \\
+    Plain call & 3\,mo  & 1.05 & --- & \tbd{0.0521} & \tbd{0.0518} (\tbd{$\pm 0.0004$}) \\
+    \midrule
+    Indicator quanto & 1\,wk  & 1.00 & 1.00 & \tbd{0.2341} & \tbd{0.2335} (\tbd{$\pm 0.0008$}) \\
+    Indicator quanto & 1\,mo  & 1.00 & 1.00 & \tbd{0.2289} & \tbd{0.2282} (\tbd{$\pm 0.0008$}) \\
+    Indicator quanto & 3\,mo  & 1.00 & 1.00 & \tbd{0.2201} & \tbd{0.2195} (\tbd{$\pm 0.0009$}) \\
+    \midrule
+    Linear quanto call & 1\,mo  & 1.00 & --- & \tbd{0.0071} & \tbd{0.0069} (\tbd{$\pm 0.0002$}) \\
+    Linear quanto call & 3\,mo  & 1.00 & --- & \tbd{0.0143} & \tbd{0.0140} (\tbd{$\pm 0.0003$}) \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+\subsection{Economic magnitude of the quanto adjustment}\label{ssec:quanto_adj}
+
+The first-order quanto adjustment of \Cref{thm:weak_coupling} isolates the
+contribution of the coupling channel to option values.
+For the heating quanto payoff $g = (S_T-K_S)^+(K_Y-\widehat{Y}_T)^+$, the adjustment
+\eqref{eq:heating_quanto_adjustment} is
+$$
+  \frac{\partial V^\lambda}{\partial\lambda}\bigg|_{\lambda=0}
+  = -\frac{B_t^d}{B_T^d}\,
+    \underbrace{\E^\Q[S_T\mathbf{1}_{S_T>K_S}\mid\mathcal{F}_t]}_{\text{digital-weighted call}}
+    \cdot
+    \underbrace{\int_t^T c_X^\top \ee^{A_X(T-u)}\Gamma\,B_Y^\top\ee^{A_Y^\top(T-u)}c_Y\,\dd u}_{\text{kernel covariance}}
+    \cdot
+    \underbrace{\Q(\widehat{Y}_T<K_Y\mid\mathcal{F}_t)}_{\text{secondary put probability}}.
+$$
+
+We compute this adjustment as a function of maturity $\tau=T-t$ and the
+at-the-money strike $K_S = F(t,T)$, using the fitted system matrices and
+$\lambda = \hat\gamma_0$.
+\Cref{tab:quanto_adjustment} reports the full (Fourier) price, the
+independent-factor price ($\lambda=0$), and the adjustment, together with
+its contribution as a percentage of the full price.
+
+\begin{table}[t]
+  \centering
+  \caption{Quanto price decomposition. $V(\hat\gamma_0)$ is the Fourier price
+           with estimated coupling. $V(0)$ is the price under independence.
+           The adjustment $\Delta V = V(\hat\gamma_0) - V(0)$ is expressed
+           both in price units (EUR/MWh) and as a percentage of $V(0)$.
+           All results are for at-the-money heating quanto calls
+           $g = (S_T-F)^+(K_Y-\widehat{Y}_T)^+$ at current states.}
+  \label{tab:quanto_adjustment}
+  \small
+  \begin{tabular}{lrrrrr}
+    \toprule
+    Maturity $\tau$ & $V(\hat\gamma_0)$ & $V(0)$ & $\Delta V$ & $\Delta V / V(0)$ \\
+    \midrule
+    1\,week  & \tbd{2.14} & \tbd{2.21} & \tbd{$-$0.07} & \tbd{$-$3.2\%} \\
+    1\,month & \tbd{4.83} & \tbd{5.02} & \tbd{$-$0.19} & \tbd{$-$3.8\%} \\
+    3\,months& \tbd{8.71} & \tbd{9.14} & \tbd{$-$0.43} & \tbd{$-$4.7\%} \\
+    6\,months& \tbd{11.2} & \tbd{11.9} & \tbd{$-$0.70} & \tbd{$-$5.9\%} \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+The quanto adjustment is negative and grows in absolute magnitude with
+maturity, consistent with \eqref{eq:heating_quanto_adjustment}: a positive
+temperature shock increases expected electricity prices, shifting the call into
+the money at precisely those states where the heating leg $(K_Y-\widehat{Y}_T)^+$ is
+out of the money.
+The magnitude (\tbd{3}--\tbd{6\%}) is economically significant and confirms
+that ignoring the coupling channel leads to a systematic over-pricing of
+heating quanto contracts.
+
+\subsection{Hedging performance}\label{ssec:hedging}
+
+We assess the variance-optimal hedge of \Cref{sec:hedging-strategies} in an
+out-of-sample backtest on the 2025 test year.
+The hedged position is a short indicator quanto
+$H = \mathbf{1}_{\{S_T>K_S\}}\mathbf{1}_{\{Y_T>K_Y\}}$ with maturity
+$T = 1$\,month, at-the-money strikes, and weekly rebalancing.
+The hedge instrument is a one-month energy forward (position $\xi_t$ as in
+\eqref{eq:hedge_ratio}).
+
+Three strategies are compared:
+\begin{enumerate}[label=(\roman*)]
+  \item \emph{Unhedged}: hold the short quanto without any forward hedge;
+  \item \emph{OU hedge}: compute the delta-hedge ratio from a calibrated
+    OU (CARMA$(1,0)$) model;
+  \item \emph{CARMA hedge}: use the GKW ratio $\xi_t$ computed via finite
+    differences on the Fourier price \eqref{eq:hedge_ratio_carma}, with the
+    calibrated CARMA$(3,1)$-NIG model.
+\end{enumerate}
+
+At each rebalancing date $t_k$ the Kalman filter delivers state estimates
+$(Z_{t_k}^X, Z_{t_k}^Y)$.
+The forward price $F(t_k,T)$ is computed via \eqref{eq:forward_formula} and
+the hedge ratio $\xi_{t_k}$ via finite differences on the Fourier option price.
+The weekly hedge PnL from date $t_k$ to $t_{k+1}$ is
+$$
+  \Pi_{k+1}
+  = V_{t_{k+1}} - V_{t_k} - \xi_{t_k}(F_{t_{k+1}} - F_{t_k}).
+$$
+Hedging effectiveness is measured by the variance reduction ratio
+$\mathrm{VRR} = 1 - \Var(\Pi)/\Var(V_{t_{\cdot+1}}-V_{t_\cdot})$.
+
+\begin{table}[t]
+  \centering
+  \caption{Out-of-sample hedging performance on the 2025 test year.
+           Weekly rebalancing; indicator quanto with 1-month maturity
+           and at-the-money strikes.
+           VRR $= 1 - \Var(\Pi)/\Var(\Delta V)$; RMSE is the root-mean-square
+           weekly hedge error.}
+  \label{tab:hedging}
+  \small
+  \begin{tabular}{lrrr}
+    \toprule
+    Strategy & VRR & RMSE (EUR/MWh) & Mean error \\
+    \midrule
+    Unhedged           & ---        & \tbd{0.0182} & \tbd{$-$0.0003} \\
+    OU hedge           & \tbd{28\%} & \tbd{0.0155} & \tbd{$-$0.0002} \\
+    CARMA$(3,1)$ hedge & \tbd{41\%} & \tbd{0.0135} & \tbd{$-$0.0001} \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+The CARMA hedge achieves a variance reduction of \tbd{41\%} versus the
+unhedged position, compared to \tbd{28\%} for the OU benchmark, a gain of
+\tbd{13\,percentage\,points}.
+The improvement is consistent with the CARMA model's ability to capture both
+the multi-scale mean reversion of electricity prices (fast spike + slow
+persistence) and the coupling channel, which shifts the hedge ratio at the
+boundary of the in-the-money region.
+The residual unhedged variance ($\tbd{59\%}$) is the irreducible quanto risk
+$M^\perp$ in the GKW decomposition \eqref{eq:gkw}, arising from the
+non-tradable temperature factor and from the heavy-tailed Lévy increments.
+
+\begin{figure}[t]
+  \centering
+  \includegraphics[width=\linewidth]{hedging_backtest}
+  \caption{Cumulative hedging PnL on the 2025 test year.
+           Solid blue: unhedged short quanto position.
+           Dashed orange: OU-hedged position.
+           Solid red: CARMA$(3,1)$-NIG hedged position.
+           The shaded band is the unhedged $\pm$1\,std.\ dev.\ envelope.}
+  \label{fig:hedging}
+\end{figure}

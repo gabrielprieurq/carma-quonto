@@ -1,0 +1,1782 @@
+\documentclass[10pt,a4paper,reqno]{amsart}
+\usepackage{amsthm,amssymb,amstext,graphicx,comment}
+\usepackage[foot]{amsaddr}
+\usepackage{bbm}
+\usepackage{enumerate}
+\usepackage{amscd}
+\usepackage{mathtools}
+\usepackage[bibliography= common]{apxproof}
+\usepackage{hyperref}
+\hypersetup{
+  colorlinks=true,
+  pdfpagelabels=true,
+  pdfpagelayout==TwoColumnRight,
+  pdftitle={},
+  pdfauthor={© Sven Karbach},
+  pdfsubject={},
+  pdfkeywords={}
+}
+\usepackage{enumitem}
+\usepackage{empheq}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{bibentry}
+\usepackage{soul}
+\usepackage{tikz}
+\usepackage{xcolor}
+\usepackage{eso-pic}
+\usepackage[capitalise]{cleveref}
+% \hypersetup{
+%  colorlinks=true,
+%  linkcolor=black,    % Color of internal links
+%  citecolor=black,    % Color of citations
+%  urlcolor=black,     % Color of URLs
+%  anchorcolor=black,  % Color of anchors
+%  pdftitle={},
+%  pdfauthor={© Sven Karbach},
+%  pdfsubject={},
+%  pdfkeywords={}
+% }
+\usepackage{natbib}
+\setcitestyle{numbers,comma,open={[},close={]}}
+\newcommand{\abs}[1]{\left|\left|#1\right|\right|}
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{remark}[theorem]{Remark}
+\newtheorem{proposition}[theorem]{Proposition}
+
+\newtheoremstyle{example}
+  {.3\baselineskip}
+  {.3\baselineskip}
+  {\normalsize}  % BODYFONT
+  {0pt}       % INDENT (empty value is the same as 0pt)
+  {\bfseries} % HEADFONT
+  {.}         % HEADPUNCT
+  {5pt plus 1pt minus 1pt} % HEADSPACE
+  {}          % CUSTOM-HEAD-SPEC
+\theoremstyle{example}
+\newtheorem{example}[theorem]{Example}
+
+\newcommand{\versionbanner}[1]{%
+    \begin{tikzpicture}[remember picture, overlay]
+    \fill[black, opacity=0.5] (current page.north west) rectangle ++(\paperwidth, -1cm);
+    \node[anchor=west, text=white, font=\sffamily\bfseries\large] at
+    ([yshift=-0.5cm]current page.north west) {This is a \underline{Working
+        Paper} // Version: \today{}}; 
+    \end{tikzpicture}
+  }
+
+  \AddToShipoutPictureFG{%
+    \ifthenelse{\value{page}=1}{\versionbanner{1.0}}{}}
+  
+\DeclareMathOperator\Tr{Tr}
+\DeclareMathOperator\dom{dom}
+\DeclareMathOperator\Res{Res}
+\DeclareMathOperator\lin{lin}
+\DeclareMathOperator{\vect}{vec}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newcommand{\Cov}{\mathrm{Cov}}
+\newcommand{\Id}{\mathrm{Id}}
+\newcommand{\dvg}{\textbf{\mathrm{div}}}
+\newcommand{\grad}{\textbf{\mathrm{grad}}}
+\newcommand*\D{\mathop{}\!\textnormal{d}}
+\newcommand*\DD{\mathop{}\!\textnormal{D}}
+\newcommand*\E{\mathop{}\!\textnormal{e}}
+\newcommand*\I{\mathop{}\!\textnormal{i}}
+\newcommand{\dt}{\D t }
+\newcommand{\dnt}{\D^{n} t }
+\newcommand{\du}{\D u\;}
+\newcommand{\dx}{\D x }
+\newcommand{\dnx}{\D^{n} x }
+\newcommand{\dy}{\D y }
+\newcommand{\dz}{\D z }
+\newcommand{\dnu}{\D \nu }
+\newcommand{\dlambda}{\D \lambda}
+\newcommand{\dmuc}{\D \ol{\mu}}
+\newcommand{\op}[1]{\mathbf{#1}}
+\newcommand{\ve}{\mathbf{e}}
+\newcommand{\veb}{\mathbf{\bar e}}
+\newcommand{\vf}{\mathbf{f}}
+\newcommand{\vr}{\mathbf{r}}
+\newcommand{\vrb}{\mathbf{\bar r}}
+\newcommand{\opE}{\mathbf{1}}
+\newcommand{\opN}{\mathbf{0}}
+\newcommand{\opp}{\mathbf{p}}
+\newcommand{\opq}{\mathbf{q}}
+\newcommand{\opr}{\mathbf{r}}
+\newcommand{\opt}{\mathbf{t}}
+\newcommand{\opx}{\mathbf{x}}
+\newcommand{\opy}{\mathbf{y}}
+\newcommand{\opb}{\mathbf{b}}
+\newcommand{\opz}{\mathbf{z}}
+\newcommand{\opA}{\mathbf{A}}
+\newcommand{\opB}{\mathbf{B}}
+\newcommand{\opC}{\mathbf{C}}
+\newcommand{\opD}{\mathbf{D}}
+\newcommand{\opG}{\mathbf{G}}
+\newcommand{\opH}{\mathbf{H}}
+\newcommand{\opI}{\mathbf{I}}
+\newcommand{\opJ}{\mathbf{J}}
+\newcommand{\opK}{\mathbf{K}}
+\newcommand{\opL}{\mathbf{L}}
+\newcommand{\opM}{\mathbf{M}}
+\newcommand{\opO}{\mathbf{O}}
+\newcommand{\opP}{\mathbf{P}}
+\newcommand{\opQ}{\mathbf{Q}}
+\newcommand{\opR}{\mathbf{R}}
+\newcommand{\opS}{\mathbf{S}}
+\newcommand{\opT}{\mathbf{T}}
+\newcommand{\opU}{\mathbf{U}}
+\newcommand{\opV}{\mathbf{V}}
+\newcommand{\opW}{\mathbf{W}}
+\newcommand{\opZ}{\mathbf{Z}}
+\newcommand{\opSigma}{\mathbf{\Sigma}}
+\newcommand{\opLA}{\mathbf{\Lambda}}
+\newcommand{\bu}{\mathbf{u}}
+\newcommand{\bv}{\mathbf{v}}
+\newcommand{\bx}{\mathbf{x}}
+\newcommand{\by}{\mathbf{y}}
+\newcommand{\bz}{\mathbf{z}}
+\newcommand{\vAb}{\mathbf{\bar{A}}}
+\newcommand{\vBb}{\mathbf{\bar{B}}}
+\newcommand{\MG}{\mathbb{G}}
+\newcommand{\MH}{\mathbb{H}}
+\newcommand{\MK}{\mathbb{K}}
+\renewcommand{\MR}{\mathbb{R}}
+\newcommand{\MC}{\mathbb{C}}
+\newcommand{\MCx}{\mathbb{C}^{\times}}
+\newcommand{\MCe}{\mathbb{C}^{*}}
+\newcommand{\MCm}{\mathbb{C}^{-}}
+\newcommand{\MD}{\mathbb{D}}
+\newcommand{\ME}{\mathbb{E}}
+\newcommand{\MZ}{\mathbb{Z}}
+\newcommand{\MU}{\mathbb{U}}
+\renewcommand{\MH}{\mathbb{H}}
+\newcommand{\MHo}{\mathbb{H}^{+}}
+\newcommand{\MHu}{\mathbb{H}^{-}}
+\newcommand{\MHr}{\mathbb{H}^{<}}
+\newcommand{\MM}{\mathbb{M}}
+\newcommand{\MN}{\mathbb{N}}
+\newcommand{\MP}{\mathbb{P}}
+\newcommand{\MQ}{\mathbb{Q}}
+\newcommand{\MI}{\mathbb{I}}
+\newcommand{\MJ}{\mathbb{J}}
+\newcommand{\MT}{\mathbb{T}}
+\newcommand{\MS}{\mathbb{S}}
+\newcommand{\MF}{\mathbb{F}}
+\newcommand{\cF}{\mathcal{F}}
+%\newcommand{\cl}{\mathcal{l}}
+\newcommand{\cA}{\mathcal{A}}
+\newcommand{\cB}{\mathcal{B}}
+\newcommand{\cC}{\mathcal{C}}
+\newcommand{\cD}{\mathcal{D}}
+\newcommand{\cE}{\mathcal{E}}
+%\newcommand{\cG}{\mathcal{G}}
+\newcommand{\cH}{\mathcal{H}}
+\newcommand{\cI}{\mathcal{I}}
+\newcommand{\cJ}{\mathcal{J}}
+\newcommand{\cK}{\mathcal{K}}
+\newcommand{\cL}{\mathcal{L}}
+\newcommand{\LH}{\mathcal{L}(\mathcal{H})}
+\newcommand{\cM}{\mathcal{M}}
+\newcommand{\cO}{\mathcal{O}}
+\newcommand{\cP}{\mathcal{P}}
+\newcommand{\cQ}{\mathcal{Q}}
+\newcommand{\cR}{\mathcal{R}}
+\newcommand{\cX}{\mathcal{X}}
+\newcommand{\cY}{\mathcal{Y}}
+\newcommand{\cZ}{\mathcal{Z}}
+\newcommand{\cG}{\mathcal{G}}
+%\newcommand{\cM}{\mathcal{M}}
+\newcommand{\co}{{\mathcal{ \scriptstyle O}}}
+\newcommand{\cS}{\mathcal{S}}
+\newcommand{\cT}{\mathcal{T}}
+\newcommand{\sC}{\mathsf{C}}
+\newcommand{\Cs}{\mathsf{C}^{*}}
+\newcommand{\Ws}{\mathsf{W}^{*}}
+\newcommand{\sD}{\mathsf{D}}
+\newcommand{\sE}{\mathsf{E}}
+\newcommand{\sP}{\mathsf{P}}
+\newcommand{\sH}{\mathsf{H}}
+\newcommand{\sG}{\mathsf{G}}
+\newcommand{\sI}{\mathsf{I}}
+\newcommand{\sJ}{\mathsf{J}}
+\newcommand{\sK}{\mathsf{K}}
+\newcommand{\sL}{\mathsf{L}}
+\newcommand{\sGL}{\mathsf{GL}}
+\newcommand{\sSL}{\mathsf{SL}}
+\newcommand{\sSU}{\mathsf{SU}}
+\newcommand{\sO}{\mathsf{O}}
+\newcommand{\sSO}{\mathsf{SO}}
+\newcommand{\sM}{\mathsf{M}}
+\newcommand{\sN}{\mathsf{N}}
+\newcommand{\sR}{\mathsf{R}}
+\newcommand{\sQ}{\mathsf{Q}}
+\newcommand{\sU}{\mathsf{U}}
+\newcommand{\sT}{\mathsf{T}}
+\newcommand{\sS}{\mathsf{S}}
+\newcommand{\sV}{\mathsf{V}}
+\newcommand{\sW}{\mathsf{W}}
+\newcommand{\sX}{\mathsf{X}}
+\newcommand{\sY}{\mathsf{Y}}
+\newcommand{\sZ}{\mathsf{Z}}
+\newcommand{\su}{\mathsf{u}}
+\newcommand{\sv}{\mathsf{v}}
+\newcommand{\res}[1]{\mathrm{res_{#1}\;}}
+\newcommand{\cz}{\bar{z}}
+\newcommand{\cw}{\bar{w}}
+\newcommand{\cf}{\bar{f}}
+\newcommand{\fa}{\mathfrak{a}}
+\newcommand{\fb}{\mathfrak{b}}
+\newcommand{\fc}{\mathfrak{c}}
+\newcommand{\fZ}[1]{\mathfrak{Z}_{#1}}
+\newcommand{\MRn}{\MR^{n}}
+\newcommand{\Cn}{\MC^{n}}
+\newcommand{\Cr}{\MC^{r}}
+\newcommand{\df}{\coloneqq}
+\newcommand{\one}{\mathbf{1}}
+\newcommand{\zero}{\mymathbb{0}}
+\newcommand{\interior}[1]{({\kern0pt#1})^{\textnormal{o}}}
+\newcommand{\set}[1]{\left\{ #1\right\}}
+\newcommand{\norm}[1]{\|#1\|}
+\newcommand{\llangle}{\langle\langle}
+\newcommand{\rrangle}{\rangle\rangle}
+\newcommand{\CF}{\mathcal{F}}
+\newcommand{\EX}[1]{\mathbb{E}\left[#1\right]}
+\newcommand{\EXspec}[2]{\mathbb{E}_{#1}\left[#2\right]}
+\newcommand{\CEX}[2]{\mathbb{E}\left[#1\lvert\;#2\right]}
+\newcommand{\Var}{\textnormal{Var}}
+\newcommand{\p}{\MP}
+\newcommand{\cHplus}{\cH^{+}}
+\newcommand{\cHpo}{\interior{\cH^{+}}}
+\newcommand{\cHpluso}{\cHplus\setminus \{0\}}
+\newcommand{\MRplus}{\MR^{+}}
+\newcommand{\indep}{\perp \!\!\! \perp}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+%%%%%%%%%%%%%%%%%% Tools %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newcommand{\sven}[1]{\textcolor{red}{[S: #1]}}
+\newcommand{\vincent}[1]{\textcolor{blue}{[V: #1]}}
+\newcounter{Task}\setcounter{Task}{1}
+\newcommand{\Task}[2][~]{\noindent{%~\newline
+       \marginpar[\tiny #1 $\Rightarrow$]{$\Leftarrow$ \tiny #1}
+       $\blacktriangleright$ \textsf{Task \#\theTask
+         \addtocounter{Task}{1}: }}{\small \color{blue}\textsf{#2}}\\}
+   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{document}
+
+\title[Pricing and Hedging of Quantos in CARMA Models]{Pricing and Hedging of
+  Renewable Energy Quanto Options in CARMA Models}
+
+\address{Informatics Institute and Korteweg-de Vries Institute for Mathematics at the University of
+  Amsterdam, Science Park 105-107, 1098 XG Amsterdam, Netherlands}     
+
+\maketitle
+\vspace{-0mm}
+\begin{center}
+  \begin{tabular}{cc}
+    \textsc{Vincent Gachon} & \textsc{Sven Karbach} \\
+    \small[\texttt{\MakeLowercase{vincegachon@gmail.com}}] &  \small[\texttt{\MakeLowercase{sven@karbach.org}}] \\
+  \end{tabular}
+\end{center}
+
+
+\begin{abstract}
+  This paper investigates the pricing and hedging of Quanto options in renewable
+  energy markets, utilizing continuous-time autoregressive moving-average
+  (CARMA) processes to model the dynamics of electricity spot prices and
+  weather-related variables. Quanto options, which are European-style
+  derivatives, are written on both the electricity spot or forward price and
+  a weather or climate variable such as temperature, wind speed, or solar
+  irradiance. These options provide renewable energy firms with the means to
+  hedge against both price fluctuations and volumetric risk, enabling better
+  risk management in the renewable energy sector. We demonstrate how CARMA models
+  offer a flexible and powerful framework for accurately pricing these contracts
+  while effectively addressing both the price and weather-dependent risk. By
+  applying CARMA-driven models to joint price and weather dynamics, we extend
+  the classical Ornstein-Uhlenbeck processes to capture more complex market
+  behaviors, in particular allow for a more complex autocorrelation structure of
+  the underyling price and weather components.\newline{}
+  
+  \noindent \textbf{Keywords:} Quanto Options, Renewable Energy Markets, CARMA,
+  Volumetric Risk, Weather Derivative
+\end{abstract}
+
+\maketitle
+
+
+\sven{Phase 1: Empirical Calibration \& Model Selection: Before pricing, we must demonstrate that the CARMA model actually fits energy data better than the standard OU model.Data Selection: Choose a dataset that highlights "volumetric risk". I recommend using German (EEX) or Nord Pool spot prices coupled with local temperature indices (e.g., average daily temperature in Berlin or Oslo). These markets have high renewable penetration, making the weather-price correlation relevant.Deseasonalization Protocol: we mentioned "deterministic seasonal patterns have been removed". we must explicitly show this step.Action: Fit a truncated Fourier series to both temperature and price series to strip seasonality. Plot the ACF (Autocorrelation Function) of the residuals.Hypothesis: The residuals of the OU model will still show significant autocorrelation (indicating the model is too simple), whereas the CARMA(p,q) residuals should look more like white noise. This validates our claim in  regarding the limitations of OU.Model Identification (Order Selection): we need to determine the optimal $p$ and $q$ for the temperature ($Z_t^T$) and price ($Z_t^X$) processes.Action: Use the Akaike Information Criterion (AIC) or Bayesian Information Criterion (BIC) to select the best $(p,q)$ combination.Expected Outcome: we will likely find that a CARMA(3,0) or CARMA(3,1) fits temperature data significantly better than the CARMA(1,0) (which is the OU process), empirically justifying our model extension.Lévy Parameter Estimation: Since we chose a Normal Inverse Gaussian (NIG) process for jumps, we must estimate $(\alpha, \beta, \delta, \mu)$. Show a Q-Q plot of the fitted NIG distribution against the empirical residuals to prove it captures the "heavy tails" mentioned in.Phase 2: Pricing Validation (The "Litmus Test")we claim to derive "analytical pricing formulas". we must validate these against numerical simulations to ensure our math is correct.FFT vs. Monte Carlo:Action: Implement our analytical pricing formula using Fast Fourier Transform (FFT) methods (common for Lévy models).Benchmark: Run a robust Monte Carlo simulation (e.g., 100,000 paths) using the discretized state-space representation.Output: Create a convergence table showing that the Monte Carlo price converges to our analytical FFT price. This confirms the correctness of our pricing formulas derived in Section 3.The "Quanto Adjustment" Effect:Action: Plot the option price as a function of the correlation parameter $\lambda$.Analysis: Demonstrate how the price changes as the correlation between temperature and spot price shifts from positive to negative. This visualizes the specific risk premium associated with the "joint modeling" we emphasize in.Phase 3: Hedging Performance (The Crucial Contribution)This is the most important section for a "Pricing and Hedging" paper. we must show that a practitioner would lose money using the old model and save money using ours.In-Sample vs. Out-of-Sample Backtesting:Setup: Calibrate our model on a training window (e.g., 2022-2024).Experiment: Perform a Delta-hedging strategy on a test set (e.g., 2025 data).Metric: Calculate the Mean Squared Hedging Error (MSHE).Comparison: Compare the MSHE of:The Naive Strategy (Unhedged).The Benchmark Strategy (Delta hedging using a standard OU/CAR(1) model).our Strategy (Delta hedging using the coupled CARMA(p,q) model).Hypothesis: our model should produce a lower MSHE, specifically during periods of high weather volatility, proving the practical value of capturing "complex temporal dependencies".Phase 4: Sensitivity AnalysisImplied Volatility Surfaces: If possible, generate implied volatility surfaces implied by our CARMA model. Show that our model can reproduce the "smiles" or "skews" seen in the market, which simple Gaussian OU models usually fail to do.Jump Sensitivity: Analyze how the option price reacts to the jump intensity or tail heaviness ($\alpha$ parameter in NIG). This highlights the importance of the Lévy component.}
+
+\section{Introduction}
+
+Continuous-time autoregressive moving average (CARMA) processes have gained significant attention in financial modeling due to their flexibility and ability to capture complex time series dynamics. By generalizing the classical discrete-time ARMA models to continuous time, CARMA processes offer a robust framework for modeling phenomena where continuous-time dynamics are essential, such as in the pricing and hedging of financial derivatives. These processes provide a rich structure for capturing various characteristics of time series data, including mean reversion, volatility clustering, and long-memory effects, which are prevalent in financial and energy markets.
+
+CARMA processes have been widely applied across various fields, from engineering and meteorology to finance, particularly in modeling interest rates, stochastic volatility, and commodity prices \cite{MS07, SS12, BS13}. In the context of energy markets, accurately modeling the dynamics of variables such as wind speed, solar irradiance, and temperature is crucial. These environmental variables exhibit complex behaviors that traditional models, such as Ornstein-Uhlenbeck (OU) processes, may not fully capture. For example, wind speed and solar irradiance have been successfully modeled using higher-order ARMA and CARMA processes to account for their temporal dependencies and autocovariance structures \cite{}.
+
+In recent years, there has been growing interest in hybrid derivatives that combine price and volumetric risk, particularly in the energy sector, where weather variability can significantly impact both energy production and demand. Renewable energy quanto options are a prime example of such derivatives, as their payoffs depend on both the electricity spot price and a weather-related variable such as temperature. Previous work by Alfonsi and Vadillo~\cite{AV24} modeled day-ahead electricity prices and average daily temperatures using non-homogeneous Ornstein-Uhlenbeck processes, demonstrating the relevance of weather-driven models for energy derivatives. However, their use of OU processes, while tractable, may not capture the full complexity of the market behavior.
+
+To address these limitations, we propose modeling both energy prices and
+weather-related variables such as temperature using higher-order CARMA
+processes. CARMA processes offer greater flexibility by allowing for more
+sophisticated autocovariance structures and the ability to capture complex
+market behaviors such as volatility clustering, jumps, and heavy tails, which
+are frequently observed in energy prices and weather data \cite{}. For instance, temperature
+variations, a key driver of energy demand, have been effectively modeled using
+CARMA processes, providing a better fit to data with long-range dependencies and
+mean-reversion \cite{}. Similarly, solar
+irradiance and wind speed, both crucial for renewable energy production, can be
+modeled using ARMA and CARMA models of appropriate order to capture their
+stochastic nature \cite{}.
+
+\subsection{Background on CARMA Processes}
+
+Continuous-time autoregressive moving average (CARMA) processes extend the classical discrete-time ARMA models to continuous time, offering a powerful tool for modeling continuous-time stochastic dynamics. They are defined as solutions to higher-order stochastic differential equations (SDEs) of the form:
+
+\begin{align}\label{eq:CARMA-SDE}
+\mathrm{D}^{p} X_{t} + a_{1} \mathrm{D}^{p-1} X_{t} + \cdots + a_{p} X_{t} = b_{0} \mathrm{D}^{q} L_{t} + b_{1} \mathrm{D}^{q-1} L_{t} + \cdots + b_{q} L_{t},
+\end{align}
+
+where $\mathrm{D} = \dfrac{\D}{\D t}$ denotes differentiation, $a_i$ and $b_j$ are coefficients, and $L_t$ is a Lévy process driving the system. This equation generalizes classical ARMA models to continuous time, capturing dynamics with rich temporal dependencies and flexible autocovariance structures.
+
+In financial applications, CARMA processes are particularly valuable for modeling time series that exhibit mean reversion and short-memory behavior—common features in financial data such as asset returns, interest rates, and volatility. The Ornstein-Uhlenbeck process is a well-known example of a CARMA(1,0) process, widely used due to its tractability and mean-reverting properties. However, higher-order CARMA processes provide greater flexibility by allowing more complex autocorrelation structures, capable of capturing a wider range of dynamic behaviors observed in financial markets.
+
+\subsection{Relevance to Energy Markets}
+
+Energy markets are characterized by significant volatility and are influenced by various stochastic factors, including commodity prices and weather variables like temperature. Accurate modeling of these factors is crucial for pricing and hedging energy derivatives, such as energy quanto options, which are financial instruments whose payoffs depend on both the price of a commodity and a weather-related variable.
+
+Traditional models often rely on Ornstein-Uhlenbeck processes to model these factors; however, the limitations of OU processes—such as their inability to capture complex temporal dependencies and higher-order autocorrelations—motivate the use of higher-order CARMA processes. By modeling both the commodity price and the temperature using higher-order CARMA processes driven by Lévy processes, we can capture the intricate dynamics and interactions between these variables more accurately.
+
+In our framework, we consider correlated CARMA processes to model the joint behavior of the commodity price and temperature, capturing both individual dynamics and co-movement between these variables. This joint modeling is essential for accurately pricing energy quanto options and developing effective hedging strategies.
+
+
+\subsection{Main Contributions}
+
+In this paper, we propose a joint modeling framework for energy spot prices and temperature indices driven by correlated CARMA processes. This extension provides several advantages over traditional OU-based models, particularly in capturing the intricate behaviors observed in real market data. By introducing multivariate Lévy processes to drive these dynamics, we accommodate jumps, heavy tails, and skewness, which are often present in energy prices and other financial time series. Additionally, the CARMA framework allows for a parsimonious state-space representation, enabling efficient pricing and hedging of complex derivatives like energy quanto options.
+
+Our contributions are as follows:
+
+\begin{enumerate}
+    \item \textbf{Extension of Energy Market Modeling}: We incorporate higher-order CARMA processes for both commodity prices and temperature, providing a more flexible and accurate framework compared to traditional OU models. This allows for capturing complex temporal dependencies and interactions between these variables.
+
+    \item \textbf{Derivation of Pricing Formulas}: We derive analytical pricing formulas and efficient numerical methods for energy quanto options within this framework, accounting for complex covariance structures and potential jumps in the underlying processes.
+
+    \item \textbf{Development of Hedging Strategies}: We compute the Greeks for the options and develop hedging strategies that allow practitioners to effectively manage risks associated with movements in both commodity prices and temperature.
+\end{enumerate}
+
+\subsection{Organization of the Paper}
+
+The remainder of this paper is organized as follows. In Section~\ref{sec:CARMA},
+we provide a detailed overview of CARMA processes, including their mathematical
+properties and state-space
+representations. Section~\ref{sec:coupled-carma-models} introduces the modeling
+framework for energy markets using correlated CARMA processes and discusses the
+derivation of covariance structures and conditional expectations necessary for
+option pricing. In Section~\ref{sec:pricing-quanto-options}, we present the
+pricing methodology for energy quanto options, including the derivation of
+analytical expressions and considerations for numerical
+implementation. Section~\ref{sec:hedging-strategies} discusses hedging
+strategies, including the computation of the Greeks and the construction of
+hedging portfolios. Finally, Section~\ref{sec:conclusion} concludes the paper
+and suggests directions for future research. 
+
+
+
+\clearpage{}
+
+\section{Coupled CARMA Models for Renewable Energy Markets}\label{sec:coupled-carma-models}
+
+In this section, we introduce a coupled CARMA model to capture the dynamics of
+time-dependent variables in renewable energy markets. Specifically, we focus on
+the joint behavior of power prices and renewable energy sources such as
+temperature, wind speed, or solar irradiation, all of which can be effectively
+modeled by higher-order CARMA processes, as outlined in the
+introduction. Accurate modeling of these factors, particularly the covariance
+structure, is essential for pricing and hedging renewable energy quanto options,
+which depend on both energy prices and weather-related variables. 
+
+\subsection{Notation and Preliminaries}
+
+Throughout this paper, we adopt the following notation. Let $\mathbb{N}$ denote
+the set of natural numbers $\{1, 2, 3, \ldots\}$, and let
+$\mathbb{N}_0 = \mathbb{N} \cup \{0\}$ represent the set of non-negative
+integers. For a complex number $z = a + \I b \in \mathbb{C}$, its real part is
+denoted by $\Re(z) = a$ and its imaginary part by $\Im(z) = b$. For
+$d \in \mathbb{N}$, we let $\mathbb{R}^{d}$ denote the $d$-dimensional Euclidean
+space equipped with the standard inner product $\langle \cdot, \cdot \rangle$,
+while $\{e_1, e_2, \dots, e_d\}$ represents the standard basis vectors in
+$\mathbb{R}^{d}$. We also denote by $\mathbb{R}^{n \times m}$ the space of real
+$n \times m$ matrices, and by $\mathbb{R}^{n}$ the space of real $n$-dimensional
+column vectors. The Euclidean norm of a vector $\mathbf{x} \in \mathbb{R}^d$ is
+defined as $\| \mathbf{x} \| = \sqrt{\sum_{i=1}^d x_i^2}$.\par{}
+
+\subsubsection{L\'evy Processes}
+Let $(\Omega, \mathcal{F}, \mathbb{F}, \mathbb{P})$ be a filtered probability
+space satisfying the usual conditions of completeness and right-continuity. Let
+$\{L_t\}_{t \geq 0}$ be a real-valued L\'evy process defined on this probability
+space. Recall that a L\'evy process is a stochastic process with stationary and
+independent increments, c\`adl\`ag paths, and $L_0 = 0$ almost surely. 
+
+The characteristic function of $L_t$ is given by
+\begin{align*}
+\mathbb{E}\left[ e^{\I \theta L_t} \right] = e^{ t \psi_L(\theta) },  
+\end{align*}
+where $\psi_L(\theta)$ is the characteristic exponent, given by the
+L\'evy-Khintchine formula: 
+\begin{align}
+\psi_L(\theta) = \I \theta \gamma - \frac{1}{2} \theta^{2} \sigma^{2} +
+  \int_{\mathbb{R} \setminus \{0\}} \left( e^{\I \theta x} - 1 - \I \theta x
+  \mathbbm{1}_{\{|x| \leq 1\}} \right) \nu(\D x), \label{eq:levy-khintchine} 
+\end{align}
+for $\theta \in \mathbb{R}$. Here, $\gamma \in \mathbb{R}$ is the drift
+parameter, $\sigma^{2} \geq 0$ is the variance of the Gaussian component, and
+$\nu$ is a measure on $\mathbb{R} \setminus \{0\}$ satisfying  
+\begin{align*}
+\int_{\mathbb{R} \setminus \{0\}} (1 \wedge x^{2}) \, \nu(\D x) < \infty.  
+\end{align*}
+
+The measure $\nu$ is called the L\'evy measure of the process $L$.
+
+We say that a L\'evy process $L$ is \emph{integrable} if $\mathbb{E}[|L_t|] <
+\infty$ for all $t \geq 0$, and \emph{square-integrable} if $\mathbb{E}[L_t^{2}]
+< \infty$ for all $t \geq 0$. For a square-integrable L\'evy process $L$, the
+mean of $L_1$ is denoted by $\mu_L$ and is given by 
+\begin{align*}
+\mu_L = \gamma + \int_{|x| > 1} x \, \nu(\D x).  
+\end{align*}
+Moreover, the variance of $L_1$ is given by
+\begin{align*}
+\operatorname{Var}(L_1) = \sigma^{2} + \int_{\mathbb{R}} x^{2} \, \nu(\D x).  
+\end{align*}
+
+For any L\'evy process $\{L_t^{(1)}\}_{t \geq 0}$ defined on the positive real
+line $\mathbb{R}_{+}$, we can define a \emph{two-sided L\'evy process}
+$\{L_t\}_{t \in \mathbb{R}}$ by choosing a second independent and identically
+distributed L\'evy process $\{L_t^{(2)}\}_{t \geq 0}$ and setting
+\begin{align} 
+L_t = \begin{cases}
+L_t^{(1)}, & \text{if } t \geq 0, \\
+- L_{-t-}^{(2)}, & \text{if } t < 0,
+\end{cases} \label{eq:two-sided-levy}
+\end{align}
+where $L_{t-}^{(2)} = \lim_{s \nearrow t} L_s^{(2)}$ for all $t \geq 0$. This
+construction allows us to define processes over the entire real line.
+\begin{example}[Normal Inverse Gaussian Process]
+  The Normal Inverse Gaussian (NIG) process is a Lévy process defined by the
+  characteristic function: 
+  \begin{align*}
+    \mathbb{E}\left[ e^{\I \theta L_t} \right] = \exp\left( \I \theta \mu t -
+    \delta t \left( \sqrt{\alpha^2 - \beta^2} - \sqrt{\alpha^2 - (\beta + \I
+    \theta)^2} \right) \right),     
+  \end{align*}
+where the parameters $\alpha > 0$, $|\beta| < \alpha$, $\mu \in \mathbb{R}$, and
+$\delta > 0$ control the shape of the distribution. Here $\alpha$ governs the
+steepness of the distribution's tails; $\beta$ controls the asymmetry or
+skewness of the distribution; $\delta$ is a scaling parameter and $\mu$ represents the drift.
+\end{example}
+
+\begin{example}[Alpha-Stable Lévy process]
+The alpha-stable Lévy process is a Lévy process with the following characteristic function:
+\begin{align*}
+\mathbb{E}\left[ e^{\I \theta L_t} \right] = \exp\left( t \left( \I \theta
+  \gamma - \sigma^\alpha |\theta|^\alpha (1 - \I \beta
+  \operatorname{sign}(\theta) \tan\left(\frac{\pi \alpha}{2}\right)) \right)
+  \right),   
+\end{align*}
+where the parameters satisfy $0 < \alpha \leq 2$, $|\beta| \leq 1$, $\sigma >
+0$, and $\gamma \in \mathbb{R}$. Here  $\alpha$ is the stability parameter,
+controlling the heaviness of the tails (with smaller values of $\alpha$
+corresponding to heavier tails); $\beta$ is the skewness parameter, determining
+the asymmetry of the distribution; $\sigma$ is the scale parameter, controlling
+the dispersion of the process and $\gamma$ is the drift parameter, governing the
+location of the distribution.\par{}
+
+Alpha-stable Lévy processes are known for their ability to model distributions
+with infinite variance (for $\alpha < 2$), which makes them suitable for
+capturing extreme market events, such as price spikes or significant drops, that
+may occur in energy markets. These processes are also characterized by heavy
+tails, which are often observed in financial and energy data.
+
+In the context of energy markets, alpha-stable Lévy processes can be used to
+model the stochastic dynamics of prices or demand, allowing for the possibility
+of large, infrequent changes in market conditions. This feature makes
+alpha-stable processes particularly useful for modeling renewable energy sources
+where variability is driven by extreme weather conditions (e.g., wind gusts or
+sudden changes in solar irradiance).
+\end{example}
+
+\subsubsection{L\'evy-Driven CARMA(p,q) Processes}
+
+To model the joint dynamics of commodity prices and temperature, we employ coupled CARMA processes driven by real-valued L\'evy processes. This approach captures both the temporal dependencies within each variable and the cross-dependencies between them, which are essential for accurately pricing and hedging renewable energy quanto options.
+
+\begin{definition}\label{def:CARMA}
+A \emph{L\'evy-driven CARMA$(p,q)$ process}, with $0 \leq q < p$, is defined as $Y(t) = C^\top \mathbf{X}(t)$ (output equation), where $\mathbf{X}(t) \in \mathbb{R}^{p}$ is the solution of the following stochastic differential equation (state equation):
+\begin{align}
+\D \mathbf{X}(t) = A \mathbf{X}(t) \, \D t + B \, \D L(t), \label{eq:carma-state-equation}
+\end{align}
+with
+\begin{align}
+A &= \begin{pmatrix}
+0 & 1 & 0 & \cdots & 0 \\
+0 & 0 & 1 & \cdots & 0 \\
+\vdots & \vdots & \vdots & \ddots & \vdots \\
+0 & 0 & 0 & \cdots & 1 \\
+- a_p & - a_{p-1} & - a_{p-2} & \cdots & - a_1 \\
+\end{pmatrix}, \label{eq:state-transition-matrix} \\
+B &= \begin{pmatrix}
+0 \\
+0 \\
+\vdots \\
+0 \\
+1
+\end{pmatrix}, \quad
+C = \begin{pmatrix}
+b_1 \\
+b_2 \\
+\vdots \\
+b_p
+\end{pmatrix}, \label{eq:input-output-vectors}
+\end{align}
+where $a_i, b_j \in \mathbb{R}$ are real coefficients with $b_j \neq 0$ for $1 \leq j \leq q+1$ and $b_j = 0$ for $q+2 \leq j \leq p$. Here, $\{L(t)\}_{t \in \mathbb{R}}$ is a real-valued L\'evy process. The matrix $A$ is a $p \times p$ companion matrix containing the coefficients of the autoregressive part, which relate to the stationarity and mean-reversion properties of the process.
+\end{definition}
+
+\begin{remark}
+The structure of the matrices and vectors in the CARMA model ensures that the process $Y(t)$ satisfies the following higher-order stochastic differential equation:
+\begin{align}
+D^{p} Y(t) + a_1 D^{p-1} Y(t) + \cdots + a_p Y(t) = b_0 D^{q} L(t) + b_1 D^{q-1} L(t) + \cdots + b_q L(t), \label{eq:carma-sde}
+\end{align}
+where $D = \dfrac{\D}{\D t}$ denotes differentiation. This equation highlights the autoregressive (AR) and moving average (MA) components of the CARMA process.
+\end{remark}
+
+\begin{proposition}\label{prop:variation-of-constant}
+A solution of the state equation is a $p$-dimensional Ornstein-Uhlenbeck process
+given by the variation-of-constants formula: 
+\begin{align}
+    \mathbf{X}_t = e^{(t-s)A} \mathbf{X}_s + \int_s^t e^{(t-u)A} \mathbf{e}_p \D
+  L_u, \quad 0 \leq s < t. 
+\end{align}
+\end{proposition}
+
+\begin{remark}
+\begin{itemize}
+    \item By setting $p = 1$, we have $A = -\kappa = -a_1$. This leads us to the
+      Ornstein-Uhlenbeck (OU) process, which has been widely applied in finance,
+      particularly in option pricing. Therefore, CARMA processes are
+      higher-order generalizations of OU processes: 
+    \begin{align*}
+        \D X(t) = -\kappa X(t) \D t + \D L(t). 
+    \end{align*}
+    \item A CARMA process can also be represented as the solution of the following stochastic differential equation (SDE):
+    \begin{align*}
+        a(D) Y(t) = b(D) D L(t),
+    \end{align*}
+    where $D$ denotes differentiation with respect to $t$, and $a(\cdot)$ and $b(\cdot)$ are polynomials given by
+    \begin{align*}
+        a(z) &= z^p + a_1 z^{p-1} + \cdots + a_p, \\
+        b(z) &= b_0 + b_1 z + \cdots + b_q z^q.
+    \end{align*}
+    \item We will assume that $\mathbf{b} = \mathbf{e}_1$, i.e., $b_1 = 1$ and
+      $b_j = 0$ for $j > 1$. Furthermore, by setting $q = 0$, the
+      $\mathbf{CARMA}(p,q)$ process becomes a $\mathbf{CAR}(p)$
+      process. Therefore, we can write the $\mathbf{CAR}(p)$ process as: 
+    \begin{align*}
+    \begin{cases}
+    \D X_t^{(i)} = X_t^{(i+1)} \D t, & i = 1, 2, \dots, p-1, \\
+    \D X_t^{(p)} = -\displaystyle\sum_{k=1}^p a_k X_t^{(k)} \D t + \D L_t, & \\
+    Y(t) = X_t^{(1)}. &
+    \end{cases}
+    \end{align*}
+\end{itemize}
+\end{remark}
+
+
+\subsection{Modelling the Spot and Weather with Coupled CARMA Processes}
+
+To accurately capture the combined dynamics of daily day-ahead electricity log spot prices $\{X_t\}_{t \geq 0}$ and daily average temperatures $\{T_t\}_{t \geq 0}$, we propose a coupled stochastic model based on higher-order continuous-time autoregressive (CAR($p$)) processes. This approach extends the standard Ornstein-Uhlenbeck process (CAR(1)) to CAR($p$) processes, allowing for more complex temporal dependencies and improved modeling of the observed data.
+
+Our model builds upon the Electricity Temperature Model (ETM) described in \cite{reference}, replacing the CAR(1) processes with CAR($p$) processes to capture long-memory effects and intricate dynamics inherent in energy markets. By considering higher-order processes, we aim to provide a more flexible and accurate representation of the underlying stochastic behaviors.
+
+Both the electricity prices and temperatures are assumed to be \emph{deseasonalized}, meaning that deterministic seasonal patterns have been removed from the data. This preprocessing step allows us to focus on modeling the stochastic fluctuations around these seasonal trends.
+
+\subsubsection{Temperature Process}
+
+We model the deseasonalized temperature process using the following state-space representation:
+
+\begin{align}
+\begin{cases}
+\D \mathbf{Z}_t^T = A_T \mathbf{Z}_t^T \, \D t + \mathbf{e}_p \sigma_T \, \D W_t^T, \\[2ex]
+T_t = \mathbf{b}_T^\top \mathbf{Z}_t^T,
+\end{cases} \label{eq:temperature-process}
+\end{align}
+where:
+
+\begin{itemize}
+    \item $\mathbf{Z}_t^T \in \mathbb{R}^p$ is the state vector of the temperature process at time $t$.
+    \item $A_T \in \mathbb{R}^{p \times p}$ is the state-transition matrix governing the dynamics of the temperature process. It is typically structured to reflect the coefficients of an autoregressive polynomial of order $p$.
+    \item $\sigma_T > 0$ is the volatility parameter of the temperature process.
+    \item $\mathbf{e}_p \in \mathbb{R}^p$ is the $p$-th standard basis vector, defined as $\mathbf{e}_p = (0, 0, \dots, 0, 1)^\top$.
+    \item $W_t^T$ is a standard Brownian motion representing the stochastic noise driving the temperature process.
+    \item $\mathbf{b}_T \in \mathbb{R}^p$ is the output vector mapping the state vector $\mathbf{Z}_t^T$ to the observable temperature $T_t$.
+\end{itemize}
+
+The dynamics of $\mathbf{Z}_t^T$ are influenced by both the deterministic evolution dictated by $A_T$ and the stochastic fluctuations introduced by the Brownian motion $W_t^T$. The observable temperature $T_t$ is obtained as a linear combination of the state variables, allowing for flexibility in capturing the temperature dynamics.
+
+\subsubsection{Electricity Log Spot Price Process}
+
+The deseasonalized electricity log spot price process is modeled using a CAR($p$) process that incorporates dependence on the temperature process and accounts for jumps through a L\'evy process:
+
+\begin{align}
+\begin{cases}
+\D \mathbf{Z}_t^X = A_X \mathbf{Z}_t^X \, \D t + \lambda \sigma_T \mathbf{e}_p \, \D W_t^T + \mathbf{e}_p \, \D L_t^X, \\[2ex]
+X_t = \mathbf{b}_X^\top \mathbf{Z}_t^X,
+\end{cases} \label{eq:electricity-process}
+\end{align}
+where:
+
+\begin{itemize}
+    \item $\mathbf{Z}_t^X \in \mathbb{R}^p$ is the state vector of the electricity price process at time $t$.
+    \item $A_X \in \mathbb{R}^{p \times p}$ is the state-transition matrix for the electricity price process.
+    \item $\lambda \in \mathbb{R}$ is a coupling parameter that introduces dependence between the temperature and electricity price processes.
+    \item $L_t^X$ is a real-valued L\'evy process with Normal Inverse Gaussian (NIG) distribution parameters $(\alpha^X, \beta^X, \delta^X, \mu^X)$, capturing the jump behavior commonly observed in electricity prices.
+    \item $\mathbf{b}_X \in \mathbb{R}^p$ is the output vector for the electricity price process.
+\end{itemize}
+
+The term $\lambda \sigma_T \mathbf{e}_p \, \D W_t^T$ introduces dependence between the electricity price and temperature processes through the shared Brownian motion $W_t^T$. The coupling parameter $\lambda$ controls the strength and direction of this dependence, allowing us to model positive or negative correlations between temperature and electricity prices. The inclusion of the L\'evy process $L_t^X$ accounts for sudden spikes and heavy-tailed behavior in electricity prices due to market shocks or unexpected events.
+
+\subsubsection{Integrated Form of the Model}
+
+By applying the variation of constants formula to the state equations, we derive the integrated forms of the state processes for all $s < t$:
+
+\begin{align}
+\begin{cases}
+\displaystyle \mathbf{Z}_{t}^T = e^{A_T (t - s)} \mathbf{Z}_s^T + \sigma_T \int_s^{t} e^{A_T (t - u)} \mathbf{e}_p \, \D W_u^T, \\[3ex]
+\displaystyle \mathbf{Z}_{t}^X = e^{A_X (t - s)} \mathbf{Z}_s^X + \lambda \sigma_T \int_s^{t} e^{A_X (t - u)} \mathbf{e}_p \, \D W_u^T + \int_s^{t} e^{A_X (t - u)} \mathbf{e}_p \, \D L_u^X.
+\end{cases} \label{eq:integrated-processes}
+\end{align}
+
+In these expressions:
+
+\begin{itemize}
+    \item $e^{A_T (t - s)}$ and $e^{A_X (t - s)}$ represent the deterministic evolution of the state vectors due to the autoregressive components.
+    \item The stochastic integrals capture the cumulative effect of the stochastic inputs over the interval $[s, t]$.
+    \item The shared Brownian motion $W_t^T$ in both integrals introduces correlation between the temperature and electricity price processes.
+    \item The integral with respect to the L\'evy process $L_t^X$ accounts for the jump contributions to the electricity price dynamics, reflecting sudden market changes.
+\end{itemize}
+
+\begin{remark}
+The coupling parameter $\lambda$ plays a crucial role in modeling the
+correlation between temperature and electricity prices. A positive $\lambda$
+indicates that increases in temperature are associated with increases in
+electricity prices, which may occur during periods of high demand due to heating
+or cooling needs. Conversely, a negative $\lambda$ suggests an inverse
+relationship.   
+\end{remark}
+
+\subsection{Covariance of Residuals}
+
+Understanding the covariance between the residuals of the temperature and electricity price processes is crucial for accurate modeling and risk management in energy markets. In this subsection, we derive expressions for the covariance of these residuals within our coupled CAR($p$) framework.
+
+\begin{proposition}
+Let $T_t = \mathbf{b}_T^\top \mathbf{Z}_t^T$ and $X_t = \mathbf{b}_X^\top \mathbf{Z}_t^X$ represent the temperature and electricity price processes, respectively. Then, the covariance between $T_t$ and $X_t$ is given by
+\begin{align}
+\Cov(T_t, X_t) = \mathbf{b}_T^\top \Cov\left( \mathbf{Z}_t^T, \mathbf{Z}_t^X \right) \mathbf{b}_X. \label{eq:covariance_T_X}
+\end{align}
+\end{proposition}
+
+\begin{proof}
+Since $T_t$ and $X_t$ are linear functions of their respective state vectors, we have
+\begin{align*}
+\Cov(T_t, X_t) &= \Cov\left( \mathbf{b}_T^\top \mathbf{Z}_t^T,\, \mathbf{b}_X^\top \mathbf{Z}_t^X \right) \\
+&= \mathbf{b}_T^\top \Cov\left( \mathbf{Z}_t^T, \mathbf{Z}_t^X \right) \mathbf{b}_X,
+\end{align*}
+where we used the linearity of the covariance operator.
+\end{proof}
+
+\begin{remark}
+This result highlights that the covariance between the observable processes $T_t$ and $X_t$ depends on the covariance between their state vectors $\mathbf{Z}_t^T$ and $\mathbf{Z}_t^X$ and the output vectors $\mathbf{b}_T$ and $\mathbf{b}_X$. Understanding this relationship is essential for capturing the co-movement between temperature and electricity prices.
+\end{remark}
+
+Next, we derive an explicit expression for the covariance of the residuals of the state vectors over a time increment $\Delta$.
+
+\begin{proposition}[Covariance of Residuals]
+The covariance of the residuals of the state vectors over the interval $[t, t+\Delta]$ is given by
+\begin{align}
+\Cov\left( \mathbf{R}_t^T,\, \mathbf{R}_t^X \right) = \lambda \sigma_T^2\, e^{A_T \Delta} \hat{\mathcal{D}}_{TX}^{-1} \left( e^{\hat{\mathcal{D}}_{TX} \Delta} - \mathbf{I} \right) \mathbf{e}_p \mathbf{e}_p^\top e^{A_X^\top \Delta}, \label{eq:cov_residuals}
+\end{align}
+where
+\begin{align}
+\mathbf{R}_t^T &= \mathbf{Z}_{t+\Delta}^T - e^{A_T \Delta} \mathbf{Z}_t^T, \\
+\mathbf{R}_t^X &= \mathbf{Z}_{t+\Delta}^X - e^{A_X \Delta} \mathbf{Z}_t^X,
+\end{align}
+and the operator $\hat{\mathcal{D}}_{TX}: \mathbb{R}^{p \times p} \to \mathbb{R}^{p \times p}$ is defined by
+\begin{align}
+\hat{\mathcal{D}}_{TX}(M) = A_T M + M A_X^\top, \quad M \in \mathbb{R}^{p \times p}. \label{eq:D_TX_operator}
+\end{align}
+\end{proposition}
+
+\begin{proof}
+From the integrated forms of the state equations \eqref{eq:integrated-processes}, we have
+\begin{align*}
+\mathbf{R}_t^T &= \sigma_T \int_t^{t+\Delta} e^{A_T (t+\Delta - u)} \mathbf{e}_p \, \D W_u^T, \\
+\mathbf{R}_t^X &= \lambda \sigma_T \int_t^{t+\Delta} e^{A_X (t+\Delta - u)} \mathbf{e}_p \, \D W_u^T + \int_t^{t+\Delta} e^{A_X (t+\Delta - u)} \mathbf{e}_p \, \D L_u^X.
+\end{align*}
+
+Since $W_t^T$ and $L_t^X$ are independent processes, the covariance between $\mathbf{R}_t^T$ and the part of $\mathbf{R}_t^X$ involving $\D L_u^X$ is zero. Therefore, we have
+\begin{align*}
+\Cov\left( \mathbf{R}_t^T,\, \mathbf{R}_t^X \right) &= \Cov\left( \mathbf{R}_t^T,\, \lambda \sigma_T \int_t^{t+\Delta} e^{A_X (t+\Delta - u)} \mathbf{e}_p \, \D W_u^T \right) \\
+&= \lambda \sigma_T^2 \int_t^{t+\Delta} e^{A_T (t+\Delta - u)} \mathbf{e}_p \mathbf{e}_p^\top e^{A_X^\top (t+\Delta - u)} \, \D u.
+\end{align*}
+
+Letting $\tau = t+\Delta - u$, the limits of integration become $\tau \in [0, \Delta]$, and we have
+\begin{align*}
+\Cov\left( \mathbf{R}_t^T,\, \mathbf{R}_t^X \right) &= \lambda \sigma_T^2 \int_0^{\Delta} e^{A_T \tau} \mathbf{e}_p \mathbf{e}_p^\top e^{A_X^\top \tau} \, \D \tau.
+\end{align*}
+
+This integral can be expressed using the operator $\hat{\mathcal{D}}_{TX}$ by noting that
+\begin{align*}
+\frac{\D}{\D \tau} \left( e^{A_T \tau} M e^{A_X^\top \tau} \right) = e^{A_T \tau} \hat{\mathcal{D}}_{TX}(M) e^{A_X^\top \tau}.
+\end{align*}
+
+Integrating both sides from $0$ to $\Delta$, we obtain
+\begin{align*}
+\int_0^{\Delta} e^{A_T \tau} \hat{\mathcal{D}}_{TX}(M) e^{A_X^\top \tau} \, \D \tau = e^{A_T \Delta} M e^{A_X^\top \Delta} - M.
+\end{align*}
+
+Therefore,
+\begin{align*}
+\int_0^{\Delta} e^{A_T \tau} M e^{A_X^\top \tau} \, \D \tau = \hat{\mathcal{D}}_{TX}^{-1} \left( e^{A_T \Delta} M e^{A_X^\top \Delta} - M \right).
+\end{align*}
+
+Applying this result with $M = \mathbf{e}_p \mathbf{e}_p^\top$, we have
+\begin{align*}
+\Cov\left( \mathbf{R}_t^T,\, \mathbf{R}_t^X \right) &= \lambda \sigma_T^2 \hat{\mathcal{D}}_{TX}^{-1} \left( e^{A_T \Delta} \mathbf{e}_p \mathbf{e}_p^\top e^{A_X^\top \Delta} - \mathbf{e}_p \mathbf{e}_p^\top \right) \\
+&= \lambda \sigma_T^2 e^{A_T \Delta} \hat{\mathcal{D}}_{TX}^{-1} \left( e^{\hat{\mathcal{D}}_{TX} \Delta} - \mathbf{I} \right) \mathbf{e}_p \mathbf{e}_p^\top e^{A_X^\top \Delta},
+\end{align*}
+where we used the fact that $e^{A_T \Delta} \mathbf{e}_p \mathbf{e}_p^\top e^{A_X^\top \Delta} = e^{\hat{\mathcal{D}}_{TX} \Delta} \mathbf{e}_p \mathbf{e}_p^\top$.
+\end{proof}
+
+\begin{remark}
+The operator $\hat{\mathcal{D}}_{TX}$ encapsulates the combined dynamics of the temperature and electricity price state processes. The expression for the covariance of the residuals involves the inverse of $\hat{\mathcal{D}}_{TX}$, highlighting the complexity introduced by the coupling parameter $\lambda$ and the matrices $A_T$ and $A_X$.
+\end{remark}
+
+Next, we provide a lemma that is useful for calculating expectations involving the integral of an exponential matrix.
+
+\begin{lemma}\label{lem:expected_integral}
+Let $A \in \mathbb{R}^{p \times p}$ be an invertible matrix, $Y_t$ be a stochastic process with $\mathbb{E}[Y_t] = \mu_Y t$, and define the process
+\begin{align}
+\mathbf{X}_t = \int_0^t e^{A (t - s)} \mathbf{e}_p \, \D Y_s. \label{eq:process_X_t}
+\end{align}
+Then the expectation of $\mathbf{X}_t$ is
+\begin{align}
+\mathbb{E}[\mathbf{X}_t] = \mu_Y A^{-1} \left( e^{A t} - \mathbf{I} \right) \mathbf{e}_p. \label{eq:expected_X_t}
+\end{align}
+\end{lemma}
+
+\begin{proof}
+Since $\mathbb{E}[ \D Y_s ] = \mu_Y \D s$, we have
+\begin{align*}
+\mathbb{E}[\mathbf{X}_t] &= \int_0^t e^{A (t - s)} \mathbf{e}_p \, \mathbb{E}[ \D Y_s ] \\
+&= \mu_Y \int_0^t e^{A (t - s)} \mathbf{e}_p \, \D s.
+\end{align*}
+
+Making the substitution $\tau = t - s$, so $s = t - \tau$, and $\D s = - \D \tau$, we obtain
+\begin{align*}
+\mathbb{E}[\mathbf{X}_t] &= \mu_Y \int_0^t e^{A \tau} \mathbf{e}_p \, \D \tau \\
+&= \mu_Y \left( \int_0^t e^{A \tau} \, \D \tau \right) \mathbf{e}_p \\
+&= \mu_Y \left( A^{-1} \left( e^{A t} - \mathbf{I} \right) \right) \mathbf{e}_p,
+\end{align*}
+where we used the fact that $\int_0^t e^{A \tau} \, \D \tau = A^{-1} ( e^{A t} - \mathbf{I} )$ due to the invertibility of $A$.
+\end{proof}
+
+\begin{remark}
+The invertibility of $A$ is crucial for the expression of $\mathbb{E}[\mathbf{X}_t]$. In a $\mathbf{CAR}(p)$ process, the matrix $A$ is a companion matrix whose determinant is $\det(A) = (-1)^p a_p$, where $a_p \neq 0$ is the leading coefficient of the autoregressive polynomial. Therefore, $\det(A) \neq 0$ and $A$ is invertible.
+\end{remark}
+
+\subsubsection{Implications for Modeling}
+
+The derived expressions for the covariance of residuals are instrumental in
+understanding the joint behavior of the temperature and electricity price
+processes. They provide insights into how the coupling parameter $\lambda$ and
+the system matrices $A_T$ and $A_X$ influence the covariance structure. 
+
+In practical applications, these results can be used for parameter estimation
+and model calibration. By matching the theoretical covariances with empirical
+estimates obtained from historical data, we can infer the values of $\lambda$,
+$\sigma_T$, and the entries of $A_T$ and $A_X$. 
+
+Moreover, the covariance expressions are essential for risk management and
+derivative pricing. For instance, in the valuation of energy quanto options,
+understanding the covariance between temperature and electricity prices allows
+for more accurate modeling of the payoff distributions and hedging strategies. 
+
+\subsubsection{Additional Details on Covariance Calculation}
+
+It's important to note that the covariance between the residuals arises solely
+due to the shared Brownian motion $W_t^T$ and the coupling parameter
+$\lambda$. The L\'evy process $L_t^X$, being independent of $W_t^T$, does not
+contribute to this covariance. 
+
+The operator $\hat{\mathcal{D}}_{TX}$ plays a central role in encapsulating the
+interaction between the two state processes. Its inverse appears in the
+covariance expression, reflecting the intertwined effects of the state dynamics
+governed by $A_T$ and $A_X$.  
+
+\clearpage{}
+
+\section{Pricing of Energy Quanto Options in the Coupled CARMA Model}\label{sec:pricing-quanto-options}
+
+
+In this section, we develop a pricing framework for energy quanto options within
+the coupled CARMA model introduced earlier. We consider European-style options
+and derive the option pricing formulas by taking into account the joint dynamics
+of electricity prices and temperature.
+
+\subsection{Option Payoff Structure}
+
+Consider a European call option with maturity $T$ written on the electricity spot price process $\{S_t\}_{t \geq 0}$, where the payoff also depends on the average temperature process $\{T_t\}_{t \geq 0}$. The payoff at maturity $T$ is defined as
+\begin{align}
+\text{Payoff} = \max\left( S_T - K,\, 0 \right) \times f(T_T), \label{eq:quanto_payoff}
+\end{align}
+where
+\begin{itemize}
+    \item $K$ is the strike price.
+    \item $f(T_T)$ is a function capturing the temperature dependence, for example, $f(T_T) = \exp(- \eta T_T)$ for some parameter $\eta \in \mathbb{R}$.
+\end{itemize}
+
+This payoff structure reflects a scenario where the option holder benefits from both favorable movements in the electricity price and certain temperature conditions, which is relevant for managing risks associated with weather-dependent energy production.
+
+\subsection{Risk-Neutral Valuation Framework}
+
+To price the option, we compute the expected discounted payoff under the risk-neutral measure $\mathbb{Q}$. The option price at time $t = 0$ is given by
+\begin{align}
+V_0 = e^{- r T} \, \mathbb{E}^{\mathbb{Q}} \left[ \max\left( S_T - K,\, 0 \right) \times f(T_T) \,\bigg|\, \mathcal{F}_0 \right], \label{eq:option_price}
+\end{align}
+where
+\begin{itemize}
+    \item $V_0$ is the option price at time $t = 0$.
+    \item $r$ is the risk-free interest rate.
+    \item $\mathcal{F}_0$ represents the information available at time $t = 0$.
+\end{itemize}
+
+However, since temperature is not a tradable asset, we cannot hedge temperature risk perfectly, and thus, the standard risk-neutral valuation may not be directly applicable for the temperature component. One common approach is to assume that temperature risk is not priced, meaning that the market price of temperature risk is zero. This implies that we can work under the real-world measure $\mathbb{P}$ for the temperature process while using the risk-neutral measure $\mathbb{Q}$ for the tradable electricity price process.
+
+\subsection{Dynamics Under the Risk-Neutral Measure}
+
+Under the risk-neutral measure $\mathbb{Q}$, the dynamics of the electricity price process change to reflect the absence of arbitrage and the inclusion of risk premiums. Assuming that temperature risk is not priced, the dynamics of the temperature process remain the same under both $\mathbb{P}$ and $\mathbb{Q}$. The coupled CARMA model under $\(\mathbb{Q}\) is then given by
+\begin{align}
+\begin{cases}
+\D \mathbf{Z}_t^T = A_T \mathbf{Z}_t^T \, \D t + \mathbf{e}_p \sigma_T \, \D W_t^{T}, \\[2ex]
+\D \mathbf{Z}_t^S = \left( A_S - \mathbf{e}_p \gamma_S \right) \mathbf{Z}_t^S \, \D t + \lambda \sigma_T \mathbf{e}_p \, \D W_t^{T} + \mathbf{e}_p \, \D L_t^{S, \mathbb{Q}},
+\end{cases} \label{eq:risk_neutral_dynamics}
+\end{align}
+where
+\begin{itemize}
+    \item $\mathbf{Z}_t^T \in \mathbb{R}^p$ is the state vector of the temperature process.
+    \item $\mathbf{Z}_t^S \in \mathbb{R}^p$ is the state vector of the electricity price process.
+    \item $A_T$, $A_S \in \mathbb{R}^{p \times p}$ are the state-transition matrices for temperature and electricity prices, respectively.
+    \item $\sigma_T > 0$ is the volatility parameter for the temperature process.
+    \item $\lambda \in \mathbb{R}$ is the coupling parameter between the two processes.
+    \item $W_t^{T}$ is a standard Brownian motion under $\mathbb{Q}$, driving the temperature process.
+    \item $L_t^{S, \mathbb{Q}}$ is a L\'evy process under $\mathbb{Q}$, representing the jump component in the electricity price dynamics.
+    \item $\gamma_S \in \mathbb{R}$ is the market price of risk for the electricity price process, adjusting its drift under $\mathbb{Q}$.
+\end{itemize}
+
+Note that the temperature process remains unaffected by the change of measure, as we assume that temperature risk is not priced. The electricity price process, being a tradable asset, adjusts its drift through the risk premium parameter $\gamma_S$ under the risk-neutral measure.
+
+
+\subsection{General Payoff Structures}
+
+In some cases, energy quanto options may have payoff functions involving sums
+over multiple time periods or combining put and call features. For example,
+consider a quanto option with payoff at time $t$ defined as
+\begin{align}
+\text{Payoff} = \sum_{t = t_1}^{t_2} f_S(S_t) \times f_T(T_t), \label{eq:sum_payoff}
+\end{align}
+where $f_S$ and $f_T$ are functions such as
+\begin{align}
+f_S(S_t) = \left( S_t - \bar{S} \right)^+, \quad f_T(T_t) = \left( \bar{T} - T_t \right)^+,
+\end{align}
+with $\bar{S}$ and $\bar{T}$ being predetermined thresholds, and $(x)^+ = \max(x, 0)$.
+
+In such cases, the option price becomes
+\begin{align}
+\mathcal{Q}(t_1, t_2) = \mathbb{E}^{\mathbb{Q}} \left[ \sum_{t = t_1}^{t_2} \left( S_t - \bar{S} \right)^+ \left( \bar{T} - T_t \right)^+ \,\bigg|\, \mathcal{F}_{t_0} \right]. \label{eq:quanto_price_sum}
+\end{align}
+
+Since the temperature is not tradable and cannot be perfectly hedged, we may need to adjust our pricing approach. One method is to work under the real-world measure $\mathbb{P}$ for the temperature component and apply a risk adjustment to account for the market price of temperature risk, if any.
+
+\subsection{Pricing Under the Real-World Measure}
+
+Assuming that the time horizon is relatively short and the appropriate discount rate is uncertain, we can simplify the pricing by assuming a unit discount factor (i.e., $D(t_0, t_2) = 1$). The option price then becomes
+\begin{align}
+\mathcal{Q}(t_1, t_2) = \mathbb{E}^{\mathbb{P}} \left[ \sum_{t = t_1}^{t_2} \left( S_t - \bar{S} \right)^+ \left( \bar{T} - T_t \right)^+ \,\bigg|\, \mathcal{F}_{t_0} \right]. \label{eq:quanto_price_real_world}
+\end{align}
+
+In this framework, we use the real-world measure $\mathbb{P}$ for both processes, acknowledging that the result may need to be adjusted for risk preferences or calibrated to market prices if available.
+
+\subsection{Analytical Pricing of Energy Quanto Options}\label{sec:quanto-option-pricing}
+
+In this subsection, we derive an analytical formula for pricing energy quanto options within the coupled CAR($p$) model framework. These options have payoffs that depend on both the electricity spot price and the temperature, making the joint modeling of these variables essential for accurate valuation.
+
+Consider an energy quanto option with payoff at time $t$ defined as
+\begin{align}
+\text{Payoff} = \sum_{t = t_1}^{t_2} \left( S_t - \bar{S} \right)^+ \left( \bar{T} - T_t \right)^+, \label{eq:quanto_payoff}
+\end{align}
+where $(x)^+ = \max(x, 0)$, $\bar{S}$ and $\bar{T}$ are predetermined thresholds, and $S_t$ and $T_t$ are the electricity spot price and temperature at time $t$, respectively.
+
+Our goal is to compute the price of this option, given by
+\begin{align}
+\mathcal{Q}(t_1, t_2) = \mathbb{E} \left[ \sum_{t = t_1}^{t_2} \left( S_t - \bar{S} \right)^+ \left( \bar{T} - T_t \right)^+ \,\bigg|\, \mathcal{F}_{t_0} \right], \label{eq:quanto_option_price}
+\end{align}
+where $\mathcal{F}_{t_0}$ represents the information available at the initial
+time $t_0$.  
+
+\begin{theorem}[Quanto pricing formula]\label{thm:Quanto-CARMA-Pricer}
+    \begin{align}
+        \mathcal{Q}(t_1,t_2)=&\sum_{t=t_1}^{t_2}\Bigg( \mathbb{E}_{\lambda=0}[(S_t-\Bar{S})^+|\mathcal{F}_{t_0}]\times\mathbf{e_1}'\Bigg[\boldsymbol{\mu}\Phi(-\Sigma^{-1/2}\boldsymbol{\mu}) \nonumber\\
+        &+ \frac{\Sigma^{1/2}\mathbf{e}}{\sqrt{(2\pi)^p}}\exp\left(-\frac{1}{2}(\Sigma^{-1/2}\boldsymbol{\mu})^\intercal(\Sigma^{-1/2}\boldsymbol{\mu})\right)\Bigg]\nonumber\\
+        &+\Bigg(\mathbb{E}_{\lambda=0}\left[(S_{t+\Delta}-\Bar{S})^+|\mathcal{F}_{t_0}\right]+\Bar{S}\mathbb{P}(S_{t+\Delta}\geq\Bar{S}|\mathcal{F}_{t_0})\Bigg)\nonumber\\
+        &\times\mathbf{e}_1'K_{XT}(\Delta)K_T^{-1}(\Delta)\Sigma^{1/2}\mathbf{e}\Tr{(\Sigma^{1/2})}\Phi(-\Sigma^{-1/2}\boldsymbol{\mu})\lambda\Bigg)+o(\lambda)\nonumber
+    \end{align}
+    Where $\boldsymbol\mu=\bar{T}\textbf{e}_1-e^{\Delta A_T}\textbf{Z}_t^T$ and $\Sigma = \sigma_T^2e^{\Delta A_T}\left(\hat{\mathcal{D}}_{T}^{-1}\left(\exp(\hat{\mathcal{D}}_{T}\Delta)-\opI\right)\textbf{e}_p \textbf{e}_p'
+    \right)e^{\Delta A_T^\intercal}$. $\Phi$ is the cumulative distribution function of the multivariate normal distribution $\mathcal{N}(\textbf{0},\Id)$ and $\mathbf{e}: = \begin{bmatrix} 1 & 1 & \cdots & 1 \end{bmatrix}^\intercal$.
+\end{theorem}
+\begin{proof}
+\sven{I have to revise the proof still. But look at page 27 for a way to get
+  away of computing the multiple integral. Check if this holds.}
+  
+We aim to compute the first-order Taylor expansion of the expectation
+\begin{align}
+    \mathbb{E}\left[ (S_{t+\Delta} - \bar{S})^+ (\bar{T} - T_{t+\Delta})^+ \bigg| \mathcal{F}_t \right]
+\end{align}
+with respect to $\lambda$ at $\lambda = 0$.
+
+Using the Taylor expansion, we have
+\begin{align}
+    \mathbb{E}\left[ (S_{t+\Delta} - \bar{S})^+ (\bar{T} - T_{t+\Delta})^+ \bigg| \mathcal{F}_t \right] &= \mathbb{E}_{\lambda=0}\left[ (S_{t+\Delta} - \bar{S})^+ (\bar{T} - T_{t+\Delta})^+ \bigg| \mathcal{F}_t \right] \nonumber \\
+    &\quad + \lambda \left. \frac{\partial}{\partial \lambda} \mathbb{E}\left[ (S_{t+\Delta} - \bar{S})^+ (\bar{T} - T_{t+\Delta})^+ \bigg| \mathcal{F}_t \right] \right|_{\lambda=0} + o(\lambda).
+\end{align}
+
+When $\lambda = 0$, the spot price $S_{t+\Delta}$ and temperature $T_{t+\Delta}$ are independent, so
+\begin{align}
+    \mathbb{E}_{\lambda=0}\left[ (S_{t+\Delta} - \bar{S})^+ (\bar{T} - T_{t+\Delta})^+ \bigg| \mathcal{F}_t \right] = \mathbb{E}_{\lambda=0}\left[ (S_{t+\Delta} - \bar{S})^+ \bigg| \mathcal{F}_t \right] \cdot \mathbb{E}\left[ (\bar{T} - T_{t+\Delta})^+ \bigg| \mathcal{F}_t \right].
+\end{align}
+
+\textbf{Step 1: Compute $\mathbb{E}\left[ (\bar{T} - T_{t+\Delta})^+ \bigg| \mathcal{F}_t \right]$}
+
+Recall that the temperature process is given by
+\[
+T_{t+\Delta} = \mathbf{b}_T^\intercal \mathbf{Z}_{t+\Delta}^T,
+\]
+where $\mathbf{Z}_{t+\Delta}^T$ is the state vector of the temperature process.
+
+Define
+\[
+\mathbf{X} = \bar{T} \mathbf{e}_1 - \mathbf{Z}_{t+\Delta}^T,
+\]
+so that
+\[
+\bar{T} - T_{t+\Delta} = \mathbf{b}_T^\intercal \mathbf{X}.
+\]
+
+Under $\mathcal{F}_t$, the conditional distribution of $\mathbf{X}$ is multivariate normal:
+\[
+\mathbf{X} \big| \mathcal{F}_t \sim \mathcal{N}(\boldsymbol{\mu}, \Sigma),
+\]
+where
+\begin{align}
+    \boldsymbol{\mu} &= \bar{T} \mathbf{e}_1 - e^{\Delta A_T} \mathbf{Z}_t^T, \\
+    \Sigma &= \sigma_T^2 e^{\Delta A_T} \left( \int_0^\Delta e^{-s A_T} \mathbf{e}_p \mathbf{e}_p^\intercal e^{-s A_T^\intercal} \, \D s \right) e^{\Delta A_T^\intercal}.
+\end{align}
+
+Let $Y = \mathbf{b}_T^\intercal \mathbf{X}$. Then $Y$ is normally distributed with mean
+\[
+\mu_Y = \mathbf{b}_T^\intercal \boldsymbol{\mu}
+\]
+and variance
+\[
+\sigma_Y^2 = \mathbf{b}_T^\intercal \Sigma \mathbf{b}_T.
+\]
+
+Therefore,
+\begin{align}
+    \mathbb{E}\left[ (\bar{T} - T_{t+\Delta})^+ \bigg| \mathcal{F}_t \right] = \mathbb{E}\left[ (Y)^+ \bigg| \mathcal{F}_t \right] = \mu_Y \Phi\left( \frac{\mu_Y}{\sigma_Y} \right) + \sigma_Y \phi\left( \frac{\mu_Y}{\sigma_Y} \right),
+\end{align}
+where $\Phi$ and $\phi$ are the cumulative distribution function and probability density function of the standard normal distribution, respectively.
+
+\textbf{Step 2: Compute the Derivative of the Expectation with Respect to $\lambda$}
+
+The covariance between $S_{t+\Delta}$ and $T_{t+\Delta}$, to first order in $\lambda$, is given by
+\[
+\Cov\left( S_{t+\Delta}, T_{t+\Delta} \bigg| \mathcal{F}_t \right) = \lambda \cdot \text{Covariance Term} + o(\lambda).
+\]
+
+Since $S_{t+\Delta}$ depends on $W_t^T$ through the term $\lambda \sigma_T \mathbf{e}_p \D W_t^T$, the covariance can be computed using Itô's isometry.
+
+Define the residuals:
+\[
+\begin{cases}
+\displaystyle \mathbf{X}_T = \mathbf{Z}_{t+\Delta}^T - e^{\Delta A_T} \mathbf{Z}_t^T = \sigma_T e^{\Delta A_T} \int_t^{t+\Delta} e^{-(u - t) A_T} \mathbf{e}_p \, \D W_u^T, \\[2ex]
+\displaystyle \mathbf{X}_S = \mathbf{Z}_{t+\Delta}^X - e^{\Delta A_X} \mathbf{Z}_t^X = \lambda \sigma_T e^{\Delta A_X} \int_t^{t+\Delta} e^{-(u - t) A_X} \mathbf{e}_p \, \D W_u^T + \text{independent terms}.
+\end{cases}
+\]
+
+The covariance between $\mathbf{X}_T$ and $\mathbf{X}_S$ is
+\[
+\Cov\left( \mathbf{X}_T, \mathbf{X}_S \bigg| \mathcal{F}_t \right) = \lambda \sigma_T^2 e^{\Delta A_T} \left( \int_0^\Delta e^{-s A_T} \mathbf{e}_p \mathbf{e}_p^\intercal e^{-s A_X^\intercal} \, \D s \right) e^{\Delta A_X^\intercal}.
+\]
+
+Therefore, the covariance between $T_{t+\Delta}$ and $S_{t+\Delta}$ is
+\[
+\Cov\left( T_{t+\Delta}, S_{t+\Delta} \bigg| \mathcal{F}_t \right) = \lambda \sigma_T^2 \mathbf{b}_T^\intercal e^{\Delta A_T} \left( \int_0^\Delta e^{-s A_T} \mathbf{e}_p \mathbf{e}_p^\intercal e^{-s A_X^\intercal} \, \D s \right) e^{\Delta A_X^\intercal} \mathbf{b}_X.
+\]
+
+\textbf{Step 3: Compute the Covariance of the Payoffs}
+
+Using the properties of jointly normally distributed variables and the fact that the payoffs are functions of $(S_{t+\Delta} - \bar{S})^+$ and $(\bar{T} - T_{t+\Delta})^+$, we can compute the covariance term.
+
+Let $X_S = S_{t+\Delta}$ and $X_T = T_{t+\Delta}$.
+
+Define the standardized variables:
+\[
+\begin{cases}
+Z_S = \dfrac{X_S - \mu_S}{\sigma_S}, \\
+Z_T = \dfrac{X_T - \mu_T}{\sigma_T},
+\end{cases}
+\]
+where $\mu_S$, $\mu_T$, $\sigma_S$, and $\sigma_T$ are the means and standard deviations of $S_{t+\Delta}$ and $T_{t+\Delta}$, respectively.
+
+The correlation coefficient is
+\[
+\rho = \dfrac{\Cov(X_S, X_T)}{\sigma_S \sigma_T} = \lambda \cdot \rho_1,
+\]
+where $\rho_1$ is the derivative of the correlation coefficient at $\lambda = 0$.
+
+The covariance of the payoffs is then given by
+\[
+\Cov\left( (S_{t+\Delta} - \bar{S})^+, (\bar{T} - T_{t+\Delta})^+ \bigg| \mathcal{F}_t \right) = \sigma_S \sigma_T \rho \cdot \Theta,
+\]
+where $\Theta$ is a function involving the bivariate normal cumulative distribution function.
+
+To first order in $\lambda$, we can write
+\[
+\Cov\left( (S_{t+\Delta} - \bar{S})^+, (\bar{T} - T_{t+\Delta})^+ \bigg| \mathcal{F}_t \right) = \lambda \cdot \text{Covariance Term} + o(\lambda).
+\]
+
+
+\textbf{Step 1: Compute $\mathbb{E}\left[ (\bar{T} - T_{t+\Delta})^+ \bigg| \mathcal{F}_t \right]$}
+
+We have
+\[
+\mathbb{E}\left[ (\bar{T} - T_{t+\Delta})^+ \bigg| \mathcal{F}_t \right] = \mathbb{E}\left[ \left( \bar{T} - \mathbf{b}_T^\intercal \mathbf{Z}_{t+\Delta}^T \right)^+ \bigg| \mathcal{F}_t \right].
+\]
+
+Let us define
+\[
+\mathbf{X} = \bar{T} \mathbf{e}_1 - \mathbf{Z}_{t+\Delta}^T,
+\]
+so that
+\[
+\bar{T} - T_{t+\Delta} = \mathbf{b}_T^\intercal \mathbf{X}.
+\]
+
+Under $\mathcal{F}_t$, the conditional distribution of $\mathbf{X}$ is multivariate normal:
+\[
+\mathbf{X} \big| \mathcal{F}_t \sim \mathcal{N}(\boldsymbol{\mu}, \Sigma),
+\]
+where
+\begin{align}
+\boldsymbol{\mu} &= \bar{T} \mathbf{e}_1 - e^{\Delta A_T} \mathbf{Z}_t^T, \\
+\Sigma &= \sigma_T^2 e^{\Delta A_T} \left( \hat{\mathcal{D}}_T^{-1} \left( e^{\hat{\mathcal{D}}_T \Delta} - \mathbf{I} \right) \mathbf{e}_p \mathbf{e}_p^\intercal \right) e^{\Delta A_T^\intercal}.
+\end{align}
+
+We can write
+\[
+\mathbf{X} = \boldsymbol{\mu} + \Sigma^{1/2} \mathbf{Z},
+\]
+where $\mathbf{Z} \sim \mathcal{N}(\mathbf{0}, \mathbf{I})$ under $\mathcal{F}_t$.
+
+To compute $\mathbb{E}\left[ (\bar{T} - T_{t+\Delta})^+ \bigg| \mathcal{F}_t \right]$, we consider the expectation of a function of a linear combination of Gaussian variables. Specifically,
+\begin{align}
+\mathbb{E}\left[ (\bar{T} - T_{t+\Delta})^+ \bigg| \mathcal{F}_t \right] &= \mathbb{E}\left[ \left( \mathbf{b}_T^\intercal \mathbf{X} \right)^+ \bigg| \mathcal{F}_t \right] \\
+&= \mathbb{E}\left[ \left( \mathbf{b}_T^\intercal (\boldsymbol{\mu} + \Sigma^{1/2} \mathbf{Z}) \right)^+ \bigg| \mathcal{F}_t \right].
+\end{align}
+
+Let $Y = \mathbf{b}_T^\intercal (\boldsymbol{\mu} + \Sigma^{1/2} \mathbf{Z})$, which is a scalar normally distributed random variable with mean $\mu_Y = \mathbf{b}_T^\intercal \boldsymbol{\mu}$ and variance $\sigma_Y^2 = \mathbf{b}_T^\intercal \Sigma \mathbf{b}_T$.
+
+Using the standard result for the expected positive part of a normal variable, we have
+\begin{align}
+\mathbb{E}\left[ (\bar{T} - T_{t+\Delta})^+ \bigg| \mathcal{F}_t \right] &= \mathbb{E}\left[ Y^+ \bigg| \mathcal{F}_t \right] \\
+&= \mu_Y \Phi\left( \frac{\mu_Y}{\sigma_Y} \right) + \sigma_Y \phi\left( \frac{\mu_Y}{\sigma_Y} \right),
+\end{align}
+where $\Phi$ and $\phi$ are the cumulative distribution function and probability density function of the standard normal distribution, respectively.
+
+\textbf{Step 2: Compute the Derivative of the Expectation with Respect to $\lambda$ at $\lambda = 0$}
+
+We are interested in
+\begin{align}
+\left. \frac{\D}{\D \lambda} \mathbb{E}\left[ (S_{t+\Delta} - \bar{S})^+ (\bar{T} - T_{t+\Delta})^+ \bigg| \mathcal{F}_t \right] \right|_{\lambda = 0}.
+\end{align}
+
+Using the product rule and the fact that at $\lambda = 0$, $S_{t+\Delta}$ and $T_{t+\Delta}$ are independent, we have
+\begin{align}
+\left. \frac{\D}{\D \lambda} \mathbb{E}\left[ (S_{t+\Delta} - \bar{S})^+ (\bar{T} - T_{t+\Delta})^+ \bigg| \mathcal{F}_t \right] \right|_{\lambda = 0} &= \mathbb{E}\left[ \left. \frac{\D}{\D \lambda} (S_{t+\Delta} - \bar{S})^+ \right|_{\lambda = 0} \cdot (\bar{T} - T_{t+\Delta})^+ \bigg| \mathcal{F}_t \right].
+\end{align}
+
+\begin{remark}
+Since $T_{t+\Delta}$ does not depend on $\lambda$, its distribution remains the same when taking the derivative at $\lambda = 0$.
+\end{remark}
+
+We proceed to compute the derivative of $(S_{t+\Delta} - \bar{S})^+$ with respect to $\lambda$ at $\lambda = 0$.
+
+Recall that $S_{t+\Delta} = e^{X_{t+\Delta}}$, where $X_{t+\Delta} = \mathbf{b}_X^\intercal \mathbf{Z}_{t+\Delta}^X$.
+
+At $\lambda = 0$, the process $\mathbf{Z}_{t+\Delta}^X$ does not depend on $W_u^T$ (since $\lambda$ multiplies the term involving $W_u^T$). Therefore, the derivative is
+\begin{align}
+\left. \frac{\D}{\D \lambda} X_{t+\Delta} \right|_{\lambda = 0} &= \left. \frac{\D}{\D \lambda} \left( \mathbf{b}_X^\intercal \mathbf{Z}_{t+\Delta}^X \right) \right|_{\lambda = 0} \\
+&= \mathbf{b}_X^\intercal \left( \left. \frac{\D}{\D \lambda} \mathbf{Z}_{t+\Delta}^X \right|_{\lambda = 0} \right).
+\end{align}
+
+From the dynamics of $\mathbf{Z}_{t+\Delta}^X$, we have
+\begin{align}
+\mathbf{Z}_{t+\Delta}^X &= e^{\Delta A_X} \mathbf{Z}_t^X + \lambda \sigma_T e^{\Delta A_X} \int_t^{t+\Delta} e^{-(u - t) A_X} \mathbf{e}_p \, \D W_u^T + \text{terms independent of } \lambda.
+\end{align}
+
+Thus,
+\begin{align}
+\left. \frac{\D}{\D \lambda} \mathbf{Z}_{t+\Delta}^X \right|_{\lambda = 0} &= \sigma_T e^{\Delta A_X} \int_t^{t+\Delta} e^{-(u - t) A_X} \mathbf{e}_p \, \D W_u^T.
+\end{align}
+
+Therefore,
+\begin{align}
+\left. \frac{\D}{\D \lambda} X_{t+\Delta} \right|_{\lambda = 0} &= \mathbf{b}_X^\intercal \left( \sigma_T e^{\Delta A_X} \int_t^{t+\Delta} e^{-(u - t) A_X} \mathbf{e}_p \, \D W_u^T \right).
+\end{align}
+
+Using the chain rule for the positive part function, we have
+\begin{align}
+\left. \frac{\D}{\D \lambda} (S_{t+\Delta} - \bar{S})^+ \right|_{\lambda = 0} &= \mathbbm{1}_{S_{t+\Delta} > \bar{S}} e^{X_{t+\Delta}} \left. \frac{\D}{\D \lambda} X_{t+\Delta} \right|_{\lambda = 0}.
+\end{align}
+
+\textbf{Computing the Derivative of the Expected Payoff}
+
+Now, the derivative becomes
+\begin{align}
+\left. \frac{\D}{\D \lambda} \mathbb{E}\left[ (S_{t+\Delta} - \bar{S})^+ (\bar{T} - T_{t+\Delta})^+ \bigg| \mathcal{F}_t \right] \right|_{\lambda = 0} &= \mathbb{E}_{\lambda = 0} \left[ \mathbbm{1}_{S_{t+\Delta} > \bar{S}} e^{X_{t+\Delta}} \left. \frac{\D}{\D \lambda} X_{t+\Delta} \right|_{\lambda = 0} (\bar{T} - T_{t+\Delta})^+ \bigg| \mathcal{F}_t \right].
+\end{align}
+
+Since at $\lambda = 0$, $S_{t+\Delta}$ and $T_{t+\Delta}$ are independent, we can write
+\begin{align}
+&\mathbb{E}_{\lambda = 0} \left[ \mathbbm{1}_{S_{t+\Delta} > \bar{S}} e^{X_{t+\Delta}} \bigg| \mathcal{F}_t \right] = \mathbb{E}_{\lambda = 0} \left[ (S_{t+\Delta} - \bar{S})^+ \bigg| \mathcal{F}_t \right] + \bar{S} \mathbb{P}_{\lambda = 0} \left( S_{t+\Delta} > \bar{S} \bigg| \mathcal{F}_t \right).
+\end{align}
+
+Therefore,
+\begin{align}
+\left. \frac{\D}{\D \lambda} \mathbb{E}\left[ (S_{t+\Delta} - \bar{S})^+ (\bar{T} - T_{t+\Delta})^+ \bigg| \mathcal{F}_t \right] \right|_{\lambda = 0} &= \left( \mathbb{E}_{\lambda = 0} \left[ (S_{t+\Delta} - \bar{S})^+ \bigg| \mathcal{F}_t \right] + \bar{S} \mathbb{P}_{\lambda = 0} \left( S_{t+\Delta} > \bar{S} \bigg| \mathcal{F}_t \right) \right) \nonumber \\
+&\quad \times \mathbb{E}_{\lambda = 0} \left[ \left. \frac{\D}{\D \lambda} X_{t+\Delta} \right|_{\lambda = 0} (\bar{T} - T_{t+\Delta})^+ \bigg| \mathcal{F}_t \right].
+\end{align}
+
+\textbf{Computing the Second Expectation}
+
+We need to compute
+\begin{align}
+\mathbb{E}_{\lambda = 0} \left[ \left. \frac{\D}{\D \lambda} X_{t+\Delta} \right|_{\lambda = 0} (\bar{T} - T_{t+\Delta})^+ \bigg| \mathcal{F}_t \right] &= \sigma_T \mathbf{b}_X^\intercal e^{\Delta A_X} \int_t^{t+\Delta} e^{-(u - t) A_X} \mathbf{e}_p \, \D u \cdot \mathbb{E}_{\lambda = 0} \left[ (\bar{T} - T_{t+\Delta})^+ \bigg| \mathcal{F}_t \right],
+\end{align}
+but this is incorrect because the integral involves $\D W_u^T$, and $(\bar{T} - T_{t+\Delta})^+$ is a function of $W_u^T$.
+
+We need to consider the joint distribution of
+\[
+\left( \left. \frac{\D}{\D \lambda} X_{t+\Delta} \right|_{\lambda = 0}, \, \bar{T} - T_{t+\Delta} \right).
+\]
+
+\textbf{Using the Joint Normality}
+
+At $\lambda = 0$, both $\left. \frac{\D}{\D \lambda} X_{t+\Delta} \right|_{\lambda = 0}$ and $\bar{T} - T_{t+\Delta}$ are linear functions of the same Brownian motion $W_u^T$. Therefore, their joint distribution is bivariate normal.
+
+Let us define
+\begin{align}
+U &= \left. \frac{\D}{\D \lambda} X_{t+\Delta} \right|_{\lambda = 0} = \sigma_T \mathbf{b}_X^\intercal e^{\Delta A_X} \int_t^{t+\Delta} e^{-(u - t) A_X} \mathbf{e}_p \, \D W_u^T, \\
+V &= \bar{T} - T_{t+\Delta} = \mathbf{b}_T^\intercal \left( \bar{T} \mathbf{e}_1 - \mathbf{Z}_{t+\Delta}^T \right).
+\end{align}
+
+Both $U$ and $V$ are normally distributed with zero means and a certain covariance.
+
+We can compute
+\begin{align}
+\Cov(U, V) &= \sigma_T^2 \mathbf{b}_X^\intercal e^{\Delta A_X} \left( \int_t^{t+\Delta} e^{-(u - t) A_X} \mathbf{e}_p \mathbf{e}_p^\intercal e^{-(u - t) A_T^\intercal} \, \D u \right) e^{\Delta A_T^\intercal} \mathbf{b}_T.
+\end{align}
+
+Define the covariance matrix
+\[
+K_{XT}(\Delta) = \sigma_T^2 e^{\Delta A_X} \hat{\mathcal{D}}_{XT}^{-1} \left( e^{\hat{\mathcal{D}}_{XT} \Delta} - \mathbf{I} \right) \mathbf{e}_p \mathbf{e}_p^\intercal e^{\Delta A_T^\intercal}.
+\]
+
+Therefore,
+\[
+\Cov(U, V) = \mathbf{b}_X^\intercal K_{XT}(\Delta) \mathbf{b}_T.
+\]
+
+Similarly, compute the variances
+\[
+\Var(U) = \sigma_T^2 \mathbf{b}_X^\intercal K_X(\Delta) \mathbf{b}_X, \quad \Var(V) = \mathbf{b}_T^\intercal \Sigma \mathbf{b}_T.
+\]
+
+\textbf{Computing the Expectation}
+
+Since $U$ and $V$ are jointly normal, we can write
+\begin{align}
+\mathbb{E} \left[ U \cdot (V)^+ \bigg| \mathcal{F}_t \right] = \Cov(U, V) \cdot \phi\left( 0 \right) = \Cov(U, V) \cdot \frac{1}{\sqrt{2\pi} \sigma_V},
+\end{align}
+assuming that $V$ has zero mean (we may need to adjust if $V$ has non-zero mean).
+
+However, since $V$ has mean $\mu_V = \mathbf{b}_T^\intercal \boldsymbol{\mu}$, we need to consider the more general expression.
+
+The expected value is
+\begin{align}
+\mathbb{E} \left[ U \cdot (V)^+ \bigg| \mathcal{F}_t \right] &= \Cov(U, V) \cdot \phi\left( \frac{\mu_V}{\sigma_V} \right) + \mu_U \mathbb{E} \left[ (V)^+ \bigg| \mathcal{F}_t \right],
+\end{align}
+where $\mu_U = 0$.
+
+Since $\mu_U = 0$, the second term vanishes.
+
+Thus, the derivative of the expectation is
+\begin{align}
+\left. \frac{\D}{\D \lambda} \mathbb{E}\left[ (S_{t+\Delta} - \bar{S})^+ (\bar{T} - T_{t+\Delta})^+ \bigg| \mathcal{F}_t \right] \right|_{\lambda = 0} &= \left( \mathbb{E}_{\lambda = 0} \left[ (S_{t+\Delta} - \bar{S})^+ \bigg| \mathcal{F}_t \right] + \bar{S} \mathbb{P}_{\lambda = 0} \left( S_{t+\Delta} > \bar{S} \bigg| \mathcal{F}_t \right) \right) \nonumber \\
+&\quad \times \frac{\Cov(U, V)}{\sigma_V} \phi\left( \frac{\mu_V}{\sigma_V} \right).
+\end{align}
+
+\textbf{Final Expression}
+
+Putting everything together, we have
+\begin{align}
+\mathcal{Q}(t_1, t_2) &= \sum_{t = t_1}^{t_2} \Bigg\{ \mathbb{E}_{\lambda = 0} \left[ (S_t - \bar{S})^+ \bigg| \mathcal{F}_{t_0} \right] \cdot \mathbb{E} \left[ (\bar{T} - T_t)^+ \bigg| \mathcal{F}_{t_0} \right] \nonumber \\
+&\quad + \lambda \left( \mathbb{E}_{\lambda = 0} \left[ (S_t - \bar{S})^+ \bigg| \mathcal{F}_{t_0} \right] + \bar{S} \mathbb{P}_{\lambda = 0} \left( S_t > \bar{S} \bigg| \mathcal{F}_{t_0} \right) \right) \nonumber \\
+&\quad \times \frac{\Cov(U, V)}{\sigma_V} \phi\left( \frac{\mu_V}{\sigma_V} \right) \Bigg\} + o(\lambda).
+\end{align}
+\end{proof}
+
+
+
+Now, we aim to compute
+\begin{align}
+\mathbb{E}\left[ \mathbf{b}_X^\intercal \sigma_T \mathbf{X} \cdot (\bar{T} - T_{t+\Delta})^+ \Bigg| \mathcal{F}_t \right],
+\end{align}
+where $T_{t+\Delta} = \mathbf{b}_T^\intercal \mathbf{Z}_{t+\Delta}^T$.
+
+Using the law of total expectation and the properties of conditional expectations, we have
+\begin{align}
+&\mathbb{E}\left[ \mathbf{b}_X^\intercal \sigma_T \mathbf{X} \cdot (\bar{T} - T_{t+\Delta})^+ \Bigg| \mathcal{F}_t \right] \nonumber \\
+&= \mathbb{E}\left[ \mathbb{E}\left[ \mathbf{b}_X^\intercal \sigma_T \mathbf{X} \cdot (\bar{T} - T_{t+\Delta})^+ \Bigg| \mathbf{Y} \right] \Bigg| \mathcal{F}_t \right] \nonumber \\
+&= \mathbb{E}\left[ \mathbf{b}_X^\intercal \sigma_T \mathbb{E}\left[ \mathbf{X} \Big| \mathbf{Y} \right] \cdot (\bar{T} - T_{t+\Delta})^+ \Bigg| \mathcal{F}_t \right] \nonumber \\
+&= \mathbf{b}_X^\intercal \sigma_T K_{XT}(\Delta) K_T^{-1}(\Delta) \mathbb{E}\left[ \mathbf{Y} \cdot (\bar{T} - T_{t+\Delta})^+ \Bigg| \mathcal{F}_t \right].
+\end{align}
+
+Note that $\mathbf{Y}$ is related to $T_{t+\Delta}$ via
+\begin{align}
+T_{t+\Delta} &= \mathbf{b}_T^\intercal \left( e^{\Delta A_T} \mathbf{Z}_t^T + \sigma_T \mathbf{Y} \right).
+\end{align}
+
+Define
+\begin{align}
+\boldsymbol{\mu} &= \bar{T} - \mathbf{b}_T^\intercal e^{\Delta A_T} \mathbf{Z}_t^T, \\
+\Sigma_T &= \sigma_T^2 \mathbf{b}_T^\intercal e^{\Delta A_T} \hat{\mathcal{D}}_T^{-1} \left( e^{\hat{\mathcal{D}}_T \Delta} - \mathbf{I} \right) \mathbf{e}_p \mathbf{e}_p^\intercal e^{\Delta A_T^\intercal} \mathbf{b}_T.
+\end{align}
+
+Then,
+\begin{align}
+\bar{T} - T_{t+\Delta} &= \boldsymbol{\mu} - \sigma_T \mathbf{b}_T^\intercal \mathbf{Y}.
+\end{align}
+
+Let $V = \bar{T} - T_{t+\Delta} = \boldsymbol{\mu} - \sigma_T \mathbf{b}_T^\intercal \mathbf{Y}$ and $U = \mathbf{b}_Y^\intercal \mathbf{Y}$, where
+\begin{align}
+\mathbf{b}_Y &= \sigma_T K_T^{-1}(\Delta)^\intercal K_{XT}(\Delta)^\intercal \mathbf{b}_X.
+\end{align}
+
+Our expectation becomes
+\begin{align}
+\mathbb{E}\left[ U \cdot V^+ \Big| \mathcal{F}_t \right].
+\end{align}
+
+Since $U$ and $V$ are linear functions of the same Gaussian vector $\mathbf{Y}$, they are jointly normally distributed. We can compute their covariance and variances:
+\begin{align}
+\operatorname{Var}(U) &= \mathbf{b}_Y^\intercal K_T(\Delta) \mathbf{b}_Y, \\
+\operatorname{Var}(V) &= \sigma_T^2 \mathbf{b}_T^\intercal K_T(\Delta) \mathbf{b}_T, \\
+\operatorname{Cov}(U, V) &= -\sigma_T \mathbf{b}_Y^\intercal K_T(\Delta) \mathbf{b}_T.
+\end{align}
+
+The negative sign in the covariance arises from the minus sign in the expression for $V$.
+
+We can standardize $U$ and $V$:
+\begin{align}
+\tilde{U} &= \frac{U}{\sigma_U}, \quad \sigma_U = \sqrt{\operatorname{Var}(U)}, \\
+\tilde{V} &= \frac{V - \mu_V}{\sigma_V}, \quad \mu_V = \boldsymbol{\mu}, \quad \sigma_V = \sqrt{\operatorname{Var}(V)}.
+\end{align}
+
+The correlation coefficient is
+\begin{align}
+\rho = \frac{\operatorname{Cov}(U, V)}{\sigma_U \sigma_V}.
+\end{align}
+
+Therefore, the expectation can be expressed as
+\begin{align}
+\mathbb{E}\left[ U \cdot V^+ \right] = \sigma_U \sigma_V \left( \rho \phi\left( \frac{\mu_V}{\sigma_V} \right) + \left( \frac{\mu_V}{\sigma_V} \rho^2 + \rho \right) \Phi\left( -\frac{\mu_V}{\sigma_V} \right) \right),
+\end{align}
+where $\phi$ and $\Phi$ are the standard normal PDF and CDF, respectively.
+
+Given that $\mu_U = \mathbb{E}[U] = 0$, the expression simplifies, and we obtain
+\begin{align}
+\mathbb{E}\left[ U \cdot V^+ \right] = -\operatorname{Cov}(U, V) \phi\left( \frac{\mu_V}{\sigma_V} \right).
+\end{align}
+
+Substituting back, we have
+\begin{align}
+\mathbb{E}\left[ \mathbf{b}_X^\intercal \sigma_T \mathbf{X} \cdot (\bar{T} - T_{t+\Delta})^+ \Bigg| \mathcal{F}_t \right] = -\operatorname{Cov}(U, V) \phi\left( \frac{\mu_V}{\sigma_V} \right).
+\end{align}
+
+Therefore, the final expression is
+\begin{align}
+\mathbb{E}\left[ \mathbf{b}_X^\intercal \sigma_T \mathbf{X} \cdot (\bar{T} - T_{t+\Delta})^+ \Bigg| \mathcal{F}_t \right] = \sigma_T^2 \mathbf{b}_X^\intercal K_{XT}(\Delta) K_T^{-1}(\Delta) \mathbf{b}_T \phi\left( \frac{\boldsymbol{\mu}}{\sigma_V} \right).
+\end{align}
+
+
+\clearpage{}
+
+\section{Hedging of Energy Quanto Options in the coupled CARMA Model}
+
+Effective hedging requires calculating the sensitivities of the option price to various risk factors, commonly known as the Greeks.
+
+\subsubsection{Delta Hedging}
+
+The Delta of the option with respect to the electricity price $X_t$ is given by:
+\begin{align}
+    \Delta_X = \frac{\partial V_0}{\partial X_0}.
+\end{align}
+
+Similarly, the Delta with respect to the temperature $T_t$ is:
+\begin{align}
+    \Delta_T = \frac{\partial V_0}{\partial T_0}.
+\end{align}
+
+These can be computed numerically using finite difference methods or by differentiating the pricing formula if analytical expressions are available.
+
+\subsubsection{Gamma and Vega}
+
+Higher-order Greeks such as Gamma and Vega provide insights into the curvature of the option price with respect to underlying variables and volatility, respectively:
+\begin{align}
+    \Gamma_X = \frac{\partial^2 V_0}{\partial X_0^2}, \quad \text{Vega} = \frac{\partial V_0}{\partial \sigma_X}.
+\end{align}
+
+\subsubsection{Hedging Portfolio Construction}
+
+By combining positions in the underlying assets and possibly other derivatives,
+we can construct a hedging portfolio that minimizes the risk associated with
+movements in $X_t$ and $T_t$. 
+
+
+
+
+\appendix{}
+
+\section{Linear State-Space Models and CARMA Processes}\label{sec:carma-processes}
+
+In this section, we consider linear state-space models where the state and output processes take values in $\mathbb{R}$. Let $p \in \mathbb{N}$, and let $(\Omega, \mathcal{F}, \mathbb{F}, \mathbb{P})$ be a filtered probability space satisfying the usual conditions. We assume that this space is rich enough to support a real-valued two-sided L\'evy process $L = (L_t)_{t \in \mathbb{R}}$ with finite moments as needed.
+
+\begin{definition}\label{def:state-space-model}
+Let the tuple $(A, B, C, L)$ consist of:
+
+\begin{itemize}
+    \item A \emph{state-transition matrix} $A \in \mathbb{R}^{p \times p}$, defined by
+    \[
+    A = \begin{pmatrix}
+    -a_1 & -a_2 & \cdots & -a_{p-1} & -a_p \\
+    1 & 0 & \cdots & 0 & 0 \\
+    0 & 1 & \cdots & 0 & 0 \\
+    \vdots & \vdots & \ddots & \vdots & \vdots \\
+    0 & 0 & \cdots & 1 & 0
+    \end{pmatrix},
+    \]
+    where $a_i \in \mathbb{R}$ are scalar coefficients.
+
+    \item An \emph{input vector} $B \in \mathbb{R}^{p}$, defined by
+    \[
+    B = \begin{pmatrix}
+    b_0 \\
+    0 \\
+    \vdots \\
+    0
+    \end{pmatrix},
+    \]
+    where $b_0 \in \mathbb{R}$ is a scalar coefficient.
+
+    \item An \emph{output vector} $C \in \mathbb{R}^{p}$, defined by
+    \[
+    C = \begin{pmatrix}
+    c_1 \\
+    c_2 \\
+    \vdots \\
+    c_p
+    \end{pmatrix},
+    \]
+    where $c_i \in \mathbb{R}$ are scalar coefficients.
+
+    \item A real-valued two-sided L\'evy process $L = (L_t)_{t \in \mathbb{R}}$.
+\end{itemize}
+
+A \emph{continuous-time linear state-space model} associated with the parameter set $(A, B, C, L)$ consists of:
+
+\begin{itemize}
+    \item A \emph{state equation}:
+    \begin{align}\label{eq:state-space}
+    \D \mathbf{Z}_t = A \mathbf{Z}_t \, \D t + B \, \D L_t, \quad t \in \mathbb{R},
+    \end{align}
+    where $\mathbf{Z}_t \in \mathbb{R}^{p}$ is the state vector.
+
+    \item An \emph{output equation}:
+    \begin{align}\label{eq:output}
+    X_t = C^\top \mathbf{Z}_t, \quad t \in \mathbb{R},
+    \end{align}
+    where $X_t \in \mathbb{R}$ is the output process.
+\end{itemize}
+
+We refer to $(\mathbf{Z}_t)_{t \in \mathbb{R}}$ as the \emph{state process} and $(X_t)_{t \in \mathbb{R}}$ as the \emph{output process} of the continuous-time linear state-space model associated with $(A, B, C, L)$.
+\end{definition}
+
+\begin{remark}
+In this setup, the matrices $A$, $B$, and $C$ are defined to ensure dimensional consistency. The coefficients $a_i$, $b_0$, and $c_i$ are real numbers that determine the dynamics of the system. The state vector $\mathbf{Z}_t$ is an element of $\mathbb{R}^{p}$, representing the internal state of the system at time $t$.
+\end{remark}
+
+The state equation \eqref{eq:state-space} can be written component-wise as
+\begin{align*}
+\D Z_t^{(1)} &= \left( - a_1 Z_t^{(1)} - a_2 Z_t^{(2)} - \cdots - a_p Z_t^{(p)} \right) \D t + b_0 \, \D L_t, \\
+\D Z_t^{(i)} &= Z_t^{(i-1)} \D t, \quad \text{for } i = 2, \dots, p.
+\end{align*}
+
+The solution to the state equation is given by the variation-of-constants formula:
+\begin{align}\label{eq:state-solution}
+\mathbf{Z}_t = e^{A (t - s)} \mathbf{Z}_s + \int_s^t e^{A (t - u)} B \, \D L_u, \quad s < t \in \mathbb{R}.
+\end{align}
+
+\begin{remark}
+The matrix exponential $e^{A t}$ is defined via the usual exponential series expansion for matrices. Since $A$ is a finite-dimensional matrix, this exponential is well-defined and can be computed using standard methods.
+\end{remark}
+
+\begin{definition}\label{def:stable-processes}
+We call a continuous-time state-space model associated with $(A, B, C, L)$ \emph{stable} if all eigenvalues of $A$ have negative real parts. This ensures that the homogeneous solution decays to zero over time. If, in addition, $L$ has finite logarithmic moments (i.e., $\mathbb{E}\left[ \log | L_1 | \right] < \infty$), then there exists a unique stationary solution to \eqref{eq:state-space} given by
+\begin{align}\label{eq:stationary-state}
+\mathbf{Z}_t = \int_{-\infty}^t e^{A (t - s)} B \, \D L_s, \quad t \in \mathbb{R}.
+\end{align}
+In this case, we refer to $(\mathbf{Z}_t)_{t \in \mathbb{R}}$ as the \emph{stable state process} and $(X_t)_{t \in \mathbb{R}}$ as the \emph{stable output process}. If $A$ has eigenvalues with non-negative real parts, we call the state-space model \emph{unstable}, and solutions may not converge to a stationary process without additional conditions.
+\end{definition}
+
+\begin{remark}
+The condition on the eigenvalues of $A$ ensures exponential stability of the deterministic part of the state equation. The existence of a stationary solution in the stable case follows from standard results in stochastic differential equations driven by L\'evy processes (see \cite{SY83, CM87}).
+\end{remark}
+
+\begin{remark}
+When $p = 1$, our definition coincides with the standard continuous-time state-space models for scalar Ornstein-Uhlenbeck processes. In this case, the state equation simplifies to
+\[
+\D Z_t = - a_1 Z_t \, \D t + b_0 \, \D L_t,
+\]
+and the output process is simply $X_t = c_1 Z_t$.
+\end{remark}
+
+\subsection{CARMA Processes}
+
+Continuous-time autoregressive moving average (CARMA) processes extend the concept of ARMA processes to continuous time. They can be represented using the state-space framework described above.
+
+A CARMA process of order $(p, q)$, with $p > q$, is defined as the output process $\{X_t\}_{t \in \mathbb{R}}$ of a state-space model where the state equation corresponds to a system whose characteristic polynomial matches that of the desired CARMA process.
+
+The CARMA process satisfies a higher-order stochastic differential equation:
+\begin{align}\label{eq:CARMA-SDE}
+D^{p} X_t + a_1 D^{p-1} X_t + \cdots + a_p X_t = b_0 D^{q} L_t + b_1 D^{q-1} L_t + \cdots + b_q L_t,
+\end{align}
+where $D = \dfrac{\D}{\D t}$ denotes differentiation, $a_i$ and $b_j$ are real coefficients, and $L_t$ is a real-valued L\'evy process.
+
+The correspondence between the state-space representation and the higher-order SDE allows us to utilize the powerful machinery of state-space models to analyze and simulate CARMA processes.
+
+\begin{remark}
+The use of higher-order CARMA processes enables modeling of time series with complex dependencies and autocorrelation structures, which are common in applications such as finance and engineering.
+\end{remark}
+
+Given a state process $\{\mathbf{Z}_t\}_{t \in \mathbb{R}}$, we now shift our focus to the output process $\{X_t\}_{t \in \mathbb{R}}$ defined by:
+\begin{align}\label{eq:output-process}
+X_t = C^\top \mathbf{Z}_t, \quad t \in \mathbb{R}.
+\end{align}
+
+In the next proposition, we summarize some well-known and fundamental properties of the output process $\{X_t\}_{t \in \mathbb{R}}$.
+
+\begin{proposition}\label{prop:output-process-properties}
+Let $(A, B, C, L)$ be as in Definition~\ref{def:state-space-model}, and let $\psi_L$ be the characteristic exponent of the L\'evy process $L$. Then, the output process $\{X_t\}_{t \in \mathbb{R}}$ defined by equation~\eqref{eq:output-process} satisfies the following properties:
+
+\begin{enumerate}
+    \item \textbf{Variation of Constants Formula}: For any $s < t \in \mathbb{R}$,
+    \begin{align}\label{eq:X-variation-of-constants}
+    X_t = C^\top e^{A (t - s)} \mathbf{Z}_s + \int_s^t C^\top e^{A (t - u)} B \, \D L_u.
+    \end{align}
+    
+    \item \textbf{Conditional Characteristic Function}: For every $\theta \in \mathbb{R}$ and $\mathcal{F}_s$, the conditional characteristic function of $X_t$ given $\mathcal{F}_s$ is
+    \begin{align}\label{eq:X-characteristic-function}
+    \mathbb{E}\left[ e^{\I \theta X_t} \bigg| \mathcal{F}_s \right] = \exp\left( \I \theta C^\top e^{A (t - s)} \mathbf{Z}_s + \int_s^t \psi_L\left( \theta C^\top e^{A (t - u)} B \right) \, \D u \right).
+    \end{align}
+    
+    \item \textbf{Conditional Mean}: If $L$ is integrable (i.e., $\mathbb{E}[ |L_1| ] < \infty$), then the conditional mean of $X_t$ is finite and given by
+    \begin{align}\label{eq:X-mean}
+    \mathbb{E}[ X_t \big| \mathcal{F}_s ] = C^\top e^{A (t - s)} \mathbf{Z}_s + \int_s^t C^\top e^{A (t - u)} B \, \mu_L \, \D u,
+    \end{align}
+    where $\mu_L = \mathbb{E}[ L_1 ]$ is the mean of the L\'evy process $L$.
+    
+    \item \textbf{Stationary Case}: If $L$ has finite logarithmic moments (i.e., $\mathbb{E}[ \log | L_1 | ] < \infty$), and the output process $\{X_t\}_{t \in \mathbb{R}}$ is stable (i.e., all eigenvalues of $A$ have negative real parts), then $\{X_t\}_{t \in \mathbb{R}}$ is stationary and given by
+    \begin{align}\label{eq:X-stationary}
+    X_t = \int_{-\infty}^t C^\top e^{A (t - u)} B \, \D L_u, \quad t \in \mathbb{R}.
+    \end{align}
+    
+    Moreover, if $L$ is integrable, then the mean of $X_t$ is constant (independent of $t$) and given by
+    \begin{align}\label{eq:X-mean-stationary}
+    \mathbb{E}[ X_t ] = - C^\top A^{-1} B \, \mu_L, \quad t \in \mathbb{R}.
+    \end{align}
+\end{enumerate}
+\end{proposition}
+
+\begin{proof}
+We provide brief explanations for each part.
+
+\begin{enumerate}
+    \item \textbf{Variation of Constants}: The expression for $X_t$ follows directly from substituting the solution of the state equation for $\mathbf{Z}_t$ into $X_t = C^\top \mathbf{Z}_t$, and applying the variation-of-constants formula for $\mathbf{Z}_t$:
+    \begin{align*}
+    \mathbf{Z}_t = e^{A (t - s)} \mathbf{Z}_s + \int_s^t e^{A (t - u)} B \, \D L_u.
+    \end{align*}
+    Thus,
+    \begin{align*}
+    X_t &= C^\top \mathbf{Z}_t = C^\top e^{A (t - s)} \mathbf{Z}_s + \int_s^t C^\top e^{A (t - u)} B \, \D L_u.
+    \end{align*}
+    
+    \item \textbf{Conditional Characteristic Function}: Using the independence of L\'evy increments and linearity, we have
+    \begin{align*}
+    \mathbb{E}\left[ e^{\I \theta X_t} \bigg| \mathcal{F}_s \right] &= e^{ \I \theta C^\top e^{A (t - s)} \mathbf{Z}_s } \cdot \mathbb{E}\left[ e^{\I \theta \int_s^t C^\top e^{A (t - u)} B \, \D L_u } \bigg| \mathcal{F}_s \right] \\
+    &= e^{ \I \theta C^\top e^{A (t - s)} \mathbf{Z}_s } \cdot \exp\left( \int_s^t \psi_L\left( \theta C^\top e^{A (t - u)} B \right) \, \D u \right),
+    \end{align*}
+    where we have utilized the fact that the characteristic function of a stochastic integral with respect to $L$ involves the L\'evy exponent $\psi_L$ applied to the integrand.
+    
+    \item \textbf{Conditional Mean}: If $L$ is integrable, we compute the conditional mean by taking expectations inside the integral:
+    \begin{align*}
+    \mathbb{E}[ X_t \big| \mathcal{F}_s ] &= C^\top e^{A (t - s)} \mathbf{Z}_s + \int_s^t C^\top e^{A (t - u)} B \, \mathbb{E}[ \D L_u ] \\
+    &= C^\top e^{A (t - s)} \mathbf{Z}_s + \int_s^t C^\top e^{A (t - u)} B \, \mu_L \, \D u.
+    \end{align*}
+    
+    \item \textbf{Stationary Case}: For a stable system, the solution converges to the stationary solution:
+    \begin{align*}
+    X_t = \int_{-\infty}^t C^\top e^{A (t - u)} B \, \D L_u.
+    \end{align*}
+    The mean of $X_t$ is then
+    \begin{align*}
+    \mathbb{E}[ X_t ] &= \int_{-\infty}^t C^\top e^{A (t - u)} B \, \mu_L \, \D u \\
+    &= C^\top \left( \int_0^\infty e^{A v} \, \D v \right) B \, \mu_L \\
+    &= - C^\top A^{-1} B \, \mu_L,
+    \end{align*}
+    since the integral of $e^{A v}$ from $0$ to $\infty$ equals $-A^{-1}$ when
+    $A$ is stable. 
+\end{enumerate}
+\end{proof}
+
+
+
+\section{Proof of
+  Theorem~\ref{thm:Quanto-CARMA-Pricer}}\label{sec:proof-Quanto-CARMA-Pricer}
+
+\begin{lemma}\label{lem:normal-distribution-positive}
+Let $X$ be a normally distributed random variable with mean $\mu$ and standard deviation $\sigma$. Then, the expected positive part of $X$ is given by
+\begin{align}
+    \mathbb{E}[ X^+ ] = \mu \Phi\left( \frac{\mu}{\sigma} \right) + \sigma \phi\left( \frac{\mu}{\sigma} \right),
+\end{align}
+where $\Phi$ is the cumulative distribution function and $\phi$ is the probability density function of the standard normal distribution.
+\end{lemma}
+
+\begin{proof}
+The expected positive part is
+\begin{align}
+    \mathbb{E}[ X^+ ] &= \int_0^\infty x \cdot \frac{1}{\sigma \sqrt{2\pi}} \exp\left( -\frac{(x - \mu)^2}{2\sigma^2} \right) \, \D x \\
+    &= \mu \Phi\left( \frac{\mu}{\sigma} \right) + \sigma \phi\left( \frac{\mu}{\sigma} \right).
+\end{align}
+\end{proof}
+
+\begin{lemma}
+Let $X$ and $Y$ be jointly normally distributed with means $\mu_X$, $\mu_Y$, standard deviations $\sigma_X$, $\sigma_Y$, and correlation coefficient $\rho$. Then, the covariance of the positive parts is given by
+\begin{align}
+    \Cov\left( X^+, Y^+ \right) = \sigma_X \sigma_Y \rho \cdot \Theta,
+\end{align}
+where $\Theta$ is a function depending on $\mu_X$, $\mu_Y$, $\sigma_X$, $\sigma_Y$, and $\rho$.
+\end{lemma}
+
+\begin{proof}
+The covariance can be computed using the properties of the bivariate normal distribution and involves evaluating integrals of the form
+\[
+\int_{0}^\infty \int_{0}^\infty (x - \mu_X)(y - \mu_Y) f_{X,Y}(x, y) \, \D x \, \D y,
+\]
+where $f_{X,Y}(x, y)$ is the joint probability density function of $X$ and $Y$.
+\end{proof}
+
+\begin{remark}
+The function $\Theta$ can be expressed in terms of the cumulative distribution function of the bivariate normal distribution, which can be evaluated numerically.
+\end{remark}
+
+
+\begin{proposition}\label{prop:joint-distribution-integrals}
+The joint distribution of the random vectors 
+\[
+\left( \int_t^{t+\Delta} e^{(t+\Delta - u) A_X} \mathbf{e}_p \, \D W_u^T, \, \int_t^{t+\Delta} e^{(t+\Delta - u) A_T} \mathbf{e}_p \, \D W_u^T \right)
+\]
+is a zero-mean multivariate normal distribution with covariance matrix
+\[
+\mathbf{K}(\Delta) = \begin{bmatrix}
+K_X(\Delta) & K_{XT}(\Delta) \\
+K_{XT}^\intercal(\Delta) & K_T(\Delta)
+\end{bmatrix},
+\]
+where
+\begin{align}
+K_X(\Delta) &= \sigma_T^2 e^{\Delta A_X} \hat{\mathcal{D}}_X^{-1} \left( e^{\hat{\mathcal{D}}_X \Delta} - \mathbf{I} \right) \mathbf{e}_p \mathbf{e}_p^\intercal e^{\Delta A_X^\intercal}, \\
+K_T(\Delta) &= \sigma_T^2 e^{\Delta A_T} \hat{\mathcal{D}}_T^{-1} \left( e^{\hat{\mathcal{D}}_T \Delta} - \mathbf{I} \right) \mathbf{e}_p \mathbf{e}_p^\intercal e^{\Delta A_T^\intercal}, \\
+K_{XT}(\Delta) &= \sigma_T^2 e^{\Delta A_X} \hat{\mathcal{D}}_{XT}^{-1} \left( e^{\hat{\mathcal{D}}_{XT} \Delta} - \mathbf{I} \right) \mathbf{e}_p \mathbf{e}_p^\intercal e^{\Delta A_T^\intercal}.
+\end{align}
+
+The linear operators $\hat{\mathcal{D}}_X$, $\hat{\mathcal{D}}_T$, and $\hat{\mathcal{D}}_{XT}$ are defined on $\mathbb{M}_p$, the space of $p \times p$ real matrices, by
+\begin{align}
+\hat{\mathcal{D}}_X(M) &= A_X M + M A_X^\intercal, \\
+\hat{\mathcal{D}}_T(M) &= A_T M + M A_T^\intercal, \\
+\hat{\mathcal{D}}_{XT}(M) &= A_X M + M A_T^\intercal.
+\end{align}
+\end{proposition}
+
+\begin{proof}
+The covariance matrices are derived using Itô's isometry and properties of matrix exponentials. The integrals involve the same Brownian motion $W_u^T$, leading to non-zero covariance between the two integrals.
+\end{proof}
+
+\begin{corollary}\label{cor:conditional-distribution}
+Conditionally on $\displaystyle \mathbf{Y} = \int_t^{t+\Delta} e^{(t+\Delta - u)
+  A_T} \textbf{e}_p \, \D W_u^T$, the random vector $\displaystyle \mathbf{X} =
+\int_t^{t+\Delta} e^{(t+\Delta - u) A_X} \textbf{e}_p \, \D W_u^T$ follows a
+Gaussian distribution with mean  
+\begin{align}
+\mathbb{E}\left[ \mathbf{X} \Big| \mathbf{Y} \right] &= K_{XT}(\Delta) K_T^{-1}(\Delta) \mathbf{Y},
+\end{align}
+and covariance matrix
+\begin{align}
+\operatorname{Var}\left( \mathbf{X} \Big| \mathbf{Y} \right) &= K_X(\Delta) - K_{XT}(\Delta) K_T^{-1}(\Delta) K_{TX}(\Delta),
+\end{align}
+where
+\begin{align*}
+K_X(\Delta) &= \sigma_T^2 e^{\Delta A_X} \hat{\mathcal{D}}_X^{-1} \left( e^{\hat{\mathcal{D}}_X \Delta} - \mathbf{I} \right) \mathbf{e}_p \mathbf{e}_p^\intercal e^{\Delta A_X^\intercal}, \\
+K_T(\Delta) &= \sigma_T^2 e^{\Delta A_T} \hat{\mathcal{D}}_T^{-1} \left( e^{\hat{\mathcal{D}}_T \Delta} - \mathbf{I} \right) \mathbf{e}_p \mathbf{e}_p^\intercal e^{\Delta A_T^\intercal}, \\
+K_{XT}(\Delta) &= \sigma_T^2 e^{\Delta A_X} \hat{\mathcal{D}}_{XT}^{-1} \left( e^{\hat{\mathcal{D}}_{XT} \Delta} - \mathbf{I} \right) \mathbf{e}_p \mathbf{e}_p^\intercal e^{\Delta A_T^\intercal}.
+\end{align*}
+\end{corollary}
+
+\begin{proof}
+Since $\mathbf{X}$ and $\mathbf{Y}$ are jointly Gaussian with zero mean, their
+conditional distribution is Gaussian with the given mean and covariance, derived
+from the standard formulas for conditioning in multivariate normal
+distributions. 
+\end{proof}
+
+\begin{lemma}
+Let $X$ and $Y$ be jointly normally distributed random variables with $\mathbb{E}[X] = 0$, $\mathbb{E}[Y] = \mu_Y$, variances $\sigma_X^2$, $\sigma_Y^2$, and correlation coefficient $\rho$. Then,
+\begin{align}
+\mathbb{E}[ X \cdot Y^+ ] = -\sigma_X \sigma_Y \rho \phi\left( \frac{\mu_Y}{\sigma_Y} \right).
+\end{align}
+\end{lemma}
+
+\begin{proof}
+Since $X$ and $Y$ are jointly normal, the expectation $\mathbb{E}[ X \cdot Y^+ ]$ can be computed using the properties of the bivariate normal distribution. The derivation involves integrating over the joint density and leveraging the symmetry and properties of the normal distribution.
+\end{proof}
+
+
+\begin{lemma}
+Let \(X\) and \(Y\) be jointly normally distributed random variables with \(\mathbb{E}[X] = 0\), \(\mathbb{E}[Y] = \mu_Y\), variances \(\sigma_X^2\), \(\sigma_Y^2\), and correlation coefficient \(\rho\). Then,
+\begin{align*}
+\mathbb{E}[ X Y^+ ] = \sigma_X \sigma_Y \rho \phi\left( \frac{\mu_Y}{\sigma_Y} \right) + \mu_Y \mathbb{E}[ X \Phi\left( \frac{X \rho - \mu_Y}{\sigma_Y \sqrt{1 - \rho^2}} \right) ],
+\end{align*}
+where \(\phi\) is the standard normal probability density function and \(\Phi\) is the cumulative distribution function.  
+\end{lemma}
+
+We aim to compute the integral
+\begin{align*}
+    \mathbf{I}_1 = \int_{\mathbf{x} \geq -A^{-1}\mathbf{b}} A \mathbf{x} \mathbf{e}_1' A \mathbf{x} \frac{1}{\sqrt{(2\pi)^p}} \exp\left( -\frac{1}{2} \mathbf{x}^\intercal \mathbf{x} \right) \, \D \mathbf{x}.
+\end{align*}
+
+However, directly computing this integral is complex due to the multidimensional integration over a truncated domain. Instead, we can simplify the problem by leveraging properties of multivariate normal distributions and known results.
+
+Let us consider the random vector
+\[
+\mathbf{Y} = A \mathbf{X} + \mathbf{b},
+\]
+where \(\mathbf{X} \sim \mathcal{N}(\mathbf{0}, \mathbf{I})\). Then, \(\mathbf{Y} \sim \mathcal{N}(\mathbf{b}, AA^\intercal)\).
+
+Our goal is to compute
+\[
+\mathbb{E}\left[ (A \mathbf{X}) \mathbf{e}_1' \mathbf{Y}^+ \right] = \mathbb{E}\left[ (\mathbf{Y} - \mathbf{b}) \mathbf{e}_1' \mathbf{Y}^+ \right],
+\]
+where \(\mathbf{Y}^+\) denotes the vector obtained by taking the positive part of each component of \(\mathbf{Y}\).
+
+We focus on computing each component of the vector \(\mathbb{E}\left[ (\mathbf{Y} - \mathbf{b}) \mathbf{e}_1' \mathbf{Y}^+ \right]\). Specifically, for each \(i = 1, \dots, p\), we need to compute
+\[
+\mathbb{E}\left[ (Y_i - b_i) Y_1^+ \right].
+\]
+
+Since \(Y_i - b_i\) and \(Y_1\) are jointly normally distributed with mean zero and covariance \((AA^\intercal)_{i1}\), we can use properties of the bivariate normal distribution.
+
+However, since \(\mathbb{E}[X] = 0\) and \(X\) and \(Y\) are jointly normal, the
+term involving \(\mathbb{E}[ X \Phi(\cdot) ]\) simplifies to zero due to
+symmetry. Therefore, we have 
+\begin{align*}
+\mathbb{E}[ X Y^+ ] = \sigma_{XY} \phi\left( \frac{\mu_Y}{\sigma_Y} \right),
+\end{align*}
+where \(\sigma_{XY} = \sigma_X \sigma_Y \rho\).
+
+Applying this to our case:
+\begin{itemize}
+    \item \(X = Y_i - b_i\), which has mean zero and variance \((AA^\intercal)_{ii}\).
+    \item \(Y = Y_1\), with mean \(\mu_{Y_1} = b_1\) and variance \((AA^\intercal)_{11}\).
+    \item The covariance between \(X\) and \(Y\) is \(\sigma_{XY} = \operatorname{Cov}(Y_i - b_i, Y_1) = (AA^\intercal)_{i1}\).
+\end{itemize}
+
+Therefore,
+\begin{align*}
+\mathbb{E}\left[ (Y_i - b_i) Y_1^+ \right] = (AA^\intercal)_{i1} \phi\left( \frac{b_1}{\sqrt{(AA^\intercal)_{11}}} \right).
+\end{align*}
+
+Collecting the components, we obtain
+\begin{align*}
+\mathbb{E}\left[ (A \mathbf{X}) \mathbf{e}_1' \mathbf{Y}^+ \right] = A \mathbf{e} \cdot (AA^\intercal)_{1} \phi\left( \frac{b_1}{\sqrt{(AA^\intercal)_{11}}} \right),
+\end{align*}
+where \((AA^\intercal)_{1}\) denotes the first column of \(AA^\intercal\).
+
+\textbf{Final Expression.}
+
+Since \((AA^\intercal)_{1}\) is \(A\) times the first column of \(A^\intercal\), and \(A^\intercal\) has columns \((a_{1}, \dots, a_{p})\), where \(a_{i}\) are the rows of \(A\), we have
+\begin{align*}
+(AA^\intercal)_{1} = A A^\intercal \mathbf{e}_1 = A a_{1}.
+\end{align*}
+
+Therefore,
+\begin{align*}
+\mathbb{E}\left[ A \mathbf{X} \mathbf{e}_1' \mathbf{Y}^+ \right] = A \mathbf{e} \cdot A a_{1} \phi\left( \frac{b_1}{\sqrt{(AA^\intercal)_{11}}} \right).
+\end{align*}
+
+Simplifying further, since \(A a_{1}\) is a vector, and we are taking the dot product with \(A \mathbf{e}\), the expression becomes
+\begin{align*}
+\mathbb{E}\left[ A \mathbf{X} \mathbf{e}_1' \mathbf{Y}^+ \right] = \left( A \mathbf{e} \right) \left( A a_{1} \right)^\intercal \phi\left( \frac{b_1}{\sqrt{(AA^\intercal)_{11}}} \right).
+\end{align*}
+
+This expression can be further simplified depending on the specific structure of
+\(A\). 
+
+
+
+\newpage
+\bibliographystyle{acm}
+\bibliography{literature}
+
+\end{document}

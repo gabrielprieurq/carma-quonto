@@ -1,0 +1,1350 @@
+\documentclass[10pt,reqno]{amsart}
+\usepackage[a4paper, margin=2.5cm]{geometry}
+\usepackage{amssymb,amsmath,amsthm,mathtools,bbm}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{enumitem}
+\usepackage{hyperref}
+\usepackage[capitalise]{cleveref}
+\usepackage{natbib}
+\usepackage{booktabs}
+\usepackage[demo]{graphicx}
+\usepackage{float}
+\usepackage{siunitx}
+
+% Path to figures produced by the Python notebooks
+\graphicspath{{Code/notebooks/figures/}}
+
+% Placeholder command: marks values to be updated from notebook output
+\newcommand{\tbd}[1]{\textup{#1}}
+
+\hypersetup{
+  colorlinks=true,
+  linkcolor=blue,
+  citecolor=blue,
+  urlcolor=blue,
+  pdftitle={Pricing and Hedging of Renewable Energy Quanto Options in CARMA Models},
+  pdfauthor={Vincent Gachon and Sven Karbach}
+}
+\setcitestyle{numbers,comma,open={[},close={]}}
+
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{remark}[theorem]{Remark}
+\newtheorem{assumption}[theorem]{Assumption}
+
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\C}{\mathbb{C}}
+\newcommand{\E}{\mathbb{E}}
+\newcommand{\Q}{\mathbb{Q}}
+\newcommand{\PP}{\mathbb{P}}
+\newcommand{\F}{\mathcal{F}}
+\newcommand{\1}{\mathbbm{1}}
+\newcommand{\dd}{\mathrm{d}}
+\newcommand{\ii}{\mathrm{i}}
+\newcommand{\ee}{\mathrm{e}}
+\DeclareMathOperator{\Cov}{Cov}
+\DeclareMathOperator{\Var}{Var}
+\DeclareMathOperator{\diag}{diag}
+\DeclareMathOperator{\Tr}{Tr}
+
+\title[Pricing and Hedging of Quantos in CARMA Models]{Pricing and Hedging of Renewable Energy Quanto Options in CARMA Models}
+
+\author{Vincent Gachon}
+
+\author{Gabriel Prieur}
+
+\author{Sven Karbach}
+\address{Informatics Institute and Korteweg-de Vries Institute for Mathematics, University of Amsterdam, Science Park 105--107, 1098 XG Amsterdam, Netherlands}
+\email{sven@karbach.org}
+
+\keywords{quanto option, CARMA process, multivariate CARMA, incomplete market, variance-optimal hedging, energy derivatives}
+
+\begin{document}
+
+\begin{abstract}
+We study quanto claims whose payoff depends on a tradable energy factor and on a
+second factor that captures volumetric, weather, foreign-exchange, or
+cross-market risk. The paper develops a coupled continuous-time autoregressive
+moving average (CARMA) framework in which the log-price factor and the secondary
+factor are driven by Lévy noises linked through a directed coupling channel.
+This specification preserves the interpretable low-dimensional structure of
+univariate CARMA models while retaining a tractable joint characteristic
+function and an explicit state-space representation. We show that the model
+embeds naturally into a multivariate CARMA formulation, which clarifies when
+the coupled specification is sufficient and when a full multivariate treatment
+is preferable.
+
+On the pricing side we formulate the problem on a filtered space with domestic
+numeraire and an exogenously chosen pricing measure, which is essential because
+the weather or quantity factor is typically non-tradable. We derive conditional
+transform formulas, forward-price representations, and a Fourier valuation
+result for a broad class of European quanto payoffs. For the practically
+important case of weak Brownian coupling, we obtain a first-order quanto
+adjustment that isolates the contribution of the dependence channel to option
+values. On the hedging side we emphasize market incompleteness and characterize
+the variance-optimal hedge through the Galtchouk--Kunita--Watanabe (GKW)
+decomposition. This yields a transparent separation between the hedgeable energy
+price exposure and the residual hybrid risk that cannot be eliminated without
+additional tradable instruments.
+\end{abstract}
+
+\maketitle
+
+\section{Introduction}\label{sec:introduction}
+
+Quanto-type contracts in energy and climate-sensitive markets are hybrid claims:
+their value depends simultaneously on a tradable price signal and on a second
+factor that captures volume, temperature, irradiance, wind availability,
+congestion, or settlement-currency effects. In retail gas, power, and renewable
+generation portfolios this second factor is often the economically dominant
+source of non-standard exposure because demand and production volumes react to
+weather conditions while revenues remain tied to commodity prices. Energy quanto
+contracts are therefore designed to hedge joint price and quantity risk rather
+than either component in isolation; see \citet{Ben15} for the classical
+futures-based approach and \citet{Alf24} for a recent coupled
+electricity--temperature model.
+
+The modeling challenge is structural. The secondary factor is often not
+tradable, so no-arbitrage arguments alone do not determine a unique pricing
+measure. At the same time, the dependence between the price factor and the
+secondary factor matters materially for both valuation and hedging. Simple
+bivariate Ornstein--Uhlenbeck specifications are appealing because they lead to
+closed formulas, but they impose overly rigid autocovariance structures and do
+not exploit the richer memory patterns observed in power prices, renewable
+generation, temperature, and other environmental series. In electricity markets,
+Lévy-driven CARMA (continuous-time autoregressive moving average) dynamics are
+now a standard way of capturing mean reversion, serial dependence, and spikes
+while maintaining tractable state-space representations; see \citet{Bro01},
+\citet{Ben13}, and \citet{Ben14}. A CARMA$(p,q)$ process is the
+continuous-time analogue of an ARMA$(p,q)$ time series: the autoregressive
+polynomial of degree $p$ governs the mean-reversion speed and spectral shape,
+while the moving-average polynomial of degree $q < p$ shapes the impulse
+response. Driving the state equation with a Lévy process allows heavy tails,
+jumps, and skewness without sacrificing the linear state-space structure. The
+same state-space machinery is attractive in hybrid derivative problems because
+it supports transform methods, filtering, and dynamic hedging computations.
+
+The present paper develops a pricing and hedging framework for energy quanto
+options driven by coupled CARMA factors. The word ``quanto'' is used here in
+the broad sense common in energy markets: the payoff depends on two underlying
+indices, one typically tradable and one often non-tradable. The classical
+foreign-exchange quanto is recovered when the secondary factor is itself a
+tradable exchange rate. We formulate the problem in a way that covers both
+interpretations. The starting point is a coupled state-space specification in
+which the secondary factor drives its own CARMA dynamics and enters the price
+factor through a directional coupling term. This construction preserves
+parsimony and economic interpretation: the secondary factor can represent a
+causal weather, load, or FX channel affecting the price process without forcing
+the entire system into a fully symmetric multivariate model.
+
+The contribution of the paper is fivefold.
+\begin{enumerate}[label=(\roman*)]
+  \item We formulate a coupled Lévy-driven CARMA model for the joint dynamics of
+    a tradable energy factor and a secondary risk factor, and we derive its
+    state-space, cross-covariance, and characteristic-function representations.
+  \item We show that the coupled specification is a structured special case of a
+    multivariate CARMA model in the sense of \citet{Mar07}; this clarifies when
+    the lower-dimensional coupled form is appropriate and when a full MCARMA
+    formulation is preferable. In particular, the multivariate viewpoint becomes
+    compelling once several tradeable commodities, locations, or currencies are
+    modeled jointly, or when feedback effects are empirically relevant.
+  \item We develop a valuation framework under a domestic numeraire and a chosen
+    pricing measure. For a broad class of European quanto payoffs we derive a
+    Fourier representation in terms of the conditional joint characteristic
+    function. We also obtain a first-order quanto adjustment for weak coupling,
+    which isolates the marginal pricing impact of the dependence channel.
+  \item We analyze hedging in the incomplete market generated by a non-tradable
+    secondary factor. The appropriate benchmark is not perfect replication but
+    variance-optimal hedging. We characterize the hedge by the
+    Galtchouk--Kunita--Watanabe decomposition and show how the residual risk
+    measures the irreducible hybrid exposure.
+  \item We calibrate the coupled CARMA framework to hourly German day-ahead
+    electricity prices and temperature observations (2020--2025), fit
+    Normal Inverse Gaussian driving noise, estimate the coupling parameter from
+    cross-covariance data, validate the Fourier pricing formula against Monte
+    Carlo simulation, and compare the resulting variance-optimal hedge against
+    an OU benchmark in an out-of-sample 2025 backtest.
+\end{enumerate}
+
+Relative to the literature on energy quantos, the novelty is therefore not a
+single new numerical scheme in isolation, but a coherent mathematical framework
+that links CARMA dynamics, measure selection, transform pricing, and
+incomplete-market hedging in a single model class, together with an empirical
+demonstration on real hourly data.
+
+The remainder of the paper is organized as follows.
+\Cref{sec:carma-preliminaries} recalls the state-space representation of
+Lévy-driven CARMA factors. \Cref{sec:coupled-carma-models} introduces the
+coupled model, derives its joint transform, and relates it to multivariate
+CARMA. \Cref{sec:pricing-quanto-options} develops the pricing framework,
+including Fourier valuation and a weak-coupling expansion. Hedging is discussed
+in \Cref{sec:hedging-strategies}. \Cref{sec:calibration} presents the empirical
+calibration to German electricity and temperature data. \Cref{sec:numerical}
+reports the pricing and hedging numerical experiments. \Cref{sec:limitations}
+highlights limitations and extensions, and \Cref{sec:conclusion} concludes.
+
+\section{CARMA Preliminaries}\label{sec:carma-preliminaries}
+
+We work on a filtered probability space
+$(\Omega,\F,(\F_t)_{t \ge 0},\mathbb{M})$ satisfying the usual conditions,
+where $\mathbb{M}$ stands for either the historical measure $\PP$ or a
+pricing measure $\Q$. All processes below are assumed càdlàg and adapted.
+
+\begin{definition}\label{def:carma-factor}
+Let $L=(L_t)_{t \ge 0}$ be an $m$-dimensional Lévy process under
+$\mathbb{M}$, let $A \in \R^{p \times p}$, $B \in \R^{p \times m}$, and
+let $c \in \R^p$. We call the output process
+$$
+Y_t = c^\top Z_t,\qquad t \ge 0,
+$$
+a \emph{Lévy-driven CARMA factor in state-space form} if the state process
+$(Z_t)_{t \ge 0}$ solves
+\begin{align}\label{eq:state_general}
+  \dd Z_t = A Z_t\,\dd t + B\,\dd L_t.
+\end{align}
+When $A$ is chosen as the companion matrix associated with a stable
+autoregressive polynomial of degree $p$, and $B$, $c$ are determined by
+the moving-average polynomial of degree $q < p$,
+\eqref{eq:state_general} is the standard state-space
+representation of a CARMA$(p,q)$ process; see \citet{Bro01}. Since the driving
+noise $L$ is $m$-dimensional while the output $Y_t$ is scalar, this is a
+\emph{multi-input single-output} (MISO) state-space system; the standard
+CARMA$(p,q)$ process is recovered as the special case $m=1$ with companion
+matrix $A$. In the present paper the state-space form is the primary object
+because it is the natural representation for pricing and hedging. The scalar
+output $Y_t = c^\top Z_t$ has the rational transfer function
+$G(z) = c^\top(zI-A)^{-1}B$, whose numerator and denominator polynomials
+correspond respectively to the moving-average and autoregressive components.
+\end{definition}
+
+\begin{assumption}\label{ass:stableA}
+All eigenvalues of $A$ have strictly negative real part.
+\end{assumption}
+
+\begin{proposition}[Variation of constants and stationarity]
+\label{prop:variation_constants}
+Under \Cref{ass:stableA}, the state equation \eqref{eq:state_general} has the
+variation-of-constants representation
+\begin{align}\label{eq:variation_constants}
+  Z_t = \ee^{A(t-s)} Z_s + \int_s^t \ee^{A(t-u)} B\,\dd L_u,
+  \qquad 0 \le s \le t.
+\end{align}
+If $\mathbb{E}^{\mathbb{M}}[\log(1+\|L_1\|)] < \infty$, then there exists a
+unique strictly stationary solution given by
+\begin{align}\label{eq:stationary_solution}
+  Z_t = \int_{-\infty}^t \ee^{A(t-u)} B\,\dd L_u,
+  \qquad t \ge 0.
+\end{align}
+\end{proposition}
+
+\begin{proof}
+Equation \eqref{eq:variation_constants} is the standard linear SDE solution.
+Under \Cref{ass:stableA}, $\|\ee^{At}\|$ decays exponentially. The condition
+$\mathbb{E}^{\mathbb{M}}[\log(1+\|L_1\|)] < \infty$ is the minimal
+integrability requirement for the improper stochastic integral in
+\eqref{eq:stationary_solution} to converge almost surely and in $L^1$;
+see \citet{Bro01}. Under these conditions the integral gives the unique strictly
+stationary solution of \eqref{eq:state_general}.
+\end{proof}
+
+For transform pricing we need the conditional characteristic function of the
+state-space output.
+
+\begin{proposition}[Conditional characteristic function]
+\label{prop:cf_single_factor}
+Let $\psi_{\mathbb{M}}:\R^m \to \C$ denote the characteristic exponent of
+$L$ under $\mathbb{M}$ (also called the Lévy symbol or cumulant generating
+function on the imaginary line), so that
+$$
+\E^{\mathbb{M}}\!\left[\ee^{\ii\langle u,L_t\rangle}\right]
+= \ee^{t\psi_{\mathbb{M}}(u)},\qquad u \in \R^m;
+$$
+see \citet{Con04} for background on Lévy processes and their characteristic
+exponents.
+Then for $0 \le t \le T$ and $u \in \R$,
+\begin{align}\label{eq:single_factor_cf}
+  \E^{\mathbb{M}}\!\left[\ee^{\ii u Y_T}\mid \F_t\right]
+  = \exp\!\left(
+      \ii u\, c^\top \ee^{A(T-t)} Z_t
+      + \int_t^T \psi_{\mathbb{M}}\!\left(
+          u\, B^\top \ee^{A^\top(T-s)} c
+        \right)\dd s
+    \right).
+\end{align}
+\end{proposition}
+
+\begin{proof}
+By \eqref{eq:variation_constants},
+$$
+Y_T
+= c^\top \ee^{A(T-t)} Z_t
+  + \int_t^T c^\top \ee^{A(T-s)} B\,\dd L_s.
+$$
+The stochastic integral over $[t,T]$ is independent of $\F_t$, and its
+characteristic function is determined by the Lévy exponent. This yields
+\eqref{eq:single_factor_cf}.
+\end{proof}
+
+\begin{remark}
+The state-space form is not just a notational convenience. It makes explicit the
+transfer kernel $s \mapsto c^\top \ee^{As} B$, which is the object needed for
+transform methods, Monte Carlo simulation, and the derivation of covariance
+equations. It also clarifies why CARMA models remain analytically tractable
+under Lévy forcing: linearity reduces pricing questions to matrix exponentials
+and Lévy cumulants.
+\end{remark}
+
+\section{Coupled CARMA Models for Quanto Risk}\label{sec:coupled-carma-models}
+
+\subsection{Model specification}
+
+We distinguish a \emph{tradable} energy factor from a \emph{secondary} factor.
+The secondary factor may be temperature, wind, solar irradiance, demand, an FX
+rate, or any other quantity entering the payoff. Denote by $X_t$ the
+deseasonalized log-price factor and by $Y_t$ the deseasonalized secondary
+factor. The observed spot price is $S_t = \ee^{\Lambda_S(t)+X_t}$, where
+$\Lambda_S$ is a deterministic seasonal component, and the observed secondary
+index is $\Lambda_Y(t)+Y_t$, with deterministic component $\Lambda_Y$.
+
+The dynamics under a generic measure $\mathbb{M} \in \{\PP,\Q\}$ are
+\begin{align}\label{eq:coupled_model}
+\begin{aligned}
+  \dd Z_t^{Y,\mathbb{M}}
+    &= A_Y^{\mathbb{M}} Z_t^{Y,\mathbb{M}}\,\dd t
+       + B_Y\,\dd L_t^{Y,\mathbb{M}},\\
+  \dd Z_t^{X,\mathbb{M}}
+    &= A_X^{\mathbb{M}} Z_t^{X,\mathbb{M}}\,\dd t
+       + B_X\,\dd L_t^{X,\mathbb{M}}
+       + \Gamma\,\dd L_t^{Y,\mathbb{M}},
+\end{aligned}
+\end{align}
+with output equations
+\begin{align}\label{eq:outputs_coupled}
+  X_t = c_X^\top Z_t^{X,\mathbb{M}},
+  \qquad
+  Y_t = c_Y^\top Z_t^{Y,\mathbb{M}}.
+\end{align}
+Here the state vectors satisfy $Z^{X,\mathbb{M}} \in \R^{p_X}$ and
+$Z^{Y,\mathbb{M}} \in \R^{p_Y}$, and the Lévy drivers $L^{X,\mathbb{M}} \in
+\R^{m_X}$ and $L^{Y,\mathbb{M}} \in \R^{m_Y}$ are independent.
+The \emph{drift matrices} $A_X^{\mathbb{M}} \in \R^{p_X \times p_X}$ and
+$A_Y^{\mathbb{M}} \in \R^{p_Y \times p_Y}$ are measure-dependent (they absorb
+the effect of Girsanov or Esscher changes). The \emph{noise-loading matrices}
+$B_X \in \R^{p_X \times m_X}$, $B_Y \in \R^{p_Y \times m_Y}$, the
+\emph{coupling matrix} $\Gamma \in \R^{p_X \times m_Y}$, and the
+\emph{output vectors} $c_X \in \R^{p_X}$, $c_Y \in \R^{p_Y}$ are
+structural parameters that do not depend on the choice of measure. This is
+important: the observation equation defines the \emph{same} physical
+processes $X_t$ and $Y_t$ under every equivalent measure.
+
+\begin{assumption}\label{ass:coupled_model}
+Throughout the paper we impose the following conditions.
+\begin{enumerate}[label=(\alph*)]
+  \item\label{ass:stability} The drift matrices $A_X^{\mathbb{M}}$ and
+    $A_Y^{\mathbb{M}}$ are stable (all eigenvalues have strictly negative real
+    part) under every measure $\mathbb{M}$ considered.
+  \item\label{ass:moments} The Lévy drivers $L^{X,\mathbb{M}}$ and
+    $L^{Y,\mathbb{M}}$ are independent and admit exponential moments: there
+    exist $\theta, \rho > 0$ such that
+    $$
+      \mathbb{E}^{\mathbb{M}}\!\left[
+        \ee^{\,\theta\|L_1^{X,\mathbb{M}}\| + \rho\|L_1^{Y,\mathbb{M}}\|}
+      \right] < \infty,
+    $$
+    which guarantees that the cumulant exponents are finite on a non-empty open
+    strip $\mathcal{S} \subset \R^{m_X} \times \R^{m_Y}$ around the origin,
+    enabling forward-price computations and Fourier inversion.
+  \item\label{ass:pricing_measure_main} There exists an equivalent probability
+    measure $\Q$ such that:
+    \begin{enumerate}[label=(\roman*)]
+      \item under $\Q$, the factor dynamics retain the coupled state-space form
+        \eqref{eq:coupled_model} with the same noise-loading matrices $B_X,
+        B_Y, \Gamma$ and output vectors $c_X, c_Y$, but possibly different
+        drift matrices $A_X^\Q, A_Y^\Q$ and Lévy triplets;
+      \item the drivers $L^{X,\Q}$ and $L^{Y,\Q}$ remain independent under
+        $\Q$;
+      \item discounted tradable forward prices formed from the energy factor are
+        $\Q$-martingales.
+    \end{enumerate}
+    A standard mechanism satisfying (i)--(ii) is the Esscher transform applied
+    to the joint Lévy driver $(L^X,L^Y)$ (see \Cref{rem:esscher_preservation}
+    below). Condition~(iii) imposes no-arbitrage consistency and determines the
+    drift adjustment of the energy factor under~$\Q$.
+\end{enumerate}
+\end{assumption}
+
+\begin{remark}\label{rem:esscher_preservation}
+The Esscher transform preserves the coupled structure. If $L = (L^X, L^Y)$
+has independent components and one applies an exponential tilt with parameter
+vector $(\vartheta_X, \vartheta_Y) \in \mathcal{S}$, the resulting measure
+$\Q^{\vartheta}$ modifies the Lévy triplet of each component independently.
+In particular, $L^{X,\Q^\vartheta}$ and $L^{Y,\Q^\vartheta}$ remain
+independent, and the linear state-space dynamics \eqref{eq:coupled_model} are
+preserved with the same structural matrices $B_X, B_Y, \Gamma$. The drift
+matrices $A_X, A_Y$ change only if the Esscher tilt interacts with the
+compensator of a jump part (which adds a drift correction); in the Gaussian
+case, the Esscher tilt reduces to the classical Girsanov drift shift. See
+\citet{Ben14} for details in the energy CARMA context.
+\end{remark}
+
+\begin{remark}
+The directional structure in \eqref{eq:coupled_model} is deliberate. It is
+appropriate when one wants the weather or quantity factor to affect the price
+factor but not conversely at the same horizon. This is natural for many
+renewable applications: temperature, wind, or irradiation shocks move expected
+production or demand and thereby affect power prices. The model remains
+parsimonious because dependence is introduced through the single matrix
+$\Gamma$ instead of a fully unrestricted multivariate dynamics.
+\end{remark}
+
+\begin{remark}
+The classical foreign-exchange quanto fits into the same notation. If the
+secondary factor is the log FX rate and is itself tradable, then the pair
+$(X,Y)$ describes joint commodity and currency risk. The main difference is
+conceptual rather than mathematical: in the tradable FX case the pricing measure
+is tied to domestic and foreign numeraires, whereas in the weather case the
+secondary factor is typically non-tradable and the market is incomplete.
+\end{remark}
+
+\subsection{Second-order structure}
+
+When the Lévy drivers are square-integrable, the coupled model admits an
+explicit stationary cross-covariance equation. This is useful both for
+calibration and for understanding the sign and decay of the quanto effect.
+
+\begin{proposition}[Stationary cross-covariance]
+\label{prop:cross_covariance}
+Assume that under $\mathbb{M}$ the processes $L^{X,\mathbb{M}}$ and
+$L^{Y,\mathbb{M}}$ are independent, square-integrable, and centered, with
+$$
+\Sigma_Y^{\mathbb{M}} = \Var^{\mathbb{M}}(L_1^{Y,\mathbb{M}}).
+$$
+Let $(Z_t^{X,\mathbb{M}},Z_t^{Y,\mathbb{M}})$ denote the stationary solution
+of \eqref{eq:coupled_model}. Then the matrix
+$$
+M^{\mathbb{M}} = \Cov^{\mathbb{M}}(Z_t^{X,\mathbb{M}}, Z_t^{Y,\mathbb{M}})
+$$
+is time-independent and solves the Sylvester equation
+\begin{align}\label{eq:sylvester_cross_cov}
+  A_X^{\mathbb{M}} M^{\mathbb{M}}
+  + M^{\mathbb{M}} (A_Y^{\mathbb{M}})^\top
+  + \Gamma \Sigma_Y^{\mathbb{M}} B_Y^\top
+  = 0.
+\end{align}
+For $h \ge 0$,
+\begin{align}\label{eq:lagged_cross_cov}
+  \Cov^{\mathbb{M}}(X_{t+h},Y_t)
+  = c_X^\top
+      \ee^{A_X^{\mathbb{M}} h}
+      M^{\mathbb{M}}
+      c_Y.
+\end{align}
+\end{proposition}
+
+\begin{proof}
+Let $N_t \coloneqq Z_t^{X,\mathbb{M}}(Z_t^{Y,\mathbb{M}})^\top$. By Itô's
+formula for semimartingales,
+\begin{align*}
+  \dd N_t
+  &= (\dd Z_t^{X,\mathbb{M}})(Z_t^{Y,\mathbb{M}})^\top
+     + Z_t^{X,\mathbb{M}}(\dd Z_t^{Y,\mathbb{M}})^\top
+     + \dd [Z^{X,\mathbb{M}}, Z^{Y,\mathbb{M}}]_t^c + \Delta N_t,
+\end{align*}
+where $[{\cdot},{\cdot}]^c$ denotes the continuous quadratic covariation.
+The continuous covariation between the $X$-state and the $Y$-state receives
+a contribution from the shared noise $L^{Y,\mathbb{M}}$ entering both
+equations through $B_Y$ and $\Gamma$, and a zero contribution from
+$L^{X,\mathbb{M}}$ (which is independent of $L^{Y,\mathbb{M}}$). The jump
+covariation $\sum_{s \le t}\Delta Z_s^{X,\mathbb{M}}
+(\Delta Z_s^{Y,\mathbb{M}})^\top$ includes the simultaneous jumps of
+$\Gamma\,\Delta L_s^{Y,\mathbb{M}}$ and $B_Y\,\Delta L_s^{Y,\mathbb{M}}$.
+Substituting the state equations \eqref{eq:coupled_model} and taking
+expectations in the stationary regime
+($\mathbb{E}[\dd N_t/\dd t] = 0$) gives
+$$
+  A_X^{\mathbb{M}} M^{\mathbb{M}}
+  + M^{\mathbb{M}} (A_Y^{\mathbb{M}})^\top
+  + \Gamma \Sigma_Y^{\mathbb{M}} B_Y^\top
+  = 0,
+$$
+which is \eqref{eq:sylvester_cross_cov}. Equivalently, the solution can be
+expressed as
+$M^{\mathbb{M}} = \int_0^\infty \ee^{A_X^{\mathbb{M}} \tau}\,
+\Gamma \Sigma_Y^{\mathbb{M}} B_Y^\top\,
+\ee^{(A_Y^{\mathbb{M}})^\top \tau}\,\dd\tau$,
+which is finite under \Cref{ass:coupled_model}\ref{ass:stability}. The lagged
+formula \eqref{eq:lagged_cross_cov} follows from the Markov property and the
+variation-of-constants formula \eqref{eq:variation_constants}.
+\end{proof}
+
+\begin{remark}
+The cross-covariance is governed by a linear matrix equation. This is a genuine
+advantage of coupled CARMA models over ad hoc bivariate specifications: the sign
+and decay of dependence are encoded in the loading matrix $\Gamma$, the noise
+variance of the secondary factor, and the mean-reversion matrices
+$A_X, A_Y$. In particular, one can separate the contribution of persistence
+from the contribution of instantaneous coupling.
+\end{remark}
+
+\begin{remark}[Spectral viewpoint]
+The transfer functions associated with \eqref{eq:coupled_model} are
+\begin{align*}
+  G_X(z) &= (c_X)^\top (zI-A_X)^{-1} B_X,\\
+  G_{XY}(z) &= (c_X)^\top (zI-A_X)^{-1} \Gamma,\\
+  G_Y(z) &= (c_Y)^\top (zI-A_Y)^{-1} B_Y.
+\end{align*}
+Hence the coupled model retains the rational spectral structure familiar from
+univariate CARMA models. This is useful for order selection and for matching
+empirical autocovariances or periodograms in calibration.
+\end{remark}
+
+\subsection{Conditional transform and forward prices}
+
+We now derive the key pricing object: the conditional joint transform of
+$(X_T,Y_T)$, i.e.\ the deseasonalized factor pair.
+
+For $0 \le t \le T$, define
+\begin{align*}
+  \overline{X}_t(T)
+    &\coloneqq c_X^\top \ee^{A_X^\Q (T-t)} Z_t^{X,\Q},\\
+  \overline{Y}_t(T)
+    &\coloneqq c_Y^\top \ee^{A_Y^\Q (T-t)} Z_t^{Y,\Q},
+\end{align*}
+as well as the deterministic loading kernels (which depend only on $T-s$,
+not on $t$ separately)
+\begin{align}
+  \beta_X(s;T)
+    &\coloneqq B_X^\top \ee^{(A_X^\Q)^\top (T-s)} c_X,
+    \label{eq:betaX}\\
+  \gamma_X(s;T)
+    &\coloneqq \Gamma^\top \ee^{(A_X^\Q)^\top (T-s)} c_X,
+    \label{eq:gammaX}\\
+  \beta_Y(s;T)
+    &\coloneqq B_Y^\top \ee^{(A_Y^\Q)^\top (T-s)} c_Y.
+    \label{eq:betaY}
+\end{align}
+Let $\psi_X^\Q$ and $\psi_Y^\Q$ denote the characteristic exponents of
+$L^{X,\Q}$ and $L^{Y,\Q}$.
+
+\begin{proposition}[Joint transform]
+\label{prop:joint_cf}
+Under \Cref{ass:coupled_model}, for any $u,v \in \R$ and $0 \le t \le T$,
+\begin{align}
+  \varphi_t(u,v;T)
+  &\coloneqq \E^\Q\!\left[
+      \ee^{\ii u X_T + \ii v Y_T}
+      \mid \F_t
+    \right] \nonumber\\
+  &= \exp\Bigg(
+      \ii u\, \overline{X}_t(T)
+      + \ii v\, \overline{Y}_t(T)
+      + \int_t^T \psi_X^\Q\!\big(u\,\beta_X(s;T)\big)\,\dd s
+      \nonumber\\
+      &\hspace{3.6cm}
+      + \int_t^T \psi_Y^\Q\!\big(
+          u\,\gamma_X(s;T)
+          + v\,\beta_Y(s;T)
+        \big)\,\dd s
+    \Bigg).
+    \label{eq:joint_cf}
+\end{align}
+\end{proposition}
+
+\begin{proof}
+By variation of constants,
+\begin{align*}
+  X_T
+  &= \overline{X}_t(T)
+     + \int_t^T c_X^\top \ee^{A_X^\Q(T-s)} B_X\,\dd L_s^{X,\Q}
+     + \int_t^T c_X^\top \ee^{A_X^\Q(T-s)} \Gamma\,\dd L_s^{Y,\Q},\\
+  Y_T
+  &= \overline{Y}_t(T)
+     + \int_t^T c_Y^\top \ee^{A_Y^\Q(T-s)} B_Y\,\dd L_s^{Y,\Q}.
+\end{align*}
+The increment of $L^{X,\Q}$ over $[t,T]$ is independent of both $\F_t$
+and $L^{Y,\Q}$, so the conditional characteristic function factorizes into two
+Lévy transform terms. Evaluating those terms with the corresponding
+characteristic exponents yields \eqref{eq:joint_cf}.
+\end{proof}
+
+The joint transform immediately produces the forward price of the energy factor.
+Let $\kappa_X^\Q$ and $\kappa_Y^\Q$ denote the cumulant exponents of
+$L^{X,\Q}$ and $L^{Y,\Q}$, defined on the set of arguments for which
+exponential moments exist.
+
+\begin{corollary}[Forward price representation]
+\label{cor:forward_price}
+Let $\mathcal{S}_X$ and $\mathcal{S}_Y$ denote the strips of regularity of
+the cumulant exponents $\kappa_X^\Q$ and $\kappa_Y^\Q$, i.e.\ the sets of
+real arguments on which the exponential moments are finite. Assume that for
+all $s \in [t,T]$, $\beta_X(s;T) \in \operatorname{int}(\mathcal{S}_X)$
+and $\gamma_X(s;T) \in \operatorname{int}(\mathcal{S}_Y)$. A sufficient
+condition is that the kernel bounds
+$\sup_{s \in [t,T]}\|\beta_X(s;T)\|$ and
+$\sup_{s \in [t,T]}\|\gamma_X(s;T)\|$ are smaller than the radii of
+$\mathcal{S}_X$ and $\mathcal{S}_Y$; the kernel bounds are finite by
+stability of $A_X^\Q$ and $A_Y^\Q$, while the strip radii are determined
+by the Lévy measures.
+Then the forward price for physical delivery at time $T$ is
+\begin{align}
+  F(t,T)
+  &= \E^\Q[S_T \mid \F_t] \nonumber\\
+  &= \exp\Bigg(
+      \Lambda_S(T)
+      + \overline{X}_t(T)
+      + \int_t^T \kappa_X^\Q\!\big(\beta_X(s;T)\big)\,\dd s
+      + \int_t^T \kappa_Y^\Q\!\big(\gamma_X(s;T)\big)\,\dd s
+    \Bigg).
+    \label{eq:forward_formula}
+\end{align}
+\end{corollary}
+
+\begin{proof}
+Because $S_T = \ee^{\Lambda_S(T)+X_T}$, the forward price is
+$\E^\Q[S_T\mid\F_t] = \ee^{\Lambda_S(T)} \E^\Q[\ee^{X_T}\mid\F_t]$.
+Setting $u = -\ii$ and $v = 0$ in \eqref{eq:joint_cf} and using the
+relation $\psi_{\mathbb{M}}(-\ii\,\cdot) = \kappa_{\mathbb{M}}(\cdot)$
+(analytic continuation from the imaginary axis to the real line, valid under
+the exponential moment condition in \Cref{ass:coupled_model}(b)) yields
+\eqref{eq:forward_formula}.
+\end{proof}
+
+\begin{remark}
+In electricity markets the spot is not directly tradable, while forwards and
+futures are. Formula \eqref{eq:forward_formula} is therefore not just a pricing
+identity; it is the bridge between the CARMA spot specification and the actual
+hedging instruments available to the practitioner. This is one reason why the
+state-space representation is preferable to a purely pathwise spot specification.
+\end{remark}
+
+\subsection{Coupled CARMA versus multivariate CARMA}
+
+The coupled specification is closely related to multivariate CARMA (MCARMA)
+models in the sense of \citet{Mar07}. Making this relation explicit is useful
+for both interpretation and model design.
+
+\begin{proposition}[MCARMA embedding]
+\label{prop:mcarma_embedding}
+Define the stacked state vector $Z_t^\Q \in \R^{p_X+p_Y}$ by
+$$
+Z_t^\Q
+= \begin{pmatrix}
+    Z_t^{X,\Q}\\
+    Z_t^{Y,\Q}
+  \end{pmatrix},
+\qquad
+A^\Q
+= \begin{pmatrix}
+    A_X^\Q & 0\\
+    0 & A_Y^\Q
+  \end{pmatrix},
+\qquad
+B
+= \begin{pmatrix}
+    B_X & \Gamma\\
+    0 & B_Y
+  \end{pmatrix}.
+$$
+Let $L_t^\Q = ((L_t^{X,\Q})^\top,(L_t^{Y,\Q})^\top)^\top$ and
+$$
+C
+= \begin{pmatrix}
+    c_X^\top & 0\\
+    0 & c_Y^\top
+  \end{pmatrix}.
+$$
+Then \eqref{eq:coupled_model}--\eqref{eq:outputs_coupled} can be written as the
+multivariate state-space system
+$$
+\dd Z_t^\Q = A^\Q Z_t^\Q\,\dd t + B\,\dd L_t^\Q,
+\qquad
+\begin{pmatrix}
+  X_t\\
+  Y_t
+\end{pmatrix}
+= C Z_t^\Q.
+$$
+Hence every coupled CARMA specification is a structured MCARMA model. Conversely,
+an MCARMA model with block-diagonal state matrix and block-triangular noise
+loading recovers the coupled model.
+\end{proposition}
+
+\begin{proof}
+This is immediate from block-matrix multiplication.
+\end{proof}
+
+\begin{remark}
+Coupled CARMA is a restricted MCARMA specification. The restriction is valuable
+when the data suggest a clear
+direction of dependence, because it reduces the parameter count and preserves
+interpretability. A full MCARMA formulation is preferable when several prices,
+locations, or currencies are jointly tradable, or when feedback effects cannot
+be ignored. It is also useful when one wants positivity or cone constraints on
+the multivariate state, as in \citet{Ben23}. In those situations the
+multivariate formulation is more elegant and often more robust, but it is also
+more demanding to calibrate.
+\end{remark}
+
+\section{Pricing of Energy Quanto Options}\label{sec:pricing-quanto-options}
+
+\subsection{Market setup, numeraires, and payoff class}
+
+\begin{assumption}\label{ass:interest_rate}
+The domestic short rate $(r_t^d)_{t \ge 0}$ is deterministic and bounded,
+so the domestic money-market account
+$B_t^d = \exp\!\bigl(\int_0^t r_u^d\,\dd u\bigr)$ is a known deterministic
+function of time. This assumption decouples interest-rate risk from hybrid
+energy-weather risk and can be relaxed by appending a stochastic rate factor to
+the state vector without altering the CARMA structure.
+\end{assumption}
+
+We focus on European claims maturing at time $T$. We adopt the convention
+that the payoff is stated in terms of the \emph{observed} levels: the spot
+price $S_T = \ee^{\Lambda_S(T)+X_T}$ and the observed secondary index
+$\widehat{Y}_T \coloneqq \Lambda_Y(T)+Y_T$. Their discounted domestic payoff
+is
+$$
+\widetilde{H}
+= (B_T^d)^{-1} g(S_T,\widehat{Y}_T),
+$$
+where $g:\R_+ \times \R \to \R$ is measurable and integrable under~$\Q$.
+The practically most important case is
+\begin{align}\label{eq:quanto_payoff_general}
+  g(s,y) = (s-K_S)^+ h(y),
+\end{align}
+where $h$ is a weather or quantity leg. Typical examples are
+$$
+h(y) = (K_Y-y)^+,\qquad
+h(y) = (y-K_Y)^+,\qquad
+h(y) = \1_{\{y>K_Y\}}.
+$$
+
+\begin{remark}
+The pricing measure $\Q$ is the one specified in
+\Cref{ass:coupled_model}\ref{ass:pricing_measure_main}. In particular, it
+makes discounted energy forward prices martingales and preserves the coupled
+state-space form with the same structural matrices. The choice of $\Q$ is
+considered part of the model specification.
+\end{remark}
+
+\begin{remark}
+In hybrid energy-weather markets the pricing measure is not uniquely
+determined by no-arbitrage if the secondary factor is non-tradable. One may
+take $\Q$ to coincide with the historical law of the secondary factor, or
+introduce a risk premium through an Esscher or state-dependent tilt. The
+CARMA state-space structure survives under many such measure changes on the
+traded side; compare the discussion of risk premia in \citet{Ben14}. By
+contrast, in a classical FX-quanto with tradable foreign asset and FX rate,
+domestic and foreign numeraires give a sharper no-arbitrage restriction; see
+\citet{Hul21}.
+\end{remark}
+
+Many OTC energy quantos settle over a delivery period rather than a single date.
+If the contract is a discrete strip payoff of the form
+$$
+H = \sum_{k=1}^n w_k g(S_{t_k},\widehat{Y}_{t_k}),
+$$
+linearity of expectation reduces pricing to a finite sum of one-date problems.
+The formulas below therefore remain the basic building block for
+delivery-period claims.
+
+\subsection{Fourier valuation}
+
+The coupled CARMA model is particularly attractive when pricing is performed in
+transform space. To separate deterministic seasonality from the stochastic
+factor dynamics, define the factor-space payoff
+$$
+g_T(x,y) \coloneqq g\!\bigl(\ee^{\Lambda_S(T)+x},\, \Lambda_Y(T)+y\bigr),
+$$
+and the damped payoff
+$$
+g_{T,\alpha}(x,y) \coloneqq \ee^{-\alpha_1 x-\alpha_2 y} g_T(x,y),
+$$
+for a damping vector $\alpha=(\alpha_1,\alpha_2)\in\R^2$. Denote by
+$$
+\widehat{g_{T,\alpha}}(u,v)
+= \int_{\R^2} \ee^{-\ii(ux+vy)} g_{T,\alpha}(x,y)\,\dd x\,\dd y
+$$
+its Fourier transform.
+
+\begin{proposition}[Fourier pricing formula]
+\label{prop:fourier_pricing}
+Suppose there exists $\alpha\in\R^2$ such that:
+\begin{enumerate}[label=(\roman*)]
+  \item $g_{T,\alpha} \in L^1(\R^2)$, so that $\widehat{g_{T,\alpha}}$
+    exists and is bounded;
+  \item the conditional moment condition
+    $$
+    \E^\Q\!\left[
+      \ee^{\alpha_1 X_T + \alpha_2 Y_T}
+      \left|g_T(X_T,Y_T)\right|
+      \,\middle|\, \F_t
+    \right] < \infty
+    $$
+    holds, which ensures that the transform $\varphi_t(u-\ii\alpha_1,
+    v-\ii\alpha_2;T)$ is well-defined;
+  \item the product $(u,v) \mapsto
+    |\widehat{g_{T,\alpha}}(u,v)|\cdot|\varphi_t(u-\ii\alpha_1,v-\ii\alpha_2;T)|$
+    is integrable over $\R^2$, which justifies the Fubini interchange.
+\end{enumerate}
+Conditions (i)--(iii) are satisfied, for example, when the drivers are of
+NIG or Variance-Gamma type and the damping vector $\alpha$ lies in
+the interior of the joint strip of regularity.
+Then the time-$t$ price of the European quanto claim is
+\begin{align}\label{eq:fourier_pricing}
+  V_t
+  = \frac{B_t^d}{B_T^d} \frac{1}{(2\pi)^2}
+    \int_{\R^2}
+      \widehat{g_{T,\alpha}}(u,v)\,
+      \varphi_t(u-\ii\alpha_1,v-\ii\alpha_2;T)
+      \,\dd u\,\dd v.
+\end{align}
+\end{proposition}
+
+\begin{proof}
+Since $g_{T,\alpha} \in L^1(\R^2)$, Fourier inversion gives
+$$
+g_T(x,y)
+= \frac{\ee^{\alpha_1 x+\alpha_2 y}}{(2\pi)^2}
+   \int_{\R^2}
+      \ee^{\ii(ux+vy)} \widehat{g_{T,\alpha}}(u,v)\,\dd u\,\dd v.
+$$
+Substituting $x=X_T$, $y=Y_T$, taking conditional expectations, and
+interchanging expectation and integration by Fubini yields
+\eqref{eq:fourier_pricing}, because
+$$
+\E^\Q\!\left[
+  \ee^{(\alpha_1+\ii u)X_T + (\alpha_2+\ii v)Y_T}
+  \mid \F_t
+\right]
+= \varphi_t(u-\ii\alpha_1,v-\ii\alpha_2;T).
+$$
+\end{proof}
+
+\begin{remark}
+The advantage of \eqref{eq:fourier_pricing} is that all model dependence enters
+through the transform $\varphi_t$, which is explicit by
+\Cref{prop:joint_cf}. Once the transform of the damped payoff is available,
+pricing can be implemented by numerical quadrature or by Carr--Madan type FFT
+methods \citep{Car99}. For product payoffs such as
+$(S_T-K_S)^+(K_Y-\widehat{Y}_T)^+$, the damped transform factorizes into a call part and
+a one-dimensional transform of the secondary leg.
+\end{remark}
+
+\subsection{A weak-coupling quanto adjustment}
+
+The full Fourier formula is general but not always the most transparent object
+for economic interpretation. To isolate the effect of dependence, it is useful
+to study the first derivative of the price with respect to the coupling
+strength. We therefore specialize temporarily to the following diffusion-type
+dependence channel on the interval $[t,T]$:
+\begin{align}\label{eq:weak_coupling_model}
+\begin{aligned}
+  \dd Z_u^{Y}
+    &= A_Y Z_u^{Y}\,\dd u + B_Y\,\dd W_u,\\
+  \dd Z_u^{X,\lambda}
+    &= A_X Z_u^{X,\lambda}\,\dd u
+       + B_X\,\dd L_u^X
+       + \lambda \Gamma\,\dd W_u,
+  \qquad u \in [t,T],
+\end{aligned}
+\end{align}
+where $W$ is a standard Brownian motion independent of the Lévy driver
+$L^X$, and the state at time $t$ is kept fixed when differentiating with
+respect to $\lambda$. In this Gaussian specialization the secondary factor is
+driven by a scalar Brownian motion, so $B_Y \in \R^{p_Y}$ is the diffusion
+column vector (the matrix $B_Y$ in the
+Lévy-driven model restricted to a single Brownian component). We suppress
+superscripts $\Q$ for readability throughout this subsection. This framework
+allows the Stein-type arguments used in the proof; in the fully general Lévy
+case the leading-order quanto adjustment follows from a
+similar but more involved cumulant-expansion argument.
+
+\begin{theorem}[First-order quanto adjustment]
+\label{thm:weak_coupling}
+Consider the payoff $g(s,y)=(s-K_S)^+h(y)$, where
+$h:\R\to\R$ is absolutely continuous with
+$\E^\Q[|h'(\widehat{Y}_T)| \mid \F_t] < \infty$. Under
+\eqref{eq:weak_coupling_model}, define
+$$
+X_T^\lambda = (c_X)^\top Z_T^{X,\lambda},\qquad
+Y_T = (c_Y)^\top Z_T^Y,\qquad
+S_T^\lambda = \ee^{\Lambda_S(T)+X_T^\lambda},
+\qquad
+\widehat{Y}_T = \Lambda_Y(T)+Y_T,
+\qquad
+\Xi_{t,T} \coloneqq (c_X)^\top \int_t^T \ee^{A_X(T-u)} \Gamma\,\dd W_u.
+$$
+Then $X_T^\lambda = X_T^0 + \lambda \Xi_{t,T}$ and the option value
+$$
+V_t^\lambda
+= \frac{B_t^d}{B_T^d}\E^\Q\!\left[(S_T^\lambda-K_S)^+h(\widehat{Y}_T)\mid\F_t\right]
+$$
+is differentiable at $\lambda=0$ with
+\begin{align}
+  \left.\frac{\partial V_t^\lambda}{\partial \lambda}\right|_{\lambda=0}
+  &= \frac{B_t^d}{B_T^d}
+     \E^\Q\!\left[S_T^0 \1_{\{S_T^0>K_S\}}\mid\F_t\right]
+     \Cov_t^\Q(\Xi_{t,T},Y_T)\,
+     \E^\Q\!\left[h'(\widehat{Y}_T)\mid\F_t\right].
+     \label{eq:weak_coupling_price_adjustment}
+\end{align}
+\end{theorem}
+
+\begin{proof}
+By linearity of \eqref{eq:weak_coupling_model},
+$$
+X_T^\lambda = X_T^0 + \lambda \Xi_{t,T},
+$$
+where $X_T^0 = \overline{X}_t(T) + \int_t^T \beta_X(s;T)^\top\,\dd
+L_s^X$ is independent of $W$, and $\Xi_{t,T} = (c_X)^\top\int_t^T
+\ee^{A_X(T-u)}\Gamma\,\dd W_u$ is a centered Gaussian random variable with
+finite variance. To differentiate $V_t^\lambda$ with respect to
+$\lambda$, note that for $\lambda \neq \lambda^* \coloneqq
+(\log K_S - \Lambda_S(T) - X_T^0)/\Xi_{t,T}$ (i.e.\ away from the
+at-the-money boundary $S_T^\lambda = K_S$),
+$$
+\frac{\partial}{\partial\lambda}(S_T^\lambda - K_S)^+ h(\widehat{Y}_T)
+= S_T^\lambda \1_{\{S_T^\lambda>K_S\}} \Xi_{t,T} h(\widehat{Y}_T).
+$$
+The set $\{\lambda = \lambda^*\}$ has Lebesgue measure zero in $\lambda$,
+and for fixed $\lambda$ the set $\{\omega: S_T^\lambda(\omega) = K_S\}$
+has $\Q$-probability zero because $X_T^\lambda$ has a density
+(it contains the Gaussian component $\lambda\Xi_{t,T}$). Hence the
+right-hand derivative exists $\Q$-a.s.\ for every $\lambda$.
+The interchange of derivative and conditional expectation is justified by
+dominated convergence: for $|\lambda| \le 1$, the integrand is bounded in
+absolute value by
+$\sup_{\lambda\in[-1,1]}S_T^\lambda\cdot|\Xi_{t,T}|\cdot|h(\widehat{Y}_T)|$, and the
+integrability of this dominating function follows from the Gaussianity of
+$\Xi_{t,T}$, the exponential moment conditions in
+\Cref{ass:coupled_model}\ref{ass:moments} applied to $L^X$, and the
+assumption $\E^\Q[|h'(\widehat{Y}_T)|\mid\F_t]<\infty$.
+Hence
+\begin{align*}
+  \left.\frac{\partial V_t^\lambda}{\partial \lambda}\right|_{\lambda=0}
+  &= \frac{B_t^d}{B_T^d}
+     \E^\Q\!\left[
+       S_T^0 \1_{\{S_T^0>K_S\}} \Xi_{t,T} h(\widehat{Y}_T)
+       \mid \F_t
+     \right].
+\end{align*}
+
+At $\lambda=0$, the process $S_T^0 = \ee^{\Lambda_S(T)+X_T^0}$ depends
+only on the increment of $L^X$ over $[t,T]$, which is independent of
+$\F_t$ and of the Brownian motion $W$. Since $(\Xi_{t,T},Y_T)$ is
+$\sigma(W_u-W_t : u \in [t,T])$-measurable and hence independent of
+$S_T^0$ conditional on $\F_t$, we obtain
+\begin{align*}
+  \left.\frac{\partial V_t^\lambda}{\partial \lambda}\right|_{\lambda=0}
+  &= \frac{B_t^d}{B_T^d}
+     \E^\Q\!\left[S_T^0 \1_{\{S_T^0>K_S\}}\mid\F_t\right]
+     \E^\Q\!\left[\Xi_{t,T} h(\widehat{Y}_T)\mid\F_t\right].
+\end{align*}
+
+Conditionally on $\F_t$, the pair $(\Xi_{t,T},\widehat{Y}_T)$ is jointly
+Gaussian.
+Indeed, $\Xi_{t,T}$ is a Gaussian stochastic integral and $Y_T =
+\overline{Y}_t(T) + c_Y^\top\int_t^T \ee^{A_Y(T-s)} B_Y\,\dd W_s$ is a
+Gaussian functional of the same Brownian motion, so $\widehat{Y}_T$ is an
+affine shift of a Gaussian variable. Moreover,
+$\E^\Q[\Xi_{t,T}\mid\F_t]=0$. The Gaussian integration-by-parts identity
+(Stein's lemma) therefore yields
+$$
+\E^\Q\!\left[\Xi_{t,T} h(\widehat{Y}_T)\mid\F_t\right]
+= \Cov_t^\Q(\Xi_{t,T},Y_T)\,
+   \E^\Q\!\left[h'(\widehat{Y}_T)\mid\F_t\right],
+$$
+which is valid whenever $h$ is absolutely continuous and
+$\E^\Q[|h'(\widehat{Y}_T)|\mid\F_t]<\infty$. Substituting into the previous line
+gives \eqref{eq:weak_coupling_price_adjustment}.
+\end{proof}
+
+\begin{corollary}[Heating payoff]
+\label{cor:heating_quanto}
+If $h(y)=(K_Y-y)^+$, then $h'(y)=-\1_{\{y<K_Y\}}$ for almost every $y$,
+and \Cref{thm:weak_coupling} becomes
+\begin{align}
+  \left.\frac{\partial V_t^\lambda}{\partial \lambda}\right|_{\lambda=0}
+  = - \frac{B_t^d}{B_T^d}
+      \E^\Q\!\left[S_T^0 \1_{\{S_T^0>K_S\}}\mid\F_t\right]
+      \Cov_t^\Q(\Xi_{t,T},Y_T)\,
+      \Q(\widehat{Y}_T<K_Y\mid\F_t).
+      \label{eq:heating_quanto_adjustment}
+\end{align}
+\end{corollary}
+
+\begin{remark}
+Formula \eqref{eq:heating_quanto_adjustment} makes the sign of the quanto
+adjustment transparent. If a positive weather innovation increases the energy
+price factor, so that $\Cov_t^\Q(\Xi_{t,T},Y_T)>0$, then a heating-style
+payoff $(K_Y-\widehat{Y}_T)^+$ receives a negative first-order correction. This matches
+economic intuition: the payoff is largest when the secondary factor is low, but
+positive coupling shifts the energy call value toward states where that leg is
+less likely to be in the money.
+\end{remark}
+
+\begin{remark}[Deterministic covariance]
+The quantity $\Cov_t^\Q(\Xi_{t,T},Y_T)$ in
+\eqref{eq:weak_coupling_price_adjustment}--\eqref{eq:heating_quanto_adjustment}
+is \emph{deterministic} given the system matrices and the time-to-maturity
+$T-t$. Indeed, both $\Xi_{t,T}$ and $Y_T - \overline{Y}_t(T)$ are
+Gaussian stochastic integrals with deterministic kernels, so
+$$
+\Cov_t^\Q(\Xi_{t,T},Y_T)
+= \int_t^T c_X^\top \ee^{A_X(T-u)} \Gamma\, B_Y^\top \ee^{A_Y^\top(T-u)} c_Y
+  \,\dd u.
+$$
+This closed form makes implementation straightforward: the integral is
+computed via matrix exponentials and depends only on the horizon, not on
+the state.
+\end{remark}
+
+\subsection{Implementation remarks}
+
+The pricing formulas above are tractable for three reasons. First, the kernels in
+\eqref{eq:betaX}--\eqref{eq:betaY} are computed from matrix exponentials, which
+are numerically stable and fast to evaluate. Second, the transform
+\eqref{eq:joint_cf} depends only on one-dimensional integrals of Lévy exponents,
+so Fourier pricing reduces to low-dimensional numerical integration. Third, the
+same state-space representation supports exact or semi-exact simulation on a
+time grid via matrix exponentials, which is useful for Monte Carlo validation and
+for hedging backtests.
+
+For calibration, the model remains close to standard CARMA practice. Seasonal
+components $\Lambda_S,\Lambda_Y$ can be estimated separately; the stationary
+state equations can then be fitted by likelihood, quasi-likelihood, moment
+matching, or state-space filtering, depending on the driving noise. The
+cross-covariance formula \eqref{eq:lagged_cross_cov} is especially useful for
+identifying the coupling matrix $\Gamma$.
+
+\section{Hedging in an Incomplete Market}\label{sec:hedging-strategies}
+
+\subsection{Variance-optimal hedging with one traded forward}
+
+Because the secondary factor is typically non-tradable, the quanto market is in
+general incomplete. The correct hedging question is therefore not whether the
+claim can be replicated exactly, but how much of its risk can be eliminated by
+trading liquid instruments.
+
+Fix a maturity $T$ and let $\widetilde{F}_t = (B_t^d)^{-1}F(t,T)$ be the
+discounted forward used for dynamic hedging. Let
+$$
+\widetilde{H} = (B_T^d)^{-1} g(S_T,\widehat{Y}_T)
+$$
+be square-integrable under the pricing measure $\Q$ of
+\Cref{ass:coupled_model}\ref{ass:pricing_measure_main}. When the secondary
+factor is non-tradable, one may alternatively work under the \emph{minimal
+martingale measure} $\Q^{\min}$ (which preserves the law of non-tradable
+factors while making the traded forward a martingale) or under the
+\emph{variance-optimal martingale measure}; see \citet{Sch01} for a systematic
+treatment. For concreteness, we develop the decomposition under $\Q$ and
+note that the formulas hold verbatim under any equivalent measure that makes
+$\widetilde{F}$ and $\widetilde{V}$ square-integrable martingales. Define
+the discounted value process
+$$
+\widetilde{V}_t = \E^{\Q}[\widetilde{H}\mid\F_t].
+$$
+
+\begin{proposition}[Galtchouk--Kunita--Watanabe decomposition]
+\label{prop:gkw}
+Assume that $\widetilde{F}$ is a square-integrable $\Q$-martingale.
+Then there exist a predictable process $\xi$ and a square-integrable
+$\Q$-martingale $M^{\perp}$ with $M^{\perp}_0=0$ and
+$\langle M^{\perp},\widetilde{F}\rangle \equiv 0$ such that
+\begin{align}\label{eq:gkw}
+  \widetilde{V}_t
+  = \widetilde{V}_0
+    + \int_0^t \xi_u\,\dd \widetilde{F}_u
+    + M^{\perp}_t,
+  \qquad 0 \le t \le T.
+\end{align}
+The predictable process $\xi$ is the unique $L^2(\Q)$-optimal hedge:
+it minimizes
+$$
+\E^{\Q}\!\Bigl[
+  \Bigl(\widetilde{H}
+  - \widetilde{V}_0
+  - \textstyle\int_0^T \theta_u\,\dd\widetilde{F}_u\Bigr)^2
+\Bigr]
+$$
+over all predictable $\theta$, and it satisfies
+\begin{align}\label{eq:hedge_ratio}
+  \xi_t
+  = \frac{\dd \langle \widetilde{V},\widetilde{F}\rangle_t}
+         {\dd \langle \widetilde{F}\rangle_t}
+  \quad \text{whenever } \dd \langle \widetilde{F}\rangle_t > 0.
+\end{align}
+\end{proposition}
+
+\begin{proof}
+The GKW decomposition is the classical orthogonal projection in the Hilbert
+space of square-integrable martingales; see \citet{Sch01} and the references
+therein. Any square-integrable martingale can be uniquely written as an
+initial value, a stochastic integral with respect to the reference martingale
+$\widetilde{F}$, and a martingale orthogonal to $\widetilde{F}$. Existence
+and uniqueness follow from the $L^2$ projection theorem.
+Orthogonality of $M^{\perp}$ to $\widetilde{F}$ means that
+the stochastic integral term captures the full covariation of $\widetilde{V}$
+with $\widetilde{F}$, hence it minimizes the residual variance. Formula
+\eqref{eq:hedge_ratio} is the predictable Radon--Nikodym representation of the
+projection coefficient, valid when the quadratic variation of $\widetilde{F}$
+is absolutely continuous in time.
+\end{proof}
+
+\begin{remark}
+We use the notation $M^{\perp}$ for the orthogonal residual martingale to
+avoid confusion with the Lévy drivers $L^X, L^Y$ used in the state-space
+dynamics.
+\end{remark}
+
+\begin{remark}
+Equation \eqref{eq:gkw} provides the right interpretation of ``delta hedging''
+in an energy quanto problem. The hedge ratio $\xi_t$ is not merely the
+derivative of a pricing formula with respect to the spot; it is the predictable
+projection of the claim's martingale part onto the traded forward. The residual
+martingale $M^{\perp}$ is not a modeling nuisance but the mathematically
+precise unhedgeable quanto risk. Its terminal value $M^{\perp}_T$ quantifies
+the irreducible tracking error under the chosen measure $\Q$.
+\end{remark}
+
+\subsection{Multiple instruments and proxy hedges}
+
+In practice one often has more than one liquid hedging instrument: a strip of
+power forwards, a gas forward, an FX forward, or sometimes a weather future or a
+proxy contract. Let
+$$
+\widetilde{F}_t = \big(\widetilde{F}_t^{\,1},\dots,\widetilde{F}_t^{\,m}\big)^\top
+$$
+be the vector of discounted traded instruments. The same projection principle
+gives the multi-asset hedge.
+
+\begin{proposition}[Multi-asset variance-optimal hedge]
+\label{prop:multi_hedge}
+Assume that $\widetilde{F}$ is an $m$-dimensional square-integrable
+$\Q$-martingale and that the predictable covariance matrix
+$$
+\Sigma_t^{FF}
+= \left(
+    \frac{\dd \langle \widetilde{F}^{\,i},\widetilde{F}^{\,j}\rangle_t}{\dd t}
+  \right)_{1 \le i,j \le m}
+$$
+is invertible almost everywhere. Then the variance-optimal hedge vector
+$\xi_t \in \R^m$ is
+\begin{align}\label{eq:multi_hedge}
+  \xi_t
+  = (\Sigma_t^{FF})^{-1} \Sigma_t^{FV},
+  \qquad
+  \Sigma_t^{FV}
+  \coloneqq \left(
+    \frac{\dd \langle \widetilde{F}^{\,i},\widetilde{V}\rangle_t}{\dd t}
+  \right)_{1 \le i \le m}.
+\end{align}
+\end{proposition}
+
+\begin{proof}
+This is the vector version of the Galtchouk--Kunita--Watanabe projection.
+\end{proof}
+
+\begin{remark}
+The multivariate hedge \eqref{eq:multi_hedge} is precisely where an MCARMA
+formulation can be more than a matter of elegance. If the secondary factor is a
+tradable FX rate, or if a weather future or proxy instrument is available, then
+the covariance matrix in \eqref{eq:multi_hedge} can absorb a significant part of
+the residual hybrid risk. In the classical FX-quanto setting, if one of the
+instruments $\widetilde{F}^{\,i}$ is an FX forward (tradable secondary factor),
+the residual $M^{\perp}$ is substantially reduced and the market becomes
+``almost complete'' if the only remaining unspanned source is stochastic
+volatility or a spread risk. A fully multivariate state-space specification then
+provides the natural joint model for the tradable hedge universe. In contrast,
+when only the energy forward is liquid, the simpler coupled model is often
+preferable because it isolates the residual non-tradable exposure explicitly.
+\end{remark}
+
+\subsection{Practical hedge decomposition}
+
+The CARMA framework suggests a useful decomposition of hedgeable and unhedgeable
+risk:
+\begin{enumerate}[label=(\roman*)]
+  \item \emph{Energy price risk}: the component projected onto traded forwards or
+    futures. This is the part captured by $\int \xi\,\dd \widetilde{F}$.
+  \item \emph{Cross-factor risk}: the part created by the coupling matrix
+    $\Gamma$. It affects the hedge ratio through the predictable covariation of
+    the claim value with the traded instrument.
+  \item \emph{Pure secondary-factor risk}: the orthogonal component in
+    $M^{\perp}$, which remains after projection and is unavoidable unless
+    additional tradable instruments are introduced.
+\end{enumerate}
+In applications this decomposition is more informative than a list of Greeks.
+It tells the practitioner not only how to hedge, but also which risk cannot be
+hedged within the available market.
+
+\subsection{Explicit hedge ratio for the Brownian case}
+
+The abstract formula \eqref{eq:hedge_ratio} becomes explicit in the coupled
+CARMA framework. We state the result for the Brownian specialization of
+\Cref{sec:pricing-quanto-options} (continuous-path drivers), in which the
+quadratic covariations are deterministic and computable from matrix
+exponentials.
+
+\begin{proposition}[CARMA hedge ratio]
+\label{prop:carma_hedge_ratio}
+Suppose that both $L^{X,\Q}$ and $L^{Y,\Q}$ are Brownian motions (possibly
+multivariate). Let $\Sigma_X = \Var^\Q(L_1^{X,\Q})$ and
+$\Sigma_Y = \Var^\Q(L_1^{Y,\Q})$. Then the forward price satisfies
+$$
+\dd \widetilde{F}_t
+= \widetilde{F}_{t^-}\Bigl(
+    \beta_X(t;T)^\top \dd L_t^{X,\Q}
+    + \gamma_X(t;T)^\top \dd L_t^{Y,\Q}
+  \Bigr),
+$$
+and the instantaneous quadratic variation of $\widetilde{F}$ is
+\begin{align}\label{eq:forward_qv}
+  \frac{\dd \langle \widetilde{F} \rangle_t}{\dd t}
+  = \widetilde{F}_t^2 \bigl(
+      \beta_X(t;T)^\top \Sigma_X\, \beta_X(t;T)
+      + \gamma_X(t;T)^\top \Sigma_Y\, \gamma_X(t;T)
+    \bigr) \eqqcolon \widetilde{F}_t^2\, \sigma_F^2(t;T).
+\end{align}
+The variance-optimal hedge ratio \eqref{eq:hedge_ratio} becomes
+\begin{align}\label{eq:hedge_ratio_carma}
+  \xi_t
+  = \frac{1}{\widetilde{F}_t\, \sigma_F^2(t;T)}
+    \frac{\dd \langle \widetilde{V}, \widetilde{F} \rangle_t}{\dd t},
+\end{align}
+where the numerator is computed by differentiating the pricing functional with
+respect to the state and applying the chain rule through the CARMA state
+dynamics.
+\end{proposition}
+
+\begin{proof}
+The forward dynamics follow from \eqref{eq:forward_formula} by It\^o's formula
+applied to the exponential of a linear functional of the state. The loading
+kernels $\beta_X(t;T)$ and $\gamma_X(t;T)$ are the sensitivities of the
+log-forward to the noise increments of $L^{X,\Q}$ and
+$L^{Y,\Q}$, respectively. Since $\widetilde{V}_t$ is also driven by
+$L^{X,\Q}$ and $L^{Y,\Q}$ (through the state), the predictable covariation
+is the sum of the contributions from each noise source weighted by the
+respective loadings. To numerically evaluate the covariation
+$\langle\widetilde{V},\widetilde{F}\rangle$, one may differentiate the Fourier
+pricing formula \eqref{eq:fourier_pricing} with respect to the state and apply
+the kernel representations of \eqref{eq:betaX}--\eqref{eq:betaY}.
+\end{proof}
+
+\begin{remark}
+In a Monte Carlo implementation, the hedge ratio can alternatively be
+estimated pathwise: simulate the coupled CARMA state over a time grid using
+matrix exponentials, compute the forward $F(t_k,T)$ and the option value
+estimate at each rebalancing date, and estimate the ratio
+\eqref{eq:hedge_ratio_carma} by regression of the value increments on the
+forward increments. This pathwise approach avoids the need to differentiate
+the Fourier formula and is robust to the choice of Lévy driver.
+\end{remark}
+
+\input{empirical}
+
+\section{Limitations and Extensions}\label{sec:limitations}
+
+The framework developed above is analytically tractable, but it does not remove
+the standard difficulties of hybrid derivative modeling.
+
+\paragraph{Pricing measure for the non-tradable factor.}
+The choice of pricing measure for the non-tradable factor is not implied
+by no-arbitrage. Any serious empirical implementation must therefore defend the
+risk-premium specification for the secondary factor, either by calibration to
+hybrid OTC quotes or by an explicit actuarial or utility-based criterion.
+In practice, the Esscher transform of the secondary factor Lévy triplet offers a
+one-parameter family of equivalent measures that preserves the CARMA state-space
+structure and can be calibrated to at-the-money volatilities of proxy instruments.
+
+\paragraph{Linearity of the state-space.}
+Linear CARMA dynamics are well suited to mean reversion and short-memory
+dependence, but they do not capture every stylized feature of energy markets.
+Regime switching, stochastic volatility, structural breaks, and severe
+non-linearities in renewable output may require model extensions. Lévy-driven
+CARMA factors alleviate part of this issue by accommodating jumps and heavy
+tails, but they remain linear state-space systems. A natural extension is to
+allow the noise-loading matrices $B_X, B_Y$ or the coupling matrix
+$\Gamma$ to be state-dependent (e.g., driven by a Markov chain), recovering
+a regime-switching CARMA hybrid.
+
+\paragraph{Non-tradability of the electricity spot.}
+Spot electricity is not itself tradable. The hedging theory must therefore be
+interpreted through forwards, futures, or swaps, and delivery-period mismatch
+may create additional basis risk. The framework accommodates this by working
+with forward prices \eqref{eq:forward_formula} and by treating the hedge as a
+projection problem, but it does not eliminate basis risk induced by differences
+between spot and contract delivery horizons.
+
+\paragraph{Identification and calibration.}
+A full MCARMA generalization is not automatically superior. Although it offers a
+more symmetric and often more elegant representation, it introduces additional
+parameters and can be difficult to identify from the available data. The coupled
+specification should therefore be viewed not as a shortcut, but as a structural
+restriction that is useful when it is economically justified. Concretely,
+identification of the coupling matrix $\Gamma$ requires cross-covariance
+observations at multiple lags \eqref{eq:lagged_cross_cov}; misspecification of
+the CARMA orders $(p_X,q_X,p_Y,q_Y)$ is the most important source of model
+risk in practice.
+
+\paragraph{Extensions.}
+There are several natural extensions. One can allow for stochastic interest
+rates, multiple traded commodities, explicit FX settlement, or a factor structure
+for several weather stations. One can also replace the single directed coupling
+channel by a low-rank multivariate CARMA loading, which would retain much of the
+tractability while bridging the gap between the coupled and unrestricted MCARMA
+models. Finally, combining the CARMA state-space structure with a hidden Markov
+filter would enable sequential updating of the state vector and real-time hedge
+rebalancing, turning the present theoretical framework into an operational
+trading system.
+
+\section{Conclusion}\label{sec:conclusion}
+
+We have developed and empirically validated a coherent framework for pricing
+and hedging quanto options in CARMA-based models.
+The central idea is to combine a tradable energy factor and a secondary
+hybrid-risk factor in a coupled CARMA state-space system, driven by
+independent NIG Lévy noises linked through a single directional coupling
+channel.
+
+The analysis leads to four main conclusions.
+First, coupled CARMA models are a natural intermediate layer between univariate
+CARMA models and full MCARMA systems: they preserve interpretability while
+embedding cleanly into the multivariate theory.
+For German hourly electricity prices and temperature, a CARMA$(3,1)$ model with
+NIG driving noise fits substantially better than the OU benchmark,
+with eigenvalues that identify both a fast spike-reversion component
+(half-life of order hours) and a slower persistent component (half-life of
+order days).
+Second, the Fourier valuation formula \eqref{eq:fourier_pricing} agrees with
+Monte Carlo to within simulation error across all payoff types and maturities,
+confirming that the analytical joint characteristic function \eqref{eq:joint_cf}
+is correctly implemented and computationally efficient.
+Third, the coupling parameter $\hat\gamma_0\approx\tbd{0.094}$ is statistically
+highly significant and generates a quanto adjustment of \tbd{3}--\tbd{6\%}
+for heating-type payoffs, confirming that ignoring temperature--electricity
+dependence leads to a systematic pricing bias.
+Fourth, the variance-optimal GKW hedge reduces tracking-error variance by
+\tbd{41\%} with the CARMA model versus \tbd{28\%} with the OU benchmark,
+demonstrating the practical value of higher-order continuous-time dynamics
+and the explicit coupling channel for hedging hybrid claims.
+
+The primary avenue for future work is the calibration of the pricing measure
+for the non-tradable factor.
+The present analysis uses the historical law of the secondary factor as a
+proxy; incorporating an Esscher or utility-based risk premium for temperature
+risk, calibrated to hybrid OTC quotes, would complete the bridge to a full
+mark-to-model implementation.
+Extending the hedging universe to weather futures or proxy instruments would
+further reduce the residual hybrid risk $M^\perp$.
+
+\bibliographystyle{plainnat}
+\bibliography{literature}
+
+\end{document}

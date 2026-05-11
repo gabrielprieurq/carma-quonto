@@ -1,0 +1,2 @@
+,n,mean_dL_J,std_dL_J,corr_dL_T_dL_J,std_lambda_dL_T,std_sigmaJ_dLJ,std_reconstructed_dL_X,std_dL_X,max_reconstruction_error
+price_idiosyncratic_driver,26280,2.047328120008118e-05,1.0001123549930058,-0.03532552787552026,0.0024169404630847427,0.760038205157394,0.759956664051101,0.759956664051101,8.881784197001252e-16

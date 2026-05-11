@@ -1,0 +1,896 @@
+\documentclass[10pt,a4paper,reqno]{amsart}
+\usepackage{amsthm,amssymb,amstext,graphicx,comment}
+\usepackage[foot]{amsaddr}
+\usepackage{bbm}
+\usepackage{enumerate}
+\usepackage{amscd}
+\usepackage{mathtools}
+\usepackage{hyperref}
+\hypersetup{
+  colorlinks=true,
+  pdfpagelabels=true,
+  pdfpagelayout==TwoColumnRight,
+  pdftitle={},
+  pdfauthor={© Sven Karbach},
+  pdfsubject={},
+  pdfkeywords={}
+}
+\usepackage{enumitem}
+\usepackage{empheq}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{bibentry}
+\usepackage{soul}
+\usepackage[capitalise]{cleveref}
+% \hypersetup{
+%  colorlinks=true,
+%  linkcolor=black,    % Color of internal links
+%  citecolor=black,    % Color of citations
+%  urlcolor=black,     % Color of URLs
+%  anchorcolor=black,  % Color of anchors
+%  pdftitle={},
+%  pdfauthor={© Sven Karbach},
+%  pdfsubject={},
+%  pdfkeywords={}
+% }
+\usepackage{natbib}
+\setcitestyle{numbers,comma,open={[},close={]}}
+\newcommand{\abs}[1]{\left|\left|#1\right|\right|}
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{remark}[theorem]{Remark}
+\newtheorem{proposition}[theorem]{Proposition}
+
+\newtheoremstyle{example}
+  {.3\baselineskip}
+  {.3\baselineskip}
+  {\normalsize}  % BODYFONT
+  {0pt}       % INDENT (empty value is the same as 0pt)
+  {\bfseries} % HEADFONT
+  {.}         % HEADPUNCT
+  {5pt plus 1pt minus 1pt} % HEADSPACE
+  {}          % CUSTOM-HEAD-SPEC
+\theoremstyle{example}
+\newtheorem{example}[theorem]{Example}
+
+
+\DeclareMathOperator\Tr{Tr}
+\DeclareMathOperator\dom{dom}
+\DeclareMathOperator\Res{Res}
+\DeclareMathOperator\lin{lin}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newcommand{\Cov}{\mathrm{Cov}}
+\newcommand{\Id}{\mathrm{Id}}
+\newcommand{\dvg}{\textbf{\mathrm{div}}}
+\newcommand{\grad}{\textbf{\mathrm{grad}}}
+\newcommand*\D{\mathop{}\!\textnormal{d}}
+\newcommand*\DD{\mathop{}\!\textnormal{D}}
+\newcommand*\E{\mathop{}\!\textnormal{e}}
+\newcommand*\I{\mathop{}\!\textnormal{i}}
+\newcommand{\dt}{\D t }
+\newcommand{\dnt}{\D^{n} t }
+\newcommand{\du}{\D u\;}
+\newcommand{\dx}{\D x }
+\newcommand{\dnx}{\D^{n} x }
+\newcommand{\dy}{\D y }
+\newcommand{\dz}{\D z }
+\newcommand{\dnu}{\D \nu }
+\newcommand{\dlambda}{\D \lambda}
+\newcommand{\dmuc}{\D \ol{\mu}}
+\newcommand{\op}[1]{\mathbf{#1}}
+\newcommand{\ve}{\mathbf{e}}
+\newcommand{\veb}{\mathbf{\bar e}}
+\newcommand{\vf}{\mathbf{f}}
+\newcommand{\vr}{\mathbf{r}}
+\newcommand{\vrb}{\mathbf{\bar r}}
+\newcommand{\opE}{\mathbf{1}}
+\newcommand{\opN}{\mathbf{0}}
+\newcommand{\opp}{\mathbf{p}}
+\newcommand{\opq}{\mathbf{q}}
+\newcommand{\opr}{\mathbf{r}}
+\newcommand{\opt}{\mathbf{t}}
+\newcommand{\opx}{\mathbf{x}}
+\newcommand{\opy}{\mathbf{y}}
+\newcommand{\opb}{\mathbf{b}}
+\newcommand{\opz}{\mathbf{z}}
+\newcommand{\opA}{\mathbf{A}}
+\newcommand{\opB}{\mathbf{B}}
+\newcommand{\opC}{\mathbf{C}}
+\newcommand{\opD}{\mathbf{D}}
+\newcommand{\opG}{\mathbf{G}}
+\newcommand{\opH}{\mathbf{H}}
+\newcommand{\opI}{\mathbf{I}}
+\newcommand{\opJ}{\mathbf{J}}
+\newcommand{\opK}{\mathbf{K}}
+\newcommand{\opL}{\mathbf{L}}
+\newcommand{\opM}{\mathbf{M}}
+\newcommand{\opO}{\mathbf{O}}
+\newcommand{\opP}{\mathbf{P}}
+\newcommand{\opQ}{\mathbf{Q}}
+\newcommand{\opR}{\mathbf{R}}
+\newcommand{\opS}{\mathbf{S}}
+\newcommand{\opT}{\mathbf{T}}
+\newcommand{\opU}{\mathbf{U}}
+\newcommand{\opV}{\mathbf{V}}
+\newcommand{\opW}{\mathbf{W}}
+\newcommand{\opZ}{\mathbf{Z}}
+\newcommand{\opSigma}{\mathbf{\Sigma}}
+\newcommand{\opLA}{\mathbf{\Lambda}}
+\newcommand{\bu}{\mathbf{u}}
+\newcommand{\bv}{\mathbf{v}}
+\newcommand{\bx}{\mathbf{x}}
+\newcommand{\by}{\mathbf{y}}
+\newcommand{\bz}{\mathbf{z}}
+\newcommand{\vAb}{\mathbf{\bar{A}}}
+\newcommand{\vBb}{\mathbf{\bar{B}}}
+\newcommand{\MG}{\mathbb{G}}
+\newcommand{\MH}{\mathbb{H}}
+\newcommand{\MK}{\mathbb{K}}
+\renewcommand{\MR}{\mathbb{R}}
+\newcommand{\MC}{\mathbb{C}}
+\newcommand{\MCx}{\mathbb{C}^{\times}}
+\newcommand{\MCe}{\mathbb{C}^{*}}
+\newcommand{\MCm}{\mathbb{C}^{-}}
+\newcommand{\MD}{\mathbb{D}}
+\newcommand{\ME}{\mathbb{E}}
+\newcommand{\MZ}{\mathbb{Z}}
+\newcommand{\MU}{\mathbb{U}}
+\renewcommand{\MH}{\mathbb{H}}
+\newcommand{\MHo}{\mathbb{H}^{+}}
+\newcommand{\MHu}{\mathbb{H}^{-}}
+\newcommand{\MHr}{\mathbb{H}^{<}}
+\newcommand{\MM}{\mathbb{M}}
+\newcommand{\MN}{\mathbb{N}}
+\newcommand{\MP}{\mathbb{P}}
+\newcommand{\MQ}{\mathbb{Q}}
+\newcommand{\MI}{\mathbb{I}}
+\newcommand{\MJ}{\mathbb{J}}
+\newcommand{\MT}{\mathbb{T}}
+\newcommand{\MS}{\mathbb{S}}
+\newcommand{\MF}{\mathbb{F}}
+\newcommand{\cF}{\mathcal{F}}
+%\newcommand{\cl}{\mathcal{l}}
+\newcommand{\cA}{\mathcal{A}}
+\newcommand{\cB}{\mathcal{B}}
+\newcommand{\cC}{\mathcal{C}}
+\newcommand{\cD}{\mathcal{D}}
+\newcommand{\cE}{\mathcal{E}}
+%\newcommand{\cG}{\mathcal{G}}
+\newcommand{\cH}{\mathcal{H}}
+\newcommand{\cI}{\mathcal{I}}
+\newcommand{\cJ}{\mathcal{J}}
+\newcommand{\cK}{\mathcal{K}}
+\newcommand{\cL}{\mathcal{L}}
+\newcommand{\LH}{\mathcal{L}(\mathcal{H})}
+\newcommand{\cM}{\mathcal{M}}
+\newcommand{\cO}{\mathcal{O}}
+\newcommand{\cP}{\mathcal{P}}
+\newcommand{\cQ}{\mathcal{Q}}
+\newcommand{\cR}{\mathcal{R}}
+\newcommand{\cX}{\mathcal{X}}
+\newcommand{\cY}{\mathcal{Y}}
+\newcommand{\cZ}{\mathcal{Z}}
+\newcommand{\cG}{\mathcal{G}}
+%\newcommand{\cM}{\mathcal{M}}
+\newcommand{\co}{{\mathcal{ \scriptstyle O}}}
+\newcommand{\cS}{\mathcal{S}}
+\newcommand{\cT}{\mathcal{T}}
+\newcommand{\sC}{\mathsf{C}}
+\newcommand{\Cs}{\mathsf{C}^{*}}
+\newcommand{\Ws}{\mathsf{W}^{*}}
+\newcommand{\sD}{\mathsf{D}}
+\newcommand{\sE}{\mathsf{E}}
+\newcommand{\sP}{\mathsf{P}}
+\newcommand{\sH}{\mathsf{H}}
+\newcommand{\sG}{\mathsf{G}}
+\newcommand{\sI}{\mathsf{I}}
+\newcommand{\sJ}{\mathsf{J}}
+\newcommand{\sK}{\mathsf{K}}
+\newcommand{\sL}{\mathsf{L}}
+\newcommand{\sGL}{\mathsf{GL}}
+\newcommand{\sSL}{\mathsf{SL}}
+\newcommand{\sSU}{\mathsf{SU}}
+\newcommand{\sO}{\mathsf{O}}
+\newcommand{\sSO}{\mathsf{SO}}
+\newcommand{\sM}{\mathsf{M}}
+\newcommand{\sN}{\mathsf{N}}
+\newcommand{\sR}{\mathsf{R}}
+\newcommand{\sQ}{\mathsf{Q}}
+\newcommand{\sU}{\mathsf{U}}
+\newcommand{\sT}{\mathsf{T}}
+\newcommand{\sS}{\mathsf{S}}
+\newcommand{\sV}{\mathsf{V}}
+\newcommand{\sW}{\mathsf{W}}
+\newcommand{\sX}{\mathsf{X}}
+\newcommand{\sY}{\mathsf{Y}}
+\newcommand{\sZ}{\mathsf{Z}}
+\newcommand{\su}{\mathsf{u}}
+\newcommand{\sv}{\mathsf{v}}
+\newcommand{\res}[1]{\mathrm{res_{#1}\;}}
+\newcommand{\cz}{\bar{z}}
+\newcommand{\cw}{\bar{w}}
+\newcommand{\cf}{\bar{f}}
+\newcommand{\fa}{\mathfrak{a}}
+\newcommand{\fb}{\mathfrak{b}}
+\newcommand{\fc}{\mathfrak{c}}
+\newcommand{\fZ}[1]{\mathfrak{Z}_{#1}}
+\newcommand{\MRn}{\MR^{n}}
+\newcommand{\Cn}{\MC^{n}}
+\newcommand{\Cr}{\MC^{r}}
+\newcommand{\df}{\coloneqq}
+\newcommand{\one}{\mathbf{1}}
+\newcommand{\zero}{\mymathbb{0}}
+\newcommand{\interior}[1]{({\kern0pt#1})^{\textnormal{o}}}
+\newcommand{\set}[1]{\left\{ #1\right\}}
+\newcommand{\norm}[1]{\|#1\|}
+\newcommand{\llangle}{\langle\langle}
+\newcommand{\rrangle}{\rangle\rangle}
+\newcommand{\CF}{\mathcal{F}}
+\newcommand{\EX}[1]{\mathbb{E}\left[#1\right]}
+\newcommand{\EXspec}[2]{\mathbb{E}_{#1}\left[#2\right]}
+\newcommand{\CEX}[2]{\mathbb{E}\left[#1\lvert\;#2\right]}
+\newcommand{\Var}{\textnormal{Var}}
+\newcommand{\p}{\MP}
+\newcommand{\cHplus}{\cH^{+}}
+\newcommand{\cHpo}{\interior{\cH^{+}}}
+\newcommand{\cHpluso}{\cHplus\setminus \{0\}}
+\newcommand{\MRplus}{\MR^{+}}
+\newcommand{\indep}{\perp \!\!\! \perp}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+%%%%%%%%%%%%%%%%%% Tools %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newcommand{\sven}[1]{\textcolor{red}{[S: #1]}}
+\newcommand{\vincent}[1]{\textcolor{blue}{[V: #1]}}
+\newcounter{Task}\setcounter{Task}{1}
+\newcommand{\Task}[2][~]{\noindent{%~\newline
+       \marginpar[\tiny #1 $\Rightarrow$]{$\Leftarrow$ \tiny #1}
+       $\blacktriangleright$ \textsf{Task \#\theTask
+         \addtocounter{Task}{1}: }}{\small \color{blue}\textsf{#2}}\\}
+   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{document}
+
+\title[Pricing and Hedging Quantos using CARMA]{Pricing and Hedging of Quanto Options in Renewable Energy Markets using CARMA}
+
+\address{\today{}, Informatics Institute and Korteweg-de Vries Institute for Mathematics at the University of
+  Amsterdam, Science Park 105-107, 1098 XG Amsterdam, Netherlands}     
+
+\maketitle
+\vspace{-0mm}
+\begin{center}
+  \begin{tabular}{cc}
+    \textsc{Vincent Gachon} & \textsc{Sven Karbach} \\
+    \small[\texttt{\MakeLowercase{vincent.gachon@centrale-marseille.fr}}] &  \small[\texttt{\MakeLowercase{sven@karbach.org}}] \\
+  \end{tabular}
+\end{center}
+
+
+\begin{abstract}
+In this paper, we explore the pricing and hedging of Quanto options within the renewable energy sector, employing continuous-time autoregressive moving-average (CARMA) processes to model the dynamics of spot electricity prices and temperature. Quanto options, which are European-style derivatives, are written on both the electricity spot or forward price and a weather or climate variable such as temperature, wind speed, or solar irradiance. These options enable renewable energy firms to hedge against both price and volumetric risk simultaneously. We demonstrate the application of CARMA models for accurately pricing and effectively hedging these contracts.\newline
+  
+\noindent \textbf{Keywords:} Quanto Options, Renewable Energy Markets, CARMA, Volumetric Risk, Weather Derivative
+\end{abstract}
+
+\maketitle
+
+\section{Introduction}
+
+\section{Continuous-time Autoregressive Moving Average Processes}
+\subsection{Lévy-driven CARMA processes}
+
+Continuous-time Autoregressive Moving Average processes are a general class of stationary
+processes which has been widely used in many fields including physics, engineering and meteorology for many
+years. It is the natural extension of the discrete ARMA models from time series analysis.
+CARMA provides a convenient continuous-time modeling framework accounting for memory effects and mean-reversion and they generalize Ornstein-Ulhenbeck processes in a natural way \cite{Bro01}. \medskip
+
+
+ \begin{definition}
+ A Lévy-driven $\textbf{CARMA}(p,q)$ process (with $0\leq q< p$) is defined as $Y (t) = \mathbf{b}^{\intercal}\textbf{X}(t)$ (observation equation), where $\textbf{X}(t)=[X_1(t),\cdots,X_p(t)]^{\intercal}$ is the solution of the following stochastic differential equation (state equation) 
+ \begin{align}
+\D\textbf{X}(t) = A\textbf{X}(t)\D t + \textbf{e}_p\D L(t)
+ \end{align}
+Where,  
+$$
+A=\begin{bmatrix}
+0 & 1 & 0 & \cdots & 0 \\
+0 & 0 & 1 & \cdots & 0 \\
+\vdots & \vdots & \vdots & \ddots & \vdots \\
+0 & 0 & 0 & \cdots & 1 \\
+-a_p & -a_{p-1} &  -a_{p-2} &\cdots & -a_1 \\
+\end{bmatrix} ;
+\textbf{e}_p=\begin{bmatrix}
+0 \\
+0 \\
+\vdots \\
+0\\
+1
+\end{bmatrix};
+\mathbf{b} = \begin{bmatrix}
+b_0 \\
+b_1 \\
+\vdots\\
+b_{p-1} \\
+\end{bmatrix}
+$$
+\newline\newline
+with $b_j\neq0$ and $b_j=0$ for $q<j\leq p$ and $L$ a Lévy process. $A$ is a $p \times p$ matrix containing $p$ constant mean reversion parameters. The mean reversion is related to the stationary property of the process where the process is assumed to revert back to their long term average. 
+ \end{definition}
+\noindent
+\begin{proposition}
+    A solution of the state equation is a p-dimensional Ornstein-Ulhenbeck process given by the following variation-of-constant formula,
+    \begin{align}
+         \textbf{X}_t = e^{(t-s)A}\textbf{X}_s + \int_s^t e^{(t-u)A}\textbf{e}_p\D L_u, 0 \leq s<t
+    \end{align}
+\end{proposition}
+\noindent
+\begin{remark}
+\noindent
+\begin{itemize}
+\item[--]By setting $p = 1$, we have $A=-\kappa = -a_1$. This lead us to the Ornstein-Uhlenbeck (OU) process. This process has been applied in finance particularly in option pricing. Therefore, CARMA processes are a higher-order generalization of OU processes. 
+    \begin{align*} 
+    \D X(t) = -\kappa X(t)\D t + \D L(t).      
+    \end{align*}
+\item[--] A CARMA process can also be represented as the solution of the following SDE,
+    \begin{align*}
+        a(D)Y(t)=b(D)DL(t)
+    \end{align*}
+    \noindent
+    where $D$ is the differenciation with respect to $t$ and $a(.), b(.)$ are the polynomials
+    \begin{align*}
+        &a(z) = z^p + a_1z^{p-1}+\cdots+a_p\\
+        &b(z) = b_0 + b_1z+ \cdots + b_pz^p
+    \end{align*}
+\item[--] We will assume that $\mathbf{b}=\textbf{e}_1$ ie that $b_0=1$. Furthermore, by setting $q=0$ the $\textbf{CARMA}(p,q)$ process becomes a $\textbf{CAR}(p)$ process. Therefore, we can write the $\textbf{CAR}(p)$ process as,
+\begin{align*}
+\left\{
+\begin{array}{l}
+\D X_t^{(i)}=X_t^{(i+1)}\D t  \\
+\D X_t^{(p)}=-\displaystyle\sum_{k=1}^p a_kX_t^{(i)}\D t  + \D L_t \\
+Y(t)=X_t^{(1)}
+\end{array}
+\right.
+\end{align*} 
+\end{itemize}
+\end{remark}
+\noindent
+\vincent{Need a paragraph about the characteristic function of CARMA processes}
+\section{Pricing and Hedging of Renewable Energy Quanto Options}
+\subsection{Model for the underlyings}
+In order to describe the combined dynamics of daily day ahead electricity log spot prices $(X_t)_{t\geq 0}$ and the daily average temperature $(T_t)_{t\geq 0}$, we will use the model described below. Both underlyings are model by $\textbf{CAR}(p)$ processes. This model is the same model as the (ETM) model described in \textbf{[1]} but we replace the Ornstein-Ulhenbeck processes ($\textbf{CAR}(1)$) with $\textbf{CAR}(p)$ processes.
+\newline\newline
+We consider the processes to be deseasonalized here.
+\newline\newline
+\textbf{Temperature}
+\newline
+$$
+\left\{
+\begin{array}{l}
+\D \textbf{Z}_t^T=A_T\textbf{Z}_t^T\D t+\textbf{e}_p\sigma_T\D W_t^T\\ \\
+T_t =\mathbf{b}'_T\textbf{Z}_t^T
+\end{array}
+\right.
+$$
+\newline
+\textbf{Electricity log spot prices}
+\newline
+$$
+\left\{
+\begin{array}{l}
+\D \textbf{Z}_t^X=A_X\textbf{Z}_t^X\D t+\textbf{e}_p\lambda\sigma_T\D W_t^T+\textbf{e}_p\D L_t^X\\ \\
+X_t =\mathbf{b}'_X\textbf{Z}_t^X
+\end{array}
+\right.
+$$
+\newline
+The parameter $\lambda\in\mathbb{R}$ allows for some dependence between both processes.
+\newline\newline
+$L^X$ is a Normal Inverse Gaussian distribution of parameters $(\alpha^X,\beta^X,\delta^X,m^X)$. We will assume that this process is centered.
+\newline\newline
+$W^T$ is a Wiener process (Standard Brownian Motion) independent of $L^X$ and $\sigma_T>0$ is the standard deviation of the noise.
+\newline\newline
+\textbf{Integrated model} For all $s<t$, 
+\newline
+$$
+\left\{
+\begin{array}{l}
+\displaystyle\textbf{Z}_{t}^T = e^{(t-s) A_T}\textbf{Z}_s^T + \sigma_T\int_s^{t}e^{(t-u)A_T}\textbf{e}_p\D W_u^T   \\
+\\
+\displaystyle\textbf{Z}_{t}^X = e^{(t-s) A_X}\textbf{Z}_s^X + \lambda\sigma_T\int_s^{t}e^{(t-u)A_X}\textbf{e}_p\D W_u^T+
+\int_s^{t}e^{(t-u)A_X}\textbf{e}_p\D L_u^X \\
+\end{array}
+\right.
+$$
+\subsection{Covariance of residuals}
+\begin{proposition} Link between covariances
+\begin{align}
+    \Cov(T_t,X_t)=\mathbf{b}_T'\Cov(\textbf{Z}_t^T,\textbf{Z}_t^X)\mathbf{b}_X\nonumber
+\end{align}
+\end{proposition}
+\begin{proof}
+\begin{align}
+\Cov(T_t,X_t)&=\Cov(\mathbf{b}_T'\textbf{Z}_t^T,\mathbf{b}_X'\textbf{Z}_t^X)=\Cov\left(\sum_i b_i^T\textbf{Z}_t^T^{(i)},\sum_j b_j^X\textbf{Z}_t^X^{(j)}\right)\nonumber\\
+&=\sum_i\sum_j b_i^T \Cov(\textbf{Z}_t^T^{(i)},\textbf{Z}_t^X^{(j)})b_j^{X}\nonumber\\
+&=\mathbf{b}_T'\Cov(\textbf{Z}_t^T,\textbf{Z}_t^X)\mathbf{b}_X\nonumber
+\end{align}
+\end{proof}
+\noindent
+\begin{proposition}{Covariance of residuals}
+\begin{align}
+    \Cov\left(\textbf{Z}_{t+\Delta}^T - e^{\Delta A_T}\textbf{Z}_t^T,\textbf{Z}_{t+\Delta}^X - e^{\Delta A_X}\textbf{Z}_t^X\right)=\lambda\sigma_T^2 e^{\Delta A_T}\hat{\mathcal{D}}^{-1}_{TX}\left(e^{\hat{\mathcal{D}}_{TX}\Delta}-\opI\right)\textbf{e}_p \textbf{e}_p'e^{\Delta A_X^\intercal}\nonumber
+\end{align}
+Where we define $\hat{\mathcal{D}}_{TX}\in\cL(\MM_p)$ as,
+\begin{align*}
+    \hat{\mathcal{D}}_{TX}(M)=A_TM+MA_{X}^{\intercal},\quad M\in\MM_p.
+\end{align*}
+\end{proposition}
+\begin{proof}
+ We compute in this section the covariance of the residuals.
+$$
+\left\{
+\begin{array}{l}
+\displaystyle\textbf{Z}_{t+\Delta}^T - e^{\Delta A_T}\textbf{Z}_t^T=\sigma_Te^{\Delta A_T}\int_t^{t+\Delta}e^{(t-u)A_T}\textbf{e}_p\D W_u^T   \\
+\\
+\displaystyle\textbf{Z}_{t+\Delta}^X - e^{\Delta A_X}\textbf{Z}_t^X=\lambda\sigma_Te^{\Delta A_X}\int_t^{t+\Delta}e^{(t-u)A_X}\textbf{e}_p\D W_u^T+
+e^{\Delta A_X}\int_t^{t+\Delta}e^{(t-u)A_X}\textbf{e}_p\D L_u^X \\
+\end{array}
+\right.
+$$
+\begin{align}
+    \Cov\left(\textbf{Z}_{t+\Delta}^T - e^{\Delta A_T}\textbf{Z}_t^T,\textbf{Z}_{t+\Delta}^X - e^{\Delta A_X}\textbf{Z}_t^X\right):=\Cov\left(\textbf{X},\textbf{Y}\right)\nonumber
+\end{align}
+Where
+\newline
+$$
+\left\{
+\begin{array}{l}
+\displaystyle\textbf{X}:=\sigma_Te^{\Delta A_T}\int_t^{t+\Delta}e^{(t-u)A_T}\textbf{e}_p\D W_u^T\\
+\\
+\displaystyle\textbf{Y}:=\lambda\sigma_Te^{\Delta A_X}\int_t^{t+\Delta}e^{(t-u)A_X}\textbf{e}_p\D W_u^T+e^{\Delta A_X}\int_t^{t+\Delta}e^{(t-u)A_X}\textbf{e}_p\D L_u^X
+\end{array}
+\right.
+$$
+\newline
+But
+\newline
+$$
+\Cov\left(\textbf{X},\textbf{Y}\right) = \mathbb{E}[(\textbf{X}-\mathbb{E}\textbf{X})(\textbf{Y}-\mathbb{E}\textbf{Y})^\intercal]
+$$
+$$
+\mathbb{E}\textbf{X}=\sigma_Te^{\Delta A_T}\mathbb{E}\left[\int_t^{t+\Delta}e^{(t-u)A_T}\D W_u^T \right]\textbf{e}_p = \textbf{0}
+$$
+\newline
+$$
+\mathbb{E}\textbf{Y}=\mathbb{E}[\textbf{A}+\mathbf{B}]
+$$
+Where
+\newline
+$$
+\left\{
+\begin{array}{l}
+\displaystyle\textbf{A}:=\lambda\sigma_Te^{\Delta A_X}\int_t^{t+\Delta}e^{(t-u)A_X}\textbf{e}_p\D W_u^T\\
+\\
+\displaystyle\mathbf{B}:=e^{\Delta A_X}\int_t^{t+\Delta}e^{(t-u)A_X}\textbf{e}_p\D L_u^X
+\end{array}
+\right.
+$$
+\newline
+$$
+\mathbb{E}\textbf{A}=\lambda\sigma_Te^{\Delta A_X}\mathbb{E}\left[\int_t^{t+\Delta}e^{(t-u)A_X}\D W_u^T \right]\textbf{e}_p = \textbf{0}
+$$
+\begin{lemma}
+    Let $A\in GL_p(\mathbb{R})$, $Y$ be a Lévy process and $\textbf{X}$ the stochastic process defined by,
+    \begin{align}
+        X_t=\int_0^t e^{-k(t-s)}\D Y_s\nonumber
+    \end{align}
+    Then the expectation of this process is,
+    \begin{align}
+        \mathbb{E}X_t=\frac{\mathbb{E}Y_1}{k} (1-e^{-kt})\nonumber
+    \end{align}
+\end{lemma}
+\noindent
+\begin{lemma}
+    Let $Y$ be a Lévy process and $X$ the stochastic process defined by,
+    \begin{align}
+        \textbf{X}_t=\int_0^t e^{A(t-s)}\textbf{e}_p\D Y_s\nonumber
+    \end{align}
+    Then the expectation of this process is,
+    \begin{align}
+        \mathbb{E}\textbf{X}_t=\mathbb{E}Y_1(-A)^{-1}(\Id-e^{At})\textbf{e}_p
+    \end{align}    
+\end{lemma}
+\noindent
+\begin{remark}
+    Notice that $-A$ is invertible. We calculate the determinant by using the expansion along the first column.
+    \begin{align}
+        \det(-A)=(-1)^p\det(A)=(-1)^{p+1}(-a_p)\det(\Id) + 0 =a_p \neq 0\nonumber
+    \end{align}
+    Indeed, if $a_p=0$, it will not be a $\textbf{CAR}(p)$ process anymore.
+\end{remark}
+\noindent
+Therefore,
+\newline
+$$
+\mathbb{E}\mathbf{B}=e^{\Delta A_X}\mathbb{E}\left[\int_t^{t+\Delta}e^{(t-u)A_X}\textbf{e}_p\D L_u^X\right]
+$$
+\newline
+But since $L^X$ is a centered random variable, by using lemma 2, we have $\mathbb{E}\mathbf{b}=\textbf{0}$
+\newline\newline
+Hence,
+\newline
+$$
+\Cov\left(\textbf{X},\textbf{Y}\right) = \mathbb{E}[\textbf{X}\textbf{Y}^\intercal]=\mathbb{E}[\textbf{X}\textbf{A}^\intercal] + \mathbb{E}[\textbf{X}\mathbf{B}^\intercal]
+$$
+\newline
+But,
+\newline
+$$
+\mathbf{B}^\intercal=\left(\int_t^{t+\Delta}\textbf{e}_p'e^{(t-u)A_X^\intercal}\D L_u^X\right)e^{\Delta A_X^\intercal}
+$$
+\newline
+$$
+\mathbb{E}[\textbf{X}\mathbf{B}^\intercal]=\sigma_Te^{\Delta A_T}\mathbb{E}\left[
+\int_t^{t+\Delta}e^{(t-u)A_T}\textbf{e}_p\D W_u^T \int_t^{t+\Delta}\textbf{e}_p'e^{(t-u)A_X^\intercal}\D L_u^X\right] 
+e^{\Delta A_X^\intercal}
+$$
+\newline
+In addition, we have that $W \indep L^X$, therefore,
+\newline
+$$
+\mathbb{E}[\textbf{X}\mathbf{B}^\intercal]=\sigma_Te^{\Delta A_T}\mathbb{E}\left[
+\int_t^{t+\Delta}e^{(t-u)A_T}\textbf{e}_p\D W_u^T\right]\mathbb{E}\left[ \int_t^{t+\Delta}\textbf{e}_p'e^{(t-u)A_X^\intercal}\D L_u^X\right] 
+e^{\Delta A_X^\intercal}=\textbf{0}
+$$
+\newline
+Because,
+\newline
+$$
+\mathbb{E}\left[
+\int_t^{t+\Delta}e^{(t-u)A_T}\textbf{e}_p\D W_u^T\right]=\textbf{0}
+$$
+\newline
+Also,
+\newline
+$$
+\textbf{A}^\intercal=\lambda\sigma_T\left(\int_t^{t+\Delta}\textbf{e}_p'e^{(t-u)A_X^\intercal}\D W_u^T\right)e^{\Delta A_X^\intercal}
+$$
+\newline
+$$
+\mathbb{E}[\textbf{X}\textbf{A}^\intercal]=\lambda\sigma_T^2 e^{\Delta A_T}\mathbb{E}\left[\int_t^{t+\Delta}e^{(t-u)A_T}\textbf{e}_p\D W_u^T
+\int_t^{t+\Delta}\textbf{e}_p'e^{(t-u)A_X^\intercal}\D W_u^T\right]e^{\Delta A_X^\intercal}
+$$
+\newline
+By using the multivariate extension of Itô's isometry we obtain,
+\begin{align*}
+&\mathbb{E}[\textbf{X}\textbf{A}^\intercal]=\lambda\sigma_T^2 e^{\Delta A_T}\mathbb{E}\left[\int_t^{t+\Delta}e^{(t-u)A_T}\textbf{e}_p
+\textbf{e}_p'e^{(t-u)A_X^\intercal}\D u\right]e^{\Delta A_X^\intercal}\\
+&\mathbb{E}[\textbf{X}\textbf{A}^\intercal]=\lambda\sigma_T^2 e^{\Delta A_T}\left(\int_t^{t+\Delta}e^{(t-u)A_T}\textbf{e}_p
+\textbf{e}_p'e^{(t-u)A_X^\intercal}\D u\right)e^{\Delta A_X^\intercal}\\
+&\mathbb{E}[\textbf{X}\textbf{A}^\intercal]=\lambda\sigma_T^2 e^{\Delta A_T}\left(\int_0^{\Delta}e^{uA_T}\textbf{e}_p
+\textbf{e}_p'e^{uA_X^\intercal}\D u\right)e^{\Delta A_X^\intercal}
+\end{align*}
+\noindent
+Define $\hat{\mathcal{D}}_{TX}\in\cL(\MM_p)$ as
+\begin{align*}
+    \hat{\mathcal{D}}_{TX}(M)=A_TM+MA_{X}^{\intercal},\quad M\in\MM_p.
+\end{align*}
+Then 
+\begin{align*}
+\int_0^{\Delta}e^{uA_{TX}}\textbf{e}_p \textbf{e}_p'e^{uA_X^\intercal}\D u&=\int_0^{\Delta}\exp(\hat{\mathcal{D}}_{TX}u)\textbf{e}_p \textbf{e}_p'\D u\\
+&=\hat{\mathcal{D}}_{TX}^{-1}\left(\exp(\hat{\mathcal{D}}_{TX}\Delta)-\opI\right)\textbf{e}_p \textbf{e}_p',
+\end{align*}
+where $\exp(\hat{\mathcal{D}}_{TX})$ denotes the operator exponential in $\cL(\MM_p)$, the space of all linear operators from $\MM_p$ to $\MM_p$, and where $\opI$ denotes the identity in $\cL(\MM_p)$.
+\end{proof}
+
+
+
+
+\subsection{Payoff energy quanto option}
+$$
+\displaystyle\text{Payoff}:=\sum_{t=t_1}^{t_2}f_S(S_t)\times f_T(T_t)
+$$
+
+We consider a unit discount rate as the time span $t_2-t_0$ is rather short and there is no clear alignment on which rate should be used ($D(t_0,t_2)=1$) and we will work with the real-world probability $\mathbb{P}$ and not the risk-neutral measure $\mathbb{Q}$. Indeed, since temperature is not an asset traded on the markets, risk-neutral theory cannot be applied. \vincent{Need more details}
+
+$$
+\displaystyle\text{Price}:=\mathbb{E}\left[D(t_0,t_2)\sum_{t=t_1}^{t_2}f_S(S_t)\times f_T(T_t) \bigg| \mathcal{F}_{t_0}\right]=\mathbb{E}\left[\sum_{t=t_1}^{t_2}f_S(S_t)\times f_T(T_t) \bigg| \mathcal{F}_{t_0}\right]
+$$
+
+Here, in the case of a quanto option, $f_S$ and $f_T$ correspond to the payoff function of put and call options.
+
+$$
+\displaystyle\mathcal{Q}(t_1,t_2)=\mathbb{E}\left[\sum_{t=t_1}^{t_2}(S_t-\bar{S})^+(\bar{T}-T_t)^+ \bigg| \mathcal{F}_{t_0}\right]
+$$
+
+
+
+
+\subsection{Quanto pricing}
+\begin{theorem} Quanto pricing
+    \begin{align}
+        \mathcal{Q}(t_1,t_2)=&\sum_{t=t_1}^{t_2}\Bigg( \mathbb{E}_{\lambda=0}[(S_t-\Bar{S})^+|\mathcal{F}_{t_0}]\times\mathbf{e_1}'\Bigg[\boldsymbol{\mu}\Phi(-\Sigma^{-1/2}\boldsymbol{\mu}) \nonumber\\
+        &+ \frac{\Sigma^{1/2}\mathbf{e}}{\sqrt{(2\pi)^p}}\exp\left(-\frac{1}{2}(\Sigma^{-1/2}\boldsymbol{\mu})^\intercal(\Sigma^{-1/2}\boldsymbol{\mu})\right)\Bigg]\nonumber\\
+        &+\Bigg(\mathbb{E}_{\lambda=0}\left[(S_{t+\Delta}-\Bar{S})^+|\mathcal{F}_{t_0}\right]+\Bar{S}\mathbb{P}(S_{t+\Delta}\geq\Bar{S}|\mathcal{F}_{t_0})\Bigg)\nonumber\\
+        &\times\mathbf{e}_1'K_{XT}(\Delta)K_T^{-1}(\Delta)\Sigma^{1/2}\mathbf{e}\Tr{(\Sigma^{1/2})}\Phi(-\Sigma^{-1/2}\boldsymbol{\mu})\lambda\Bigg)+o(\lambda)\nonumber
+    \end{align}
+    Where $\boldsymbol\mu=\bar{T}\textbf{e}_1-e^{\Delta A_T}\textbf{Z}_t^T$ and $\Sigma = \sigma_T^2e^{\Delta A_T}\left(\hat{\mathcal{D}}_{T}^{-1}\left(\exp(\hat{\mathcal{D}}_{T}\Delta)-\opI\right)\textbf{e}_p \textbf{e}_p'
+    \right)e^{\Delta A_T^\intercal}$. $\Phi$ is the cumulative distribution function of the multivariate normal distribution $\mathcal{N}(\textbf{0},\Id)$ and $\mathbf{e}: = \begin{bmatrix} 1 & 1 & \cdots & 1 \end{bmatrix}^\intercal$.
+\end{theorem}
+\noindent
+\begin{proof}
+We want to compute the first order Taylor expansion of $\mathbb{E}[(S_{t+\Delta}-\Bar{S})^+(\Bar{T}-T_{t+\Delta})^+ | \mathcal{F}_t]$ in $\lambda=0$
+\begin{align}
+    \mathbb{E}[(S_{t+\Delta}-\Bar{S})^+&(\Bar{T}-T_{t+\Delta})^+ | \mathcal{F}_t] = \mathbb{E}_{\lambda=0}[(S_{t+\Delta}-\Bar{S})^+(\Bar{T}-T_{t+\Delta})^+ | \mathcal{F}_t]\nonumber\\
+    &+\lambda \frac{\D }{\D \lambda}\bigg|_{\lambda=0} \mathbb{E}[(S_{t+\Delta}-\Bar{S})^+(\Bar{T}-T_{t+\Delta})^+ | \mathcal{F}_t] + o(\lambda)\nonumber
+\end{align}
+\noindent
+First, we can notice that for $\lambda = 0$,
+\begin{align}
+\mathbb{E}[(S_{t+\Delta}-\Bar{S})^+(\Bar{T}-T_{t+\Delta})^+ | \mathcal{F}_t]=\mathbb{E}[(S_{t+\Delta}-\Bar{S})^+| \mathcal{F}_t]\mathbb{E}[(\Bar{T}-T_{t+\Delta})^+ | \mathcal{F}_t]\nonumber
+\end{align}
+\newline\newline
+\textbf{1.} The first step is to calculate $\mathbb{E}[(\Bar{T}-T_{t+\Delta})^+ | \mathcal{F}_t]$
+\newline\newline
+We can notice that,
+\begin{align}
+    \ME[(\bar{T}-T_{t+\Delta})^+|\cF_t] = \opb_T^{'}\ME[(\bar{T}\textbf{e}_1-\opZ_{t+\Delta}^T)^+|\cF_t]\nonumber
+\end{align}
+\noindent
+The conditional law of $\bar{T}\textbf{e}_1-\textbf{Z}_{t+\Delta}^T$ given $\mathcal{F}_t$ is $\mathcal{N}(\boldsymbol\mu,\Sigma)$
+\begin{align}
+    \boldsymbol\mu=\ME[\bar{T}\textbf{e}_1-\textbf{Z}_{t+\Delta}^T|\mathcal{F}_t]=\bar{T}\textbf{e}_1-e^{\Delta A_T}\textbf{Z}_t^T
+\end{align}
+\noindent
+Let's use the notation $\textbf{X}:=\bar{T}\textbf{e}_1-\textbf{Z}_{t+\Delta}^T$
+\begin{align}
+    \Sigma=\ME[(\textbf{X}-\underbrace{\ME[\textbf{X}|\mathcal{F}_t]}_{\boldsymbol{\mu}})(\textbf{X}-\underbrace{\ME[\textbf{X}|\mathcal{F}_t]}_{\boldsymbol{\mu}})^\intercal|\mathcal{F}_t]\nonumber
+\end{align}
+\noindent
+But,
+\begin{align}
+  \mathbf{X}-\boldsymbol{\mu}=e^{\Delta A_T}\textbf{Z}_t^T-\mathbf{Z}_{t+\Delta}^T=-\sigma_T\int_t^{t+\Delta}e^{(t+\Delta-u)A_T}\textbf{e}_p\D W_u^T\nonumber  
+\end{align}
+\noindent
+Therefore, by using multivariate extension of Itô's isometry,
+\begin{align}
+    &\Sigma=\sigma_T^2 \ME\left[\left(\int_t^{t+\Delta}e^{(t+\Delta-u)A_T}\textbf{e}_p\D W_u^T\right)\left(\int_t^{t+\Delta}e^{(t+\Delta-u)A_T}\textbf{e}_p\D W_u^T\right)^\intercal \Bigg| \mathcal{F}_t\right]\nonumber\\
+    &\Sigma = \sigma_T^2\left(\int_t^{t+\Delta}e^{(t+\Delta-u)A_T}\textbf{e}_p\textbf{e}_p^{'}e^{(t+\Delta-u)A_T^{\intercal}} \D W_u^T\right)\nonumber\\
+    &\Sigma = \sigma_T^2e^{\Delta A_T}\left(\int_t^{t+\Delta}e^{(t-u)A_T}\textbf{e}_p\textbf{e}_p^{'}e^{(t-u)A_T^{\intercal}} \D W_u^T\right)e^{\Delta A_T^\intercal}\nonumber
+\end{align}
+\noindent
+Define $\hat{\mathcal{D}}_{TX}\in\cL(\MM_p)$ as
+\begin{align*}
+    \hat{\mathcal{D}}_{TX}(M)=A_TM+MA_{X}^{\intercal},\quad M\in\MM_p.
+\end{align*}
+Then, 
+\begin{align*}
+\int_0^{\Delta}e^{uA_{T}}\textbf{e}_p \textbf{e}_p'e^{uA_X^\intercal}\D u&=\int_0^{\Delta}\exp(\hat{\mathcal{D}}_{TX}u)\textbf{e}_p \textbf{e}_p'\D u\\
+&=\hat{\mathcal{D}}_{TX}^{-1}\left(\exp(\hat{\mathcal{D}}_{TX}\Delta)-\opI\right)\textbf{e}_p \textbf{e}_p',
+\end{align*}
+\noindent
+Therefore,
+\begin{align}
+    &\Sigma = \sigma_T^2e^{\Delta A_T}\left(\hat{\mathcal{D}}_{T}^{-1}\left(\exp(\hat{\mathcal{D}}_{T}\Delta)-\opI\right)\textbf{e}_p \textbf{e}_p'
+    \right)e^{\Delta A_T^\intercal}
+\end{align}
+In addition,
+$$
+\textbf{X}_{|\mathcal{F}_t} \sim \mathcal{N}(\boldsymbol{\mu},\Sigma) \iff (\Sigma^{1/2}\mathbf{Z}+\boldsymbol{\mu})_{|\mathcal{F}_t} \sim \mathcal{N}(\boldsymbol{\mu},\Sigma) 
+$$
+\newline
+Where $\mathbf{Z}_{|\mathcal{F}_t}\sim\mathcal{N}(\mathbf{0},\Id)$
+\begin{remark}
+    The square root of the matrix $\Sigma$, noted $\Sigma^{1/2}$, exists and is unique because the covariance matrix $\Sigma$ is positive semi-definite. Note that $\Sigma^{1/2}$ is positive semi-definite too.
+\end{remark}
+\noindent
+We note $\Phi$ the cumulative distribution function of the multivariate normal distribution $\mathcal{N}(\textbf{0},\Id)$
+\begin{lemma}
+   Let $A\in\text{GL}_p(\mathbb{R})$, $\textbf{X}\sim\mathcal{N}(\textbf{0},\Id)$ and $\mathbf{b}\in\mathbb{R}^p$. We have,
+\begin{align}
+    \mathbb{E}[(A\textbf{X}+\mathbf{b})^+]=\mathbf{b}\Phi(-A^{-1}\mathbf{b}) + \frac{A\mathbf{e}}{\sqrt{(2\pi)^p}}\exp\left(-\frac{1}{2}(A^{-1}\mathbf{b})^\intercal(A^{-1}\mathbf{b})\right)\nonumber
+\end{align}
+\end{lemma} 
+\noindent
+\begin{proof}
+    Let $A\in\text{GL}_p(\mathbb{R})$, $\textbf{X}\sim\mathcal{N}(\textbf{0},\Id)$ and $\mathbf{b}\in\mathbb{R}^p$.
+    \begin{align}
+        &\displaystyle\mathbb{E}[(A\textbf{X}+\mathbf{b})^+]=\int_{\mathbb{R}^p}(A\textbf{x}+\mathbf{b})^+ \frac{1}{\sqrt{(2\pi)^p}}\exp\left(-\frac{1}{2}\textbf{x}^\intercal\textbf{x}\right)\D \textbf{x}\nonumber\\
+        &\displaystyle\mathbb{E}[(A\textbf{X}+\mathbf{b})^+]=\frac{A}{\sqrt{(2\pi)^p}}\int_{\textbf{x}\geq -A^{-1}\mathbf{b}}\textbf{x}\exp\left(-\frac{1}{2}\textbf{x}^\intercal\textbf{x}\right)\D \textbf{x} + \mathbf{b}\underbrace{\mathbb{P}(\textbf{X}\geq -A^{-1}\mathbf{b})}_{\Phi(-A^{-1}\mathbf{b})}\nonumber\\
+        &\displaystyle\mathbb{E}[(A\textbf{X}+\mathbf{b})^+]=\mathbf{b}\Phi(-A^{-1}\mathbf{b}) + \frac{A}{\sqrt{(2\pi)^p}}\int^{\infty}_{-A^{-1}\mathbf{b}} \grad\left(-\exp\left(-\frac{1}{2}\textbf{x}^\intercal\textbf{x}\right)\right)\D \textbf{x}\nonumber\\
+        &\displaystyle\mathbb{E}[(A\textbf{X}+\mathbf{b})^+]=\mathbf{b}\Phi(-A^{-1}\mathbf{b}) + \frac{A\mathbf{e}}{\sqrt{(2\pi)^p}}\exp\left(-\frac{1}{2}(A^{-1}\mathbf{b})^\intercal(A^{-1}\mathbf{b})\right)\nonumber
+    \end{align}
+\end{proof}
+\noindent
+Therefore, by applying the lemma to $\textbf{X}_{|\mathcal{F}_t} =(\Sigma^{1/2}\mathbf{Z}+\boldsymbol{\mu})_{|\mathcal{F}_t}$ where $\mathbf{Z}_{|\mathcal{F}_t}\sim\mathcal{N}(\mathbf{0},\Id)$, 
+\begin{align}
+    &\mathbb{E}[(\Bar{T}\textbf{e}_1-\textbf{Z}_{t+\Delta}^T)^+ | \mathcal{F}_t] = \boldsymbol{\mu}\Phi(-\Sigma^{-1/2}\boldsymbol{\mu}) + \frac{\Sigma^{1/2}\mathbf{e}}{\sqrt{(2\pi)^p}}\exp\left(-\frac{1}{2}(\Sigma^{-1/2}\boldsymbol{\mu})^\intercal(\Sigma^{-1/2}\boldsymbol{\mu})\right)\nonumber\\
+    &\mathbb{E}[(\Bar{T} -T_{t+\Delta})^+ | \mathcal{F}_t]=\mathbf{e_1}'\left[\boldsymbol{\mu}\Phi(-\Sigma^{-1/2}\boldsymbol{\mu}) + \frac{\Sigma^{1/2}\mathbf{e}}{\sqrt{(2\pi)^p}}\exp\left(-\frac{1}{2}(\Sigma^{-1/2}\boldsymbol{\mu})^\intercal(\Sigma^{-1/2}\boldsymbol{\mu})\right)\right]\nonumber
+\end{align}
+Where $\boldsymbol\mu=\bar{T}\textbf{e}_1-e^{\Delta A_T}\textbf{Z}_t^T$ and $\Sigma = \sigma_T^2e^{\Delta A_T}\left(\hat{\mathcal{D}}_{T}^{-1}\left(\exp(\hat{\mathcal{D}}_{T}\Delta)-\opI\right)\textbf{e}_p \textbf{e}_p'
+    \right)e^{\Delta A_T^\intercal}$ 
+\begin{remark}
+    The square root of the covariance matrix $\Sigma^{-1/2}$ is indeed invertible, because if it wasn't the case, we would have $\det(\Sigma)=\det(\Sigma^{1/2})^2=0$ which is absurd because we assumed that $\Sigma$ is invertible.
+\end{remark}
+\noindent
+\textbf{2.} Let's now consider the derivative of $\mathbb{E}[(S_{t+\Delta}-\Bar{S})^+(\Bar{T}-T_{t+\Delta})^+ | \mathcal{F}_t]$ in $\lambda=0$
+\begin{align}
+    \frac{\D }{\D \lambda}\bigg|_{\lambda=0} \mathbb{E}[(S_{t+\Delta}-\Bar{S})^+(\Bar{T}-T_{t+\Delta})^+ | \mathcal{F}_t]= \mathbb{E}\left[\left(\frac{\D }{\D \lambda}\Bigg|_{\lambda=0}(S_{t+\Delta}-\Bar{S})^+\right)\times(\Bar{T}-T_{t+\Delta})^+ \Bigg| \mathcal{F}_t\right]\nonumber 
+\end{align}
+Notice that $S_t=e^{X_t}$, therefore,
+\begin{align}
+    \frac{\D }{\D \lambda}\Bigg|_{\lambda=0}(S_{t+\Delta}-\Bar{S})^+=\mathbbm{1}_{S_{t+\Delta}\geq \Bar{S}}\times e^{X_{t+\Delta}}\times\frac{\D }{\D \lambda}\Bigg|_{\lambda=0}X_{t+\Delta}  \nonumber
+\end{align}
+In addition,
+\begin{align}
+    \frac{\D }{\D \lambda}\Bigg|_{\lambda=0}X_{t+\Delta} = \frac{\D }{\D \lambda}\Bigg|_{\lambda=0}\mathbf{b}_X^{'}\textbf{Z}_{t+\Delta}^X=\mathbf{b}_X^{'}\frac{\D }{\D \lambda}\Bigg|_{\lambda=0}\textbf{Z}_{t+\Delta}^X\nonumber
+\end{align}
+Which leads to,
+\begin{align}
+    \frac{\D }{\D \lambda}\Bigg|_{\lambda=0}X_{t+\Delta} = \mathbf{b}_X^{'} \sigma_T \int_t^{t+\Delta} e^{(t+\Delta-u)A_X}\textbf{e}_p\D W_u^T\nonumber
+\end{align}
+Hence,
+\begin{align}
+    &\frac{\D }{\D \lambda}\bigg|_{\lambda=0} \mathbb{E}[(S_{t+\Delta}-\Bar{S})^+(\Bar{T}-T_{t+\Delta})^+ | \mathcal{F}_t]\nonumber\\
+    &=\mathbb{E}_{\lambda=0}\left[\mathbbm{1}_{S_{t+\Delta}\geq \Bar{S}} e^{X_{t+\Delta}}\mathbf{b}_X^{'} \sigma_T \int_t^{t+\Delta} e^{(t+\Delta-u)A_X}\textbf{e}_p\D W_u^T(\Bar{T}-T_{t+\Delta})^+ \Bigg| \mathcal{F}_t\right]\nonumber\\
+    &=\mathbb{E}_{\lambda=0}\left[\mathbbm{1}_{S_{t+\Delta}\geq \Bar{S}} e^{X_{t+\Delta}}\Bigg|\mathcal{F}_t\right]\times\mathbb{E}_{\lambda=0}\left[\mathbf{b}_X^{'} \sigma_T \int_t^{t+\Delta} e^{(t+\Delta-u)A_X}\textbf{e}_p\D W_u^T(\Bar{T}-T_{t+\Delta})^+ \Bigg| \mathcal{F}_t\right]\nonumber
+\end{align}
+\textbf{2.a.} We decompose the first term as the sum of two terms that will be computed with the inverse Fourier Transform.
+\begin{align}
+    \mathbb{E}_{\lambda=0}\left[\mathbbm{1}_{S_{t+\Delta}\geq \Bar{S}} e^{X_{t+\Delta}}|\mathcal{F}_t\right]=\mathbb{E}_{\lambda=0}\left[(S_{t+\Delta}-\Bar{S})^+|\mathcal{F}_t\right]+\Bar{S}\mathbb{P}(S_{t+\Delta}\geq\Bar{S}|\mathcal{F}_t)\nonumber
+\end{align}
+\textbf{2.b.} Now we want to compute the second term of the product.
+\begin{align}
+    \mathbb{E}_{\lambda=0}\left[\mathbf{b}_X^{'} \sigma_T \int_t^{t+\Delta} e^{(t+\Delta-u)A_X}\textbf{e}_p\D W_u^T(\Bar{T}-T_{t+\Delta})^+ \Bigg| \mathcal{F}_t\right]\nonumber
+\end{align}
+We are going to use the following proposition.
+\begin{proposition}
+    The joint distribution of the couple of random vectors,
+    \begin{align}
+        \left(\int_t^{t+\Delta} e^{(t+\Delta-u)A_X}\textbf{e}_p\D W_u^T,\int_t^{t+\Delta} e^{(t+\Delta-u)A_T}\textbf{e}_p\D W_u^T\right)\nonumber
+    \end{align}
+    is a centered Gaussian distribution with the joint covariance block matrix $\textbf{K}(\Delta)$,
+   \begin{align}
+\textbf{K}(\Delta)=\begin{bmatrix}
+K_X(\Delta) & K_{XT}(\Delta)  \\
+K_{XT}(\Delta) & K_T(\Delta) \\
+\end{bmatrix} \nonumber
+   \end{align}
+   Where the block matrix are defined as,
+   \begin{align}
+       &K_X(\Delta)=e^{\Delta A_X}\Hat{\mathcal{D}}_X^{-1}(e^{u\Hat{\mathcal{D}}_X}-\opI)\textbf{e}_p\textbf{e}_p'e^{\Delta A_X^\intercal} \nonumber\\
+       &K_T(\Delta)=e^{\Delta A_T}\Hat{\mathcal{D}}_T^{-1}(e^{u\Hat{\mathcal{D}}_T}-\opI)\textbf{e}_p\textbf{e}_p'e^{\Delta A_T^\intercal} \nonumber\\
+       &K_{XT}(\Delta)=e^{\Delta A_X}\Hat{\mathcal{D}}_{XT}^{-1}(e^{u\Hat{\mathcal{D}}_{XT}}-\opI)\textbf{e}_p\textbf{e}_p'e^{\Delta A_T^\intercal} \nonumber
+   \end{align}
+   With $\Hat{\mathcal{D}}_{X},\Hat{\mathcal{D}}_{XT},\Hat{\mathcal{D}}_{T}$ linear operators on $\mathbb{M}_p$ defined for all $M$ in $\mathbb{M}_p$ by,
+   \begin{align}
+       &\Hat{\mathcal{D}}_{X}(M):=A_XM+MA_X^\intercal\nonumber\\
+       &\Hat{\mathcal{D}}_{XT}(M):=A_XM+MA_T^\intercal\nonumber\\
+       &\Hat{\mathcal{D}}_{T}(M):=A_TM+MA_T^\intercal\nonumber
+   \end{align}
+\end{proposition}
+\begin{corollary} Conditionally on $(\int_t^{t+\Delta} e^{(t+\Delta-u)A_T}\textbf{e}_p\D W_u^T)$, $\int_t^{t+\Delta} e^{(t+\Delta-u)A_X}\textbf{e}_p\D W_u^T$ follows a Gaussian distribution with mean, 
+    \begin{align}
+        \mathbb{E}\Bigg[&\int_t^{t+\Delta} e^{(t+\Delta-u)A_X}\textbf{e}_p\D W_u^T\Bigg|\int_t^{t+\Delta} e^{(t+\Delta-u)A_T}\textbf{e}_p\D W_u^T\Bigg]\\
+        &= K_{XT}(\Delta)K_T^{-1}(\Delta)\int_t^{t+\Delta} e^{(t+\Delta-u)A_T}\textbf{e}_p\D W_u^T
+    \end{align}
+    and variance,
+    \begin{align}
+        K_X(\Delta) - K_{XT}(\Delta)K_{T}(\Delta)^{-1}K_{TX}(\Delta)\nonumber
+    \end{align}
+\end{corollary}
+\noindent
+Therefore,
+\begin{align}
+    &\mathbb{E}\left[\mathbf{b}_X^{'} \sigma_T \int_t^{t+\Delta} e^{(t+\Delta-u)A_X}\textbf{e}_p\D W_u^T(\Bar{T}-T_{t+\Delta})^+ \Bigg| \mathcal{F}_t\right]\nonumber\\
+    &=
+   \mathbb{E}\left[ \mathbb{E}\left[\mathbf{b}_X^{'} \sigma_T \int_t^{t+\Delta} e^{(t+\Delta-u)A_X}\textbf{e}_p\D W_u^T(\Bar{T}-T_{t+\Delta})^+ \Bigg| \int_t^{t+\Delta} e^{(t+\Delta-u)A_T}\textbf{e}_p\D W_u^T\right]\Bigg| \mathcal{F}_t\right]\nonumber\\
+   &=\mathbb{E}\left[ \mathbf{b}_X'\sigma_T   K_{XT}(\Delta)K_T^{-1}(\Delta)\int_t^{t+\Delta} e^{(t+\Delta-u)A_T}\textbf{e}_p\D W_u^T(\Bar{T}-T_{t+\Delta})^+ \Bigg|\mathcal{F}_t\right]\nonumber\\
+    &=\mathbf{b}_X'  K_{XT}(\Delta)K_T^{-1}(\Delta)\mathbb{E}\left[\sigma_T \int_t^{t+\Delta} e^{(t+\Delta-u)A_T}\textbf{e}_p\D W_u^T(\Bar{T}-T_{t+\Delta})^+ \Bigg|\mathcal{F}_t\right]\nonumber\\
+    &=\mathbf{b}_X'  K_{XT}(\Delta)K_T^{-1}(\Delta)\mathbb{E}\left[\sigma_T \int_t^{t+\Delta} e^{(t+\Delta-u)A_T}\textbf{e}_p\D W_u^T\mathbf{b}_T'(\Bar{T}\textbf{e}_1-\textbf{Z}_{t+\Delta}^T)^+ \Bigg|\mathcal{F}_t\right]\nonumber\\
+    &=\mathbf{b}_X'  K_{XT}(\Delta)K_T^{-1}(\Delta)\mathbb{E}\Bigg[\sigma_T \int_t^{t+\Delta} e^{(t+\Delta-u)A_T}\textbf{e}_p\D W_u^T\mathbf{b}_T'\Bigg(\Bar{T}\textbf{e}_1-e^{\Delta A_T}\textbf{Z}_{t}^T\nonumber\\
+    &-\sigma_T\int_t^{t+\Delta} e^{(t+\Delta-u)A_T}\textbf{e}_p\D W_u^T\Bigg)^+ \Bigg|\mathcal{F}_t\Bigg]\nonumber\\
+    &=\mathbf{b}_X'  K_{XT}(\Delta)K_T^{-1}(\Delta)\mathbb{E}[\Sigma^{1/2}\textbf{Z}\textbf{e}_1'(\boldsymbol{\mu}+\Sigma^{1/2}\textbf{Z})^+|\mathcal{F}_t]\nonumber
+\end{align}
+\noindent
+Where $\textbf{Z}_{|\mathcal{F}_t}\sim\mathcal{N}(\textbf{0},\Id)$
+\begin{lemma}
+    Let $A\in\text{GL}_p(\mathbb{R})$, $\mathbf{b}\in\mathbb{R}^p$ and $\textbf{X}\sim\mathcal{N}(\textbf{0},\Id)$. We have,
+    \begin{align}
+        \mathbb{E}\left[A\textbf{X}\textbf{e}_1'(A\textbf{X}+\mathbf{b})^+\right]=A\mathbf{e}\Tr{(A)}\Phi(-A^{-1}\mathbf{b})\nonumber
+    \end{align}
+    Where $\Phi$ is the cumulative distribution function of the multivariate normal distribution $\mathcal{N}(\textbf{0},\Id)$ and $\mathbf{e}: = \begin{bmatrix} 1 & 1 & \cdots & 1 \end{bmatrix}^\intercal$
+\end{lemma}
+\noindent
+\begin{proof}
+    \begin{align}
+        &\mathbb{E}\left[A\textbf{X}\textbf{e}_1'(A\textbf{X}+\mathbf{b})^+\right]=\int_{\mathbb{R}^p}A\textbf{x}\textbf{e}_1'(A\textbf{x}+\mathbf{b})^+\frac{1}{\sqrt{(2\pi)^p}}\exp{\left(-\frac{1}{2}\textbf{x}^\intercal\textbf{x}\right)}\D \textbf{x}\nonumber\\
+        &\mathbb{E}\left[A\textbf{X}\textbf{e}_1'(A\textbf{X}+\mathbf{b})^+\right]=\int_{\textbf{x}\geq -A^{-1}\mathbf{b}}A\textbf{x}\textbf{e}_1'(A\textbf{x}+\mathbf{b})\frac{1}{\sqrt{(2\pi)^p}}\exp{\left(-\frac{1}{2}\textbf{x}^\intercal\textbf{x}\right)}\D \textbf{x}\nonumber
+    \end{align}
+    \noindent
+    We want to compute the two following integrals,
+    \begin{align}
+        &\textbf{I}_1=\int_{\textbf{x}\geq -A^{-1}\mathbf{b}}A\textbf{x}\textbf{e}_1'A\textbf{x}\frac{1}{\sqrt{(2\pi)^p}}\exp{\left(-\frac{1}{2}\textbf{x}^\intercal\textbf{x}\right)}\D \textbf{x}\nonumber\\
+        &\textbf{I}_2=\int_{\textbf{x}\geq -A^{-1}\mathbf{b}}A\textbf{x}\textbf{e}_1'\mathbf{b}\frac{1}{\sqrt{(2\pi)^p}}\exp{\left(-\frac{1}{2}\textbf{x}^\intercal\textbf{x}\right)}\D \textbf{x}\nonumber
+    \end{align}
+\noindent
+We start to compute the second one,
+\begin{align*}
+&\textbf{I}_2=\frac{A}{\sqrt{(2\pi)^p}}\Bigg(\int_{\textbf{x}\geq -A^{-1}\mathbf{b}} \textbf{x}\exp{\left(-\frac{1}{2}\textbf{x}^\intercal\textbf{x}\right)}\D \textbf{x}\Bigg)\textbf{e}_1'\mathbf{b}\\
+&\textbf{I}_2=\frac{A}{\sqrt{(2\pi)^p}}\Bigg(\int_{\textbf{x}\geq -A^{-1}\mathbf{b}} \grad\left(-\exp{\left(-\frac{1}{2}\textbf{x}^\intercal\textbf{x}\right)}\right) \D \textbf{x}\Bigg)\textbf{e}_1'\mathbf{b}\\
+&\textbf{I}_2=\frac{A\mathbf{e}\textbf{e}_1'\mathbf{b}}{\sqrt{(2\pi)^p}}\exp{\left(-\frac{1}{2}(A^{-1}\mathbf{b})^{\intercal} (A^{-1}\mathbf{b})\right)}
+\end{align*}
+\noindent
+Then for $\textbf{I}_1$, we want to use an extension of the integration by parts,
+\begin{proposition} Let \( u(\mathbf{x}) \) be a scalar field and \( \mathbf{v}(\mathbf{x}) \) be a tensor field of order 2 (matrix) defined on a domain \( \Omega \subset \mathbb{R}^n \). Then the integration by parts formula is given by:
+\begin{align*}
+    \int_\Omega \mathbf{v} \cdot \mathbf{grad } (u) \, \D\Omega =  \int_{\partial \Omega} u\mathbf{v} \cdot \mathbf{n} \, \D S - \int_\Omega u \, \mathbf{div } (\mathbf{v}) \, \D\Omega
+\end{align*}
+where,
+\begin{itemize}
+    \item[--] \( \mathbf{n} \) is the outward-pointing unit normal vector on the boundary \( \partial \Omega \).
+    \item[--] \( \D S \) denotes the surface element on the boundary \( \partial \Omega \).
+    \item[--] $"\cdot"$ is the simple contracted tensor product.
+\end{itemize}
+\end{proposition}
+\noindent
+\begin{proof}
+We apply the integration by parts formula for multivariate scalar functions,
+\begin{align*}
+    \int_{\Omega} v_{ij}(\mathbf{x})\frac{\partial u}{\partial x_j}(\mathbf{x})\D \mathrm{x}=\int_{\partial\Omega} u(\mathbf{x})v_{ij}(\mathbf{x})\mathbf{e}_j \cdot \mathbf{n} \D S -  \int_{\Omega} u(\mathbf{x})\frac{\partial v_{ij}}{\partial x_j}(\mathrm{x})\D \mathrm{x}
+\end{align*}
+Summing over $i,j$ in $[p]$ we get,
+\begin{align*}
+        \sum_i\left(\sum_j\int_{\Omega} v_{ij}(\mathbf{x})\frac{\partial u}{\partial x_j}(\mathbf{x})\D \mathrm{x} \right)\mathbf{e}_i&=\sum_i\left(\sum_j\int_{\partial\Omega} u(\mathbf{x})v_{ij}(\mathbf{x})\mathbf{e}_j \cdot \mathbf{n} \D S \right)\mathbf{e}_i\\
+        &-  \sum_i\left(\sum_j\int_{\Omega} u(\mathbf{x})\frac{\partial v_{ij}}{\partial x_j}(\mathbf{x})\D \mathrm{x}\right)\mathbf{e}_i\\
+        \int_{\Omega} \sum_i\sum_j v_{ij}(\mathbf{x})\frac{\partial u}{\partial x_j}(\mathbf{x})\mathbf{e}_i\D \mathrm{x} &=\int_{\partial\Omega} \sum_i\sum_j u(\mathbf{x})v_{ij}(\mathbf{x})\mathbf{e}_j \cdot \mathbf{n} \mathbf{e}_i\D S \\
+        &-  \int_{\Omega} \sum_i\sum_ju(\mathbf{x})\frac{\partial v_{ij}}{\partial x_j}(\mathbf{x})\mathbf{e}_i\D \mathrm{x}\\
+\end{align*}
+We can notice that,
+\begin{align*}
+    &\mathbf{v} \cdot \mathbf{grad } (u) = \sum_i\sum_j v_{ij}(\mathbf{x})\frac{\partial u}{\partial x_j}(\mathbf{x})\mathbf{e}_i\\
+    &\mathbf{div } (\mathbf{v}) = \sum_i\sum_j\frac{\partial v_{ij}}{\partial x_j}(\mathbf{x})\mathbf{e}_i
+\end{align*}
+In addition,
+\begin{align*}
+    \sum_i\sum_j v_{ij}(\mathbf{x})\mathbf{e}_j \cdot \mathbf{n} \mathbf{e}_i=&\Bigg[\sum_j\left(\sum_i v_{ij}(\mathbf{x})\right)\mathbf{e}_j \cdot \left(\sum_jn_j\right)\mathbf{e}_j \Bigg]\mathbf{e}_i\\
+    &=\Bigg(\sum_j\sum_i v_{ij}(\mathbf{x})n_j \Bigg)\mathbf{e}_i=\sum_i\sum_j v_{ij}(\mathbf{x})n_j\mathbf{e}_i=\mathbf{v}\cdot\mathbf{n}
+\end{align*}
+\end{proof}
+\noindent
+Therefore,
+\begin{align*}
+    &\textbf{I}_1=\frac{A}{\sqrt{(2\pi)^p}}\int_{\textbf{x}\geq -A^{-1}\mathbf{b}}\textbf{x}\textbf{e}_1'A\grad\left(-\exp{\left(-\frac{1}{2}\textbf{x}^\intercal\textbf{x}\right)}\right)\D \textbf{x}\\
+    &\textbf{I}_1=\frac{A}{\sqrt{(2\pi)^p}}\left(\left[-\textbf{x}\textbf{e}_1'A\exp{\left(-\frac{1}{2}\textbf{x}^\intercal\textbf{x}\right)}\right]_{-A^{-1}\mathbf{b}}^\infty +\int_{\textbf{x}\geq -A^{-1}\mathbf{b}}\exp{\left(-\frac{1}{2}\textbf{x}^\intercal\textbf{x}\right)} \dvg(\textbf{x}\textbf{e}_1'A)\D \textbf{x}\right)\\
+    &\mathbf{I}_1=-\frac{A\mathbf{b}\mathbf{e}_1'}{\sqrt{(2\pi)^p}}\exp{\left(-\frac{1}{2}(A^{-1}\mathbf{b})^\intercal(A^{-1}\mathbf{b})\right)} + A \int_{\textbf{x}\geq -A^{-1}\mathbf{b}}\frac{\dvg(\textbf{x}\textbf{e}_1'A)}{\sqrt{(2\pi)^p}}\exp{\left(-\frac{1}{2}\textbf{x}^\intercal\textbf{x}\right)}\D \mathbf{x}
+\end{align*}
+\vincent{The problem is line 2. What is the outward normal of the boundary} \newline\newline
+However, 
+\begin{align*}
+    \dvg(\textbf{x}\textbf{e}_1'A)=\sum_i\sum_j\frac{\partial (\textbf{x}\textbf{e}_1'A)_{ij}}{\partial x_j}(\mathbf{x})\mathbf{e}_i=\sum_i\sum_j\frac{\partial (x_ia_{ij})}{\partial x_j}\mathbf{e}_i = \Tr{A}\underbrace{\sum_i\mathbf{e}_i}_{:=\mathbf{e}}
+\end{align*}
+Hence,
+\begin{align*}
+    &\mathbf{I}_1=-\frac{A\mathbf{b}\mathbf{e}_1'}{\sqrt{(2\pi)^p}}\exp{\left(-\frac{1}{2}(A^{-1}\mathbf{b})^\intercal(A^{-1}\mathbf{b})\right)} + A\mathbf{e}\Tr{(A)}\Phi(-A^{-1}\mathbf{b})
+\end{align*}
+\end{proof}
+\noindent
+Then we apply the lemma,
+\begin{align}
+        \mathbb{E}[\Sigma^{1/2}\textbf{Z}\textbf{e}_1'(\boldsymbol{\mu}+\Sigma^{1/2}\textbf{Z})^+|\mathcal{F}_t]=\Sigma^{1/2}\mathbf{e}\Tr{(\Sigma^{1/2})}\Phi(-\Sigma^{-1/2}\boldsymbol{\mu})\nonumber
+    \end{align}
+\end{proof}    
+\noindent
+\vincent{How to cite references: \cite{Alf24} \cite{Bro01} \cite{Ben14} \cite{Ben23} \cite{Ben13} \cite{Ben15} \cite{Hul21} \cite{Sch21}}
+\newline\newline
+\vincent{How to label and cite an equation: \label{eq:state-space-CARMA} ; \eqref{eq:state-space-CARMA}}
+
+
+\newpage
+\bibliographystyle{acm}
+\bibliography{literature}
+
+\end{document}
