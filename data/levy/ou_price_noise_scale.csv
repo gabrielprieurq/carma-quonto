@@ -1,2 +1,2 @@
-model,sigma_T,sigma_X_marginal,lambda_hat,lambda_sigma_T,sigma_J_state,temp_variance_share_state_pct,driver_cov_dLT_dLX,driver_slope_marginal_units,lambda_from_driver_regression,sigma_J_driver_marginal_units
-ou_price_noise,0.64279,0.0133445,-0.0005972807596713877,-0.0003839260995091713,0.013338976010178432,0.0827733745997166,-0.02876506108304246,-0.0307517343586962,-0.0006384145975351538,0.9947187039438712
+model,sigma_T,sigma_X_marginal,lambda_hat,sigma_J_state,temp_variance_share_state_pct,driver_cov_dLT_dLX,driver_slope_marginal_units,lambda_from_driver_regression,sigma_J_driver_marginal_units
+ou_price_noise,0.64279,0.0133445,-0.0005972807596713877,0.013338976010178432,0.0827733745997166,-0.02876506108304246,-0.0307517343586962,-0.0006384145975351538,0.9947187039438712

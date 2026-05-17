@@ -10,7 +10,6 @@ temperature_driver,sigma,0.9671589232233029
 price_state,kappa_X,0.0790154
 price_state,b_X,1.0
 price_state,lambda,-0.0005972807596713877
-price_state,lambda_sigma_T,-0.0003839260995091713
 price_state,sigma_J,0.013338976010178432
 price_idiosyncratic_driver,distribution,NIG
 price_idiosyncratic_driver,alpha,0.5965345909724785
